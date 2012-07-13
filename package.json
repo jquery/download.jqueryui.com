@@ -1,0 +1,10 @@
+{
+	"name": "ui-download-builder",
+	"dependencies": {
+		"async": "0.1.22",
+		"connect": "1.8.5",
+		"formidable": "1.0.9",
+		"handlebars": "latest",
+		"rimraf": "2.0.1"
+	},
+}
