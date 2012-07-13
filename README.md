@@ -1,6 +1,7 @@
 ## jQuery UI Download Builder
 
-Run a jQuery UI build with `grunt release`, then copy over the `dist` dir into this project.
+Run a jQuery UI build with `grunt release`, then copy over the result, e.g.
+`dist/jquery-ui-1.9` into the `versions` dir into this project.
 
 `npm install` to install node modules.
 

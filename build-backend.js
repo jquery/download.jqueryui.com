@@ -20,7 +20,7 @@ Builder.prototype = {
 		fs.writeFileSync( targetdir + "version.txt", "custom" );
 		this.fields.forEach(function( field ) {
 			var file = "minified/jquery.ui." + field + ".min.js";
-			fs.writeFileSync( targetdir + file, fs.readFileSync( "dist/" + file ) );
+			fs.writeFileSync( targetdir + file, fs.readFileSync( "versions/jquery-ui-1.9.0pre/ui/" + file ) );
 		});
 		callback( tmpdir, target );
 	},
