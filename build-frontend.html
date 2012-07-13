@@ -1,0 +1,16 @@
+<!doctype html>
+<title>jQuery UI Download Builder</title>
+<link rel="stylesheet" href="/themes/base/jquery.ui.all.css">
+<link rel="stylesheet" href="/frontend.css">
+<form action="/download" method="POST">
+	<fieldset class="ui-widget ui-widget-content ui-corner-all">
+		<legend class="ui-widget ui-widget-header ui-corner-all">Choose components to include in the download</legend>
+		{{#each components}}
+			<label>
+				<input type="checkbox" checked name="{{this}}" class="ui-widget-content">
+				{{this}}
+			</label>
+		{{/each}}
+		<input type="submit" class="ui-widget-content">
+	</fieldset>
+</form>
