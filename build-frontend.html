@@ -1,15 +1,19 @@
 <!doctype html>
 <title>jQuery UI Download Builder</title>
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="/frontend.css">
+<link rel="stylesheet" href="/resources/frontend.css">
+<link rel="stylesheet" href="/resources/frontend.js">
 <form action="/download" method="POST">
 	<fieldset class="ui-widget ui-widget-content ui-corner-all">
 		<legend class="ui-widget ui-widget-header ui-corner-all">Choose components to include in the download</legend>
-		{{#each components}}
-			<label title="{{description}}">
-				<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
-				{{title}}
-			</label>
+		{{#each categories}}
+			<h2>{{name}}</h2>
+			{{#each components}}
+				<label title="{{description}}">
+					<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+					{{title}}
+				</label>
+			{{/each}}
 		{{/each}}
 		<input type="submit" class="ui-widget-content">
 	</fieldset>
