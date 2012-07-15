@@ -6,6 +6,7 @@
 		"connect": "1.8.5",
 		"formidable": "1.0.9",
 		"handlebars": "latest",
-		"rimraf": "2.0.1"
+		"rimraf": "2.0.1",
+		"glob-whatev": "0.1.7"
 	}
 }

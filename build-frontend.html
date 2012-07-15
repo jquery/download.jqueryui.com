@@ -6,9 +6,9 @@
 	<fieldset class="ui-widget ui-widget-content ui-corner-all">
 		<legend class="ui-widget ui-widget-header ui-corner-all">Choose components to include in the download</legend>
 		{{#each components}}
-			<label>
-				<input type="checkbox" checked name="{{this}}" class="ui-widget-content">
-				{{this}}
+			<label title="{{description}}">
+				<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+				{{title}}
 			</label>
 		{{/each}}
 		<input type="submit" class="ui-widget-content">
