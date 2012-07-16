@@ -4,3 +4,6 @@ body {
 label {
 	display: block;
 }
+.toggle, .toggleAll {
+	font-size: 0.9em;
+}
