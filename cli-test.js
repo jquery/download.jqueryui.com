@@ -1,6 +1,6 @@
 var Builder = require( "./build-backend" );
 
-var components = require( "./manifest" ).map(function( component ) {
+var components = require( "./manifest" ).components().map(function( component ) {
 	return component.name;
 });
 

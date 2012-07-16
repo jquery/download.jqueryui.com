@@ -18,34 +18,12 @@ var httpPort = 8088,
 
 var homeTemplate = handlebars.compile( fs.readFileSync( "build-frontend.html", "utf8" ) );
 
-var components = require( "./manifest" );
-
-function categorized() {
-	var result = [],
-		categories = {};
-	components.forEach(function( component ) {
-		if ( !categories[ component.category ] ) {
-			var category = {
-				name: component.category,
-				components: []
-			};
-			categories[ component.category ] = category;
-			result.push( category );
-		}
-		categories[ component.category ].components.push( component );
-	});
-
-	result.sort(function( a, b ) {
-		return a.name > b.name ? 1 : -1;
-	});
-
-	return result;
-}
+var categories = require( "./manifest" ).categories();
 
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
 		response.end( homeTemplate( {
-			categories: categorized()
+			categories: categories
 		}));
 	});
 	app.post( routes.download, function( request, response, next) {
