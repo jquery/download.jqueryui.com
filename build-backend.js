@@ -21,20 +21,22 @@ Builder.prototype = {
 		fs.mkdirSync( targetdir );
 		fs.mkdirSync( targetdir + "minified" );
 		fs.writeFileSync( targetdir + "version.txt", "custom" );
-		var ui = {
-			version: "1.9.0"
-		};
-		this.fields.forEach(function( field ) {
-			var file = "minified/jquery.ui." + field + ".min.js";
-			ui[ field ] = true;
-			fs.writeFileSync( targetdir + file, fs.readFileSync( "versions/jquery-ui-1.9.0pre/ui/" + file ) );
-		});
-		fs.writeFileSync( targetdir + "index.html", indexTemplate({
+		var meta = {
 			jquery: {
 				version: "1.7.2"
 			},
-			ui: ui
-		}));
+			ui: {
+				version: "1.9.0"
+			}
+		};
+		this.fields.forEach(function( field ) {
+			var file = "minified/jquery.ui." + field + ".min.js";
+			meta.ui[ field ] = true;
+			fs.writeFileSync( targetdir + file, fs.readFileSync( "versions/jquery-ui-1.9.0pre/ui/" + file ) );
+		});
+		fs.writeFileSync( targetdir + "index.html", indexTemplate( meta ) );
+		fs.mkdirSync( targetdir + "js" );
+		fs.writeFileSync( targetdir + "js/jquery-" + meta.jquery.version + ".js", fs.readFileSync( "versions/jquery-ui-1.9.0pre/jquery-" + meta.jquery.version + ".js" ) );
 		callback( tmpdir, target );
 	},
 	writeTo: function( response, callback ) {
