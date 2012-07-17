@@ -4,7 +4,10 @@
 var spawn = require( "child_process" ).spawn,
 	fs = require( "fs" ),
 	rimraf = require( "rimraf" ),
-	async = require( "async" );
+	async = require( "async" ),
+	handlebars = require( "handlebars" );
+
+var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) );
 
 function Builder( fields ) {
 	this.fields = fields;
@@ -18,10 +21,20 @@ Builder.prototype = {
 		fs.mkdirSync( targetdir );
 		fs.mkdirSync( targetdir + "minified" );
 		fs.writeFileSync( targetdir + "version.txt", "custom" );
+		var ui = {
+			version: "1.9.0"
+		};
 		this.fields.forEach(function( field ) {
 			var file = "minified/jquery.ui." + field + ".min.js";
+			ui[ field ] = true;
 			fs.writeFileSync( targetdir + file, fs.readFileSync( "versions/jquery-ui-1.9.0pre/ui/" + file ) );
 		});
+		fs.writeFileSync( targetdir + "index.html", indexTemplate({
+			jquery: {
+				version: "1.7.2"
+			},
+			ui: ui
+		}));
 		callback( tmpdir, target );
 	},
 	writeTo: function( response, callback ) {
