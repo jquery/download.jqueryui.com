@@ -14,8 +14,11 @@ var input = "versions/jquery-ui-1.9.0pre/";
 var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) ),
 	pkg = JSON.parse( fs.readFileSync( input + "/package.json" ) );
 
+function stripBanner( src ) {
+	return src.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
+}
+
 function Builder( fields ) {
-	// TODO make sure fields are ordered based on dependencies
 	this.fields = fields;
 }
 Builder.prototype = {
@@ -54,23 +57,36 @@ Builder.prototype = {
 		fs.mkdirSync( targetdir + "development-bundle/ui" );
 		fs.mkdirSync( targetdir + "development-bundle/ui/minified" );
 
+		fs.mkdirSync( targetdir + "development-bundle/themes" );
+		fs.mkdirSync( targetdir + "development-bundle/themes/base" );
+		fs.mkdirSync( targetdir + "development-bundle/themes/base/images" );
+		fs.mkdirSync( targetdir + "development-bundle/themes/base/minified" );
+		fs.mkdirSync( targetdir + "development-bundle/themes/base/minified/images" );
+		glob( input + "themes/base/images/*" ).forEach(function( file ) {
+			fs.writeFileSync( targetdir + file.replace(input, "development-bundle/"), fs.readFileSync( file ) );
+			fs.writeFileSync( targetdir + file.replace(input + "themes/base/", "development-bundle/themes/base/minified/"), fs.readFileSync( file ) );
+		});
+
 		var header = banner( pkg, this.fields.map(function( field ) {
 			return "jquery.ui." + field + ".js";
 		}) ) + "\n";
 		var concatFiles = header,
-			minifiedFiles = header;
+			minifiedFiles = header,
+			cssFields = [],
+			cssConcatFiles = "",
+			cssMinifiedFiles = "";
 		this.fields.forEach(function( field ) {
 			ui[ field ] = true;
 
 			var file = "ui/jquery.ui." + field + ".js";
 			var content = fs.readFileSync( input + file, "utf-8" );
-			concatFiles += content.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
+			concatFiles += stripBanner( content );
 			fs.writeFileSync( targetdir + "development-bundle/" + file, content );
 
 			var minfile = "ui/minified/jquery.ui." + field + ".min.js";
 			var minifiedContent = fs.readFileSync( input + minfile, "utf-8" );
 			fs.writeFileSync( targetdir + "development-bundle/" + minfile, minifiedContent );
-			minifiedFiles += minifiedContent.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
+			minifiedFiles += stripBanner( minifiedContent );
 
 			if ( fs.existsSync( input + "demos/" + field ) ) {
 				fs.mkdirSync( targetdir + "development-bundle/demos/" + field );
@@ -86,12 +102,30 @@ Builder.prototype = {
 			var jsonFile = input + "ui." + field + ".jquery.json";
 			fs.writeFileSync( targetdir + jsonFile.replace(input, "development-bundle/"), fs.readFileSync( jsonFile ) );
 
-			// TODO css files
+			var cssFile = "themes/base/jquery.ui." + field + ".css";
+			if ( fs.existsSync( input + cssFile )) {
+				cssFields.push( field );
+				var cssContent = fs.readFileSync( input + cssFile, "utf-8" );
+				cssConcatFiles += stripBanner( cssContent );
+				fs.writeFileSync( targetdir + "development-bundle/" + cssFile, cssContent );
+
+				var cssMinfile = "themes/base/minified/jquery.ui." + field + ".min.css";
+				var cssMinifiedContent = fs.readFileSync( input + cssMinfile, "utf-8" );
+				fs.writeFileSync( targetdir + "development-bundle/" + cssMinfile, cssMinifiedContent );
+				cssMinifiedFiles += stripBanner( cssMinifiedContent );
+			}
 		});
 
 		fs.writeFileSync( targetdir + "development-bundle/ui/jquery-ui-" + ui.version + ".custom.js", concatFiles );
-
 		fs.writeFileSync( targetdir + "development-bundle/ui/minified/jquery-ui-" + ui.version + ".custom.min.js", minifiedFiles );
+
+		var cssHeader = banner( pkg, cssFields.map(function( field ) {
+			return "jquery.ui." + field + ".css";
+		}) ) + "\n";
+		cssConcatFiles = cssHeader + cssConcatFiles;
+		cssMinifiedFiles = cssHeader + cssMinifiedFiles;
+		fs.writeFileSync( targetdir + "development-bundle/themes/base/jquery-ui-" + ui.version + ".custom.css", cssConcatFiles );
+		fs.writeFileSync( targetdir + "development-bundle/themes/base/minified/jquery-ui-" + ui.version + ".custom.min.css", cssMinifiedFiles );
 
 		fs.mkdirSync( targetdir + "js" );
 
@@ -110,9 +144,8 @@ Builder.prototype = {
 
 		fs.mkdirSync( targetdir + "css" );
 		fs.mkdirSync( targetdir + "css/base" );
-		// TODO use concatCssFiles and minifiedConcatCSsFiles
-		fs.writeFileSync( targetdir + "css/base/jquery-ui-" + ui.version + ".custom.css", fs.readFileSync( input + "themes/base/jquery-ui.css" ) );
-		fs.writeFileSync( targetdir + "css/base/jquery-ui-" + ui.version + ".custom.min.css", fs.readFileSync( input + "themes/base/minified/jquery-ui.min.css" ) );
+		fs.writeFileSync( targetdir + "css/base/jquery-ui-" + ui.version + ".custom.css", cssConcatFiles );
+		fs.writeFileSync( targetdir + "css/base/jquery-ui-" + ui.version + ".custom.min.css", cssMinifiedFiles );
 
 		fs.mkdirSync( targetdir + "css/base/images" );
 		glob( input + "themes/base/images/*" ).forEach(function( file ) {
@@ -132,7 +165,7 @@ Builder.prototype = {
 				// console.error( data.toString() );
 			});
 			child.on( "exit", function( code ) {
-				rimraf.sync( cwd );
+				// rimraf.sync( cwd );
 				if ( code !== 0 ) {
 					callback( "zip failed :(" );
 					return;
