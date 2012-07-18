@@ -9,7 +9,7 @@ var spawn = require( "child_process" ).spawn,
 	glob = require( "glob-whatev" ).glob,
 	banner = require( "./banner" );
 
-var input = "versions/jquery-ui-1.9.0pre/";
+var input = glob( "versions/*" )[0];
 
 var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) ),
 	pkg = JSON.parse( fs.readFileSync( input + "/package.json" ) );
