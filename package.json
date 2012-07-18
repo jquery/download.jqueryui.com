@@ -8,5 +8,8 @@
 		"handlebars": "latest",
 		"rimraf": "2.0.1",
 		"glob-whatev": "0.1.7"
+	},
+	"engine": {
+		"node": ">=0.8.x"
 	}
 }
