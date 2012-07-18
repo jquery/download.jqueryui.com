@@ -10,11 +10,11 @@ module.exports = function( pkg, fields ) {
 		return "jquery.ui." + field + ".js";
 	});
 	return "/*! " + (pkg.title || pkg.name) + " - v" + pkg.version + " - " +
-		today('isoDate') + "\n" +
+		today("isoDate") + "\n" +
 		"* " + pkg.homepage + "\n" +
 		"* Includes: " + fileNames.join(", ") + "\n" +
-		"* Copyright (c) " + today('yyyy') + " " + pkg.author.name +
-		" Licensed " + _.pluck(pkg.licenses, 'type').join(', ') + " */";
+		"* Copyright (c) " + today("yyyy") + " " + pkg.author.name +
+		" Licensed " + _.pluck(pkg.licenses, "type").join(", ") + " */";
 };
 
 // console.log(module.exports({
