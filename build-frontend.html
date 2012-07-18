@@ -6,16 +6,8 @@
 	<form action="/download" method="POST">
 		<fieldset class="ui-widget ui-widget-content ui-corner-all">
 			<legend class="ui-widget ui-widget-header ui-corner-all">Choose components to include in the download</legend>
-			<label class="toggleAll">
-				<input type="checkbox" checked class="ui-widget-content">
-				Toggle All
-			</label>
 			{{#each categories}}
 				<h2>{{name}}</h2>
-				<label class="toggle">
-					<input type="checkbox" checked class="ui-widget-content">
-					Toggle All
-				</label>
 				{{#each components}}
 					<label title="{{description}}">
 						<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">

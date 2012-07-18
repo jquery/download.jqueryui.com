@@ -1,8 +1,7 @@
 ;
 (function( $, undefined ) {
 
-	var checkboxes,
-		dependencies = {},
+	var dependencies = {},
 		dependents = {};
 
 	function check( elem, value ) {
@@ -27,12 +26,23 @@
 		});
 	}
 
+	function drawToggleAll( className ) {
+		return $( "<label>" )
+			.addClass( className )
+			.text( " Toggle All" )
+			.prepend(
+				$( "<input type=checkbox>" )
+					.prop( "checked", true )
+					.addClass( "ui-widget-content" )
+			);
+	}
+
 
 	/**
 	 * Init
 	 */
-	checkboxes = $( ".download-builder input[type=checkbox]" );
-	checkboxes.each(function() {
+	// Initializes dependencies and dependents auxiliary variables.
+	$( ".download-builder input[type=checkbox]" ).each(function() {
 		var checkbox = $( this ),
 			thisDependencies = checkbox.data( "dependencies" ),
 			thisName = checkbox.attr( "name" );
@@ -53,11 +63,15 @@
 		});
 	});
 
+	// Generating toggle all checkboxes
+	$( ".download-builder fieldset" ).prepend( drawToggleAll( "toggleAll" ) );
+	$( ".download-builder h2" ).after( drawToggleAll( "toggle" ) );
+
 
 	/**
 	 * Bind
 	 */
-	checkboxes.click(function( event ) {
+	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
 		var target = $( event.target );
 		if ( target.parent().is( ".toggle" ) ) {
 			check( $( this ).parent().nextUntil( ".toggle" ).find( "input[type=checkbox]" ), $( this ).prop( "checked" ) );
