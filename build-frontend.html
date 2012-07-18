@@ -4,19 +4,31 @@
 <link rel="stylesheet" href="/resources/frontend.css">
 <div class="download-builder">
 	<form action="/download" method="POST">
-		<fieldset class="ui-widget ui-widget-content ui-corner-all">
-			<legend class="ui-widget ui-widget-header ui-corner-all">Choose components to include in the download</legend>
-			{{#each categories}}
-				<h2>{{name}}</h2>
-				{{#each components}}
-					<label title="{{description}}">
-						<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
-						{{title}}
-					</label>
-				{{/each}}
-			{{/each}}
-			<input type="submit" class="ui-widget-content">
-		</fieldset>
+		<div class="download-builder-header">
+			<h2>Components</h2>
+		</div>
+		{{#each categories}}
+			<fieldset class="ui-widget ui-widget-content">
+				<div>
+					<div class="component-group-desc">
+						<h3>{{name}}</h3>
+						<p>{{description}}</p>
+					</div>
+					<div class="component-group-list">
+					{{#each components}}
+						<label title="{{description}}">
+							<div>
+								<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+								<span class="component-title">{{title}}</span>
+								<span class="component-desc">{{description}}</span>
+							</div>
+						</label>
+					{{/each}}
+					</div>
+				</div>
+			</fieldset>
+		{{/each}}
+		<input type="submit" class="ui-widget-content" value="Download">
 	</form>
 </div>
 <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
