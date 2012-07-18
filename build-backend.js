@@ -6,9 +6,15 @@ var spawn = require( "child_process" ).spawn,
 	rimraf = require( "rimraf" ),
 	async = require( "async" ),
 	handlebars = require( "handlebars" ),
-	glob = require( "glob-whatev" ).glob;
+	glob = require( "glob-whatev" ).glob,
+	minifier = require( "./minifier" ),
+	banner = require( "./banner" );
 
-var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) );
+// TODO include trailing slash here to rid it elsewhere
+var input = "versions/jquery-ui-1.9.0pre";
+
+var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) ),
+	pkg = JSON.parse( fs.readFileSync( input + "/package.json" ) );
 
 function Builder( fields ) {
 	// TODO make sure fields are ordered based on dependencies
@@ -19,15 +25,13 @@ Builder.prototype = {
 	build: function( callback ) {
 		var tmpdir = "tmp" + (+new Date()),
 			target = "jquery-ui-custom",
-			input = "versions/jquery-ui-1.9.0pre",
 			targetdir = tmpdir + "/" + target + "/";
 		fs.mkdirSync( tmpdir );
 		fs.mkdirSync( targetdir );
-		fs.mkdirSync( targetdir + "minified" );
 
 		// TODO exclude or filter *.jquery.json files
 		fs.mkdirSync( targetdir + "development-bundle" );
-		glob( "versions/jquery-ui-1.9.0pre/*.*" ).forEach(function( file ) {
+		glob( input + "/*.*" ).forEach(function( file ) {
 			fs.writeFileSync( targetdir + file.replace(input, "development-bundle"), fs.readFileSync( file ) );
 		});
 
@@ -54,15 +58,15 @@ Builder.prototype = {
 		};
 		fs.mkdirSync( targetdir + "development-bundle/ui" );
 		fs.mkdirSync( targetdir + "development-bundle/ui/minified" );
-		// TODO replicate banner generation from grunt build
-		var concatFiles = "/* jQuery UI custom */\n";
+
+		var header = banner( pkg, this.fields ) + "\n";
+		var concatFiles = header;
 		this.fields.forEach(function( field ) {
 			meta.ui[ field ] = true;
 
 			var file = "ui/jquery.ui." + field + ".js";
-			var content = fs.readFileSync( input + "/" + file );
-			// TODO strip banner
-			concatFiles += content;
+			var content = fs.readFileSync( input + "/" + file, "utf-8" );
+			concatFiles += content.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
 			fs.writeFileSync( targetdir + "development-bundle/" + file, content );
 
 			var minfile = "ui/minified/jquery.ui." + field + ".min.js";
@@ -78,18 +82,25 @@ Builder.prototype = {
 					}
 				});
 			}
+
+			// TODO css files
 		});
+
 		fs.writeFileSync( targetdir + "development-bundle/ui/jquery-ui-" + meta.ui.version + ".custom.js", concatFiles );
+
+		var minifiedConcatFiles = header + minifier( concatFiles );
+		fs.writeFileSync( targetdir + "development-bundle/ui/minified/jquery-ui-" + meta.ui.version + ".custom.min.js", minifiedConcatFiles );
 
 		fs.writeFileSync( targetdir + "index.html", indexTemplate( meta ) );
 		fs.mkdirSync( targetdir + "js" );
 		fs.writeFileSync( targetdir + "js/jquery-" + meta.jquery.version + ".js", fs.readFileSync( input + "/jquery-" + meta.jquery.version + ".js" ) );
 
-		fs.writeFileSync( targetdir + "js/jquery-ui-" + meta.ui.version + ".custom.js", fs.readFileSync( input + "/ui/jquery-ui.js" ) );
-		fs.writeFileSync( targetdir + "js/jquery-ui-" + meta.ui.version + ".custom.min.js", fs.readFileSync( input + "/ui/minified/jquery-ui.min.js" ) );
+		fs.writeFileSync( targetdir + "js/jquery-ui-" + meta.ui.version + ".custom.js", concatFiles );
+		fs.writeFileSync( targetdir + "js/jquery-ui-" + meta.ui.version + ".custom.min.js", minifiedConcatFiles );
 
 		fs.mkdirSync( targetdir + "css" );
 		fs.mkdirSync( targetdir + "css/base" );
+		// TODO use concatCssFiles and minifiedConcatCSsFiles
 		fs.writeFileSync( targetdir + "css/base/jquery-ui-" + meta.ui.version + ".custom.css", fs.readFileSync( input + "/themes/base/jquery-ui.css" ) );
 		fs.writeFileSync( targetdir + "css/base/jquery-ui-" + meta.ui.version + ".custom.min.css", fs.readFileSync( input + "/themes/base/minified/jquery-ui.min.css" ) );
 
