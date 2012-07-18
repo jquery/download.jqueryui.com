@@ -58,7 +58,9 @@ Builder.prototype = {
 		fs.mkdirSync( targetdir + "development-bundle/ui" );
 		fs.mkdirSync( targetdir + "development-bundle/ui/minified" );
 
-		var header = banner( pkg, this.fields ) + "\n";
+		var header = banner( pkg, this.fields.map(function( field ) {
+			return "jquery.ui." + field + ".js";
+		}) ) + "\n";
 		var concatFiles = header;
 		this.fields.forEach(function( field ) {
 			meta.ui[ field ] = true;

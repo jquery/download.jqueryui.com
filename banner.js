@@ -5,10 +5,7 @@ function today(format) {
   return dateformat(new Date(), format);
 }
 
-module.exports = function( pkg, fields ) {
-	var fileNames = fields.map(function( field ) {
-		return "jquery.ui." + field + ".js";
-	});
+module.exports = function( pkg, fileNames ) {
 	return "/*! " + (pkg.title || pkg.name) + " - v" + pkg.version + " - " +
 		today("isoDate") + "\n" +
 		"* " + pkg.homepage + "\n" +
@@ -32,4 +29,4 @@ module.exports = function( pkg, fields ) {
 // 			type: "GPL"
 // 		}
 // 	]
-// }, ["autocomplete", "accordion"]));
+// }, ["jquery.ui.autocomplete.js", "jquery.ui.accordion.js"]));
