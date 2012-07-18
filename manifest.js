@@ -1,4 +1,5 @@
 var version = "jquery-ui-1.9.0pre",
+	coreRegex = /core|widget|mouse|position/,
 	dir = "versions/" + version,
 	fs = require( "fs" ),
 	glob = require( "glob-whatev" ).glob;
@@ -23,6 +24,16 @@ module.exports = {
 				category: manifest.category,
 				dependencies: dependencies( manifest )
 			};
+		// TODO stupid approach to getting those four components to the top
+		// improve...
+		}).sort(function( a, b ) {
+			if ( coreRegex.test( a.name ) ) {
+				return -1;
+			}
+			if ( coreRegex.test( b.name )) {
+				return 1;
+			}
+			return  a.name > b.name ? 1 : -1;
 		});
 	},
 	categories: function() {

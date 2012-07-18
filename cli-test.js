@@ -6,7 +6,7 @@ var components = require( "./manifest" ).components().map(function( component ) 
 
 // specify any additional arguments to include only a subset of components
 if (process.argv.length > 2) {
-	components = components.slice(0, 5);
+	components = components.slice(0, 10);
 }
 
 var out = require( "fs" ).createWriteStream( "result.zip" );

@@ -35,6 +35,8 @@ function route(app) {
 			}
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=jquery-ui-custom-1.9.zip" );
+			// TODO use child_process.fork and process.send to make building response async
+			// see https://gist.github.com/6d635e9001b92215266a
 			new Builder( list ).writeTo( response, function() {
 				response.end();
 			});
