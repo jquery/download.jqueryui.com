@@ -64,8 +64,8 @@
 	});
 
 	// Generating toggle all checkboxes
-	$( ".download-builder fieldset" ).prepend( drawToggleAll( "toggleAll" ) );
-	$( ".download-builder h2" ).after( drawToggleAll( "toggle" ) );
+	$( ".download-builder h2" ).after( drawToggleAll( "toggleAll" ) );
+	$( ".download-builder h3" ).after( drawToggleAll( "toggle" ) );
 
 
 	/**
@@ -74,7 +74,7 @@
 	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
 		var target = $( event.target );
 		if ( target.parent().is( ".toggle" ) ) {
-			check( $( this ).parent().nextUntil( ".toggle" ).find( "input[type=checkbox]" ), $( this ).prop( "checked" ) );
+			check( $( this ).closest( "fieldset" ).find( "input[type=checkbox]" ), $( this ).prop( "checked" ) );
 		} else if ( target.parent().is( ".toggleAll" ) ) {
 			check( $( this ).closest( "form" ).find( "input[type=checkbox]" ).not( this ), $( this ).prop( "checked" ) );
 		} else {

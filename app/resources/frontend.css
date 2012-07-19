@@ -1,9 +1,175 @@
-body {
-	font-size: 62.5%;
+.download-builder {
+	font-size: 10px;
+	padding: 10px 0 20px 30px;
 }
-label {
-	display: block;
+.download-builder * {
+	color: #000000;
+	font-family: "Trebuchet MS",Verdana,sans-serif;
+	margin: 0;
+	padding: 0;
 }
-.toggle, .toggleAll {
+.download-builder ul {
+	list-style-type: none;
+}
+.download-builder-content {
+	float: left;
+	padding: 0 0 70px;
+	width: 100%;
+}
+.download-builder h1 {
+	font-size: 2.7em;
+	margin: 0.6em 0 0.1em;
+}
+.download-builder h2 {
+	color: #E6820E;
+	font-size: 1.4em;
+}
+.download-builder h4 {
+	color: #333333;
+	font-size: 1em;
+	margin: 0 0 0.2em;
+	text-transform: uppercase;
+}
+.download-builder p,
+.download-builder li {
+	font-size: 1.2em;
+	line-height: 1.3;
+}
+.download-builder p.intro,
+.download-builder p.bundle_links {
+	color: #666666;
+	font-size: 1.5em;
+	line-height: 1.5;
+	margin: 1em 0;
+	width: 580px;
+}
+.download-builder p.bundle_links {
+	font-size: 1.2em;
+}
+.download-builder p.bundle_links strong {
+	color: #333333;
+	font-weight: bold;
+}
+.download-builder p.bundle_links em {
+	color: #666666;
+}
+.download-builder img#download_builder_icon {
+	float: right;
+	margin-right: 20px;
+}
+.download-builder a:link, .download-builder a:visited {
+	color: #1B75BB;
+	text-decoration: none;
+}
+.download-builder a:hover, .download-builder a:active {
+	color: #0B559B;
+	text-decoration: underline;
+}
+.download-builder-content {
+	clear: both;
+	margin: 3em 0 1em;
+}
+.download-builder-components {
+	border-top: 1px solid #999999;
+	float: left;
+	padding: 10px 0;
+	width: 670px;
+}
+.download-builder-settings {
+	background: none repeat scroll 0 0 #FFFAE5;
+	border-bottom: 1px dotted #666666;
+	border-top: 1px solid #999999;
+	float: right;
+	margin-right: 20px;
+	padding: 20px 0 30px;
+	width: 200px;
+}
+.download-builder .download-builder-header {
+	border-bottom: 1px dotted #666666;
+	padding: 10px 15px 15px;
+	position: relative;
+}
+.download-builder .download-builder-header h2 em {
+	color: #666666;
 	font-size: 0.9em;
+	font-style: normal;
+	font-weight: normal;
+}
+.download-builder .select-all {
+	background: url("../images/select_all_icon.png") no-repeat scroll 0 2px transparent;
+	font-size: 1.1em;
+	padding-left: 12px;
+	position: absolute;
+	right: 15px;
+	top: 12px;
+}
+.download-builder fieldset {
+	display: table;
+	border: 0 none;
+	border-bottom: 1px dotted #666666;
+	outline: 0 none;
+	padding: 25px 15px 15px;
+	position: relative;
+}
+.download-builder fieldset > div {
+	display: table-row;
+}
+.download-builder fieldset > div > div {
+	display: table-cell;
+}
+.download-builder .component-group {
+	border-bottom: 1px dotted #666666;
+	padding: 25px 15px 15px;
+	position: relative;
+}
+.download-builder .component-group-desc {
+	width: 230px;
+}
+.download-builder .component-group-list {
+	min-width: 400px;
+}
+.download-builder .component-group-desc h3 {
+	font-size: 1.5em;
+}
+.download-builder .component-group-desc p {
+	color: #666666;
+	font-size: 1.2em;
+	margin: 0.8em 0;
+	width: 70%;
+}
+.download-builder .component-group-list label {
+	display: table;
+	border-spacing: 4px 6px;
+}
+.download-builder .component-group-list label > div {
+	display: table-row;
+}
+.download-builder .component-group-list label > div > * {
+	display: table-cell;
+	border-spacing: 0.9em 0 1.4em;
+}
+.download-builder label span.component-title {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-right: 10px;
+	min-width: 100px;
+}
+.download-builder label span.component-desc {
+	font-size: 1.1em;
+}
+.download-builder input[type=submit] {
+	background: url("/img/download_button_on.png") repeat-x scroll 0 50% #222222;
+	border: 2px solid #AAAAAA;
+	color: #EEEEEE;
+	cursor: pointer;
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 15px 0 0;
+	padding: 0.4em 0;
+	text-align: center;
+	width: 140px;
+}
+.download-builder input[type=submit]:hover {
+	background: none repeat scroll 0 0 #111111;
+	color: #FFFFFF;
 }
