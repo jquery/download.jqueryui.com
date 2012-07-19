@@ -1,7 +1,30 @@
 var version = "jquery-ui-1.9.0pre",
 	dir = "versions/" + version,
 	fs = require( "fs" ),
-	glob = require( "glob-whatev" ).glob;
+	glob = require( "glob-whatev" ).glob,
+	_ = require( "underscore" ),
+	dict = {
+		core: {
+			name: "UI Core",
+			description: "A required dependency, contains basic functions and initializers.",
+			order: 0
+		},
+		interaction: {
+			name: "Interactions",
+			description: "These add basic behaviors to any element and are used by many components below.",
+			order: 1
+		},
+		widget: {
+			name: "Widgets",
+			description: "Full-featured UI Controls - each has a range of options and is fully themeable.",
+			order: 2
+		},
+		effect: {
+			name: "Effects",
+			description: "A rich effect API and ready to use effects.",
+			order: 3
+		}
+	};
 
 function dependencies( manifest ) {
 	var result = [];
@@ -30,10 +53,9 @@ module.exports = {
 			categories = {};
 		module.exports.components().forEach(function( component ) {
 			if ( !categories[ component.category ] ) {
-				var category = {
-					name: component.category,
+				var category = _.extend({
 					components: []
-				};
+				}, dict[component.category]);
 				categories[ component.category ] = category;
 				result.push( category );
 			}
@@ -41,7 +63,7 @@ module.exports = {
 		});
 
 		result.sort(function( a, b ) {
-			return a.name > b.name ? 1 : -1;
+			return a.order - b.order;
 		});
 
 		return result;
