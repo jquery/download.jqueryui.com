@@ -1,18 +1,28 @@
 /*jshint node: true */
 "use strict";
 
-var spawn = require( "child_process" ).spawn,
+var async = require( "async" ),
+	banner = require( "./banner" ),
 	fs = require( "fs" ),
-	rimraf = require( "rimraf" ),
-	async = require( "async" ),
-	handlebars = require( "handlebars" ),
 	glob = require( "glob-whatev" ).glob,
-	banner = require( "./banner" );
+	handlebars = require( "handlebars" ),
+	rimraf = require( "rimraf" ),
+	spawn = require( "child_process" ).spawn,
+	winston = require( "winston" );
 
 var input = glob( "versions/*" )[0];
 
 var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) ),
 	pkg = JSON.parse( fs.readFileSync( input + "/package.json" ) );
+
+var download_logger = new winston.Logger({
+		transports: [
+			new winston.transports.File({
+				filename: "downloads.log",
+				json: false
+			})
+		]
+	});
 
 function stripBanner( src ) {
 	return src.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
@@ -155,7 +165,8 @@ Builder.prototype = {
 		callback( tmpdir, target );
 	},
 	writeTo: function( response, callback ) {
-		var that = this;
+		var that = this,
+			start = new Date();
 		this.build(function( cwd, target ) {
 			var child = spawn( "zip", [ "-r", "-", target ], { cwd: cwd } );
 			child.stdout.on( "data", function( data) {
@@ -167,9 +178,15 @@ Builder.prototype = {
 			child.on( "exit", function( code ) {
 				// rimraf.sync( cwd );
 				if ( code !== 0 ) {
+					download_logger.error( "zip failed :(" );
 					callback( "zip failed :(" );
 					return;
 				}
+				// Log statistics
+				download_logger.info( JSON.stringify({
+					components: that.fields,
+					build_time: new Date() - start
+				}) );
 				callback( null, "All good!" );
 			});
 		});
