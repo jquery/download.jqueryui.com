@@ -25,7 +25,7 @@ Builder.prototype = {
 	// TODO make everything ASYNC
 	build: function( callback ) {
 		var tmpdir = "tmp" + (+new Date()),
-			target = "jquery-ui-custom",
+			target = "jquery-ui-" + pkg.version + ".custom",
 			targetdir = tmpdir + "/" + target + "/";
 		fs.mkdirSync( tmpdir );
 		fs.mkdirSync( targetdir );
@@ -165,7 +165,7 @@ Builder.prototype = {
 				// console.error( data.toString() );
 			});
 			child.on( "exit", function( code ) {
-				// rimraf.sync( cwd );
+				rimraf.sync( cwd );
 				if ( code !== 0 ) {
 					callback( "zip failed :(" );
 					return;
