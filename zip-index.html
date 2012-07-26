@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<title>jQuery UI Example Page</title>
-	<link type="text/css" href="css/base/jquery-ui-{{ui.version}}.custom.css" rel="stylesheet" />
-	<script type="text/javascript" src="js/{{jquery}}"></script>
-	<script type="text/javascript" src="js/jquery-ui-{{ui.version}}.custom.js"></script>
-	<script type="text/javascript">
+	<link href="css/base/jquery-ui-{{ui.version}}.custom.css" rel="stylesheet">
+	<script src="js/{{jquery}}"></script>
+	<script src="js/jquery-ui-{{ui.version}}.custom.js"></script>
+	<script>
 	$(function(){
 		{{#if ui.accordion}}
-		$("#accordion").accordion({ header: "h3" });
+		$( "#accordion" ).accordion({ header: "h3" });
 		{{/if}}
 
 		{{#if ui.autocomplete}}
@@ -43,58 +43,58 @@
 		{{/if}}
 
 		{{#if ui.button}}
-		$('#button').button();
-		$('#radioset').buttonset();
+		$( "#button" ).button();
+		$( "#radioset" ).buttonset();
 		{{/if}}
 
 		{{#if ui.tabs}}
-		$('#tabs').tabs();
+		$( "#tabs" ).tabs();
 		{{/if}}
 
 		{{#if ui.dialog}}
-		$('#dialog').dialog({
+		$( "#dialog" ).dialog({
 			autoOpen: false,
 			width: 600,
 			buttons: {
 				"Ok": function() {
-					$(this).dialog("close");
+					$(this).dialog( "close" );
 				},
 				"Cancel": function() {
-					$(this).dialog("close");
+					$(this).dialog( "close" );
 				}
 			}
 		});
 
 		// Dialog Link
-		$('#dialog_link').click(function(){
-			$('#dialog').dialog('open');
+		$( "#dialog_link" ).click(function(){
+			$( "#dialog" ).dialog( "open" );
 			return false;
 		});
 		{{/if}}
 
 		{{#if ui.datepicker}}
-		$('#datepicker').datepicker({
+		$( "#datepicker" ).datepicker({
 			inline: true
 		});
 		{{/if}}
 
 		{{#if ui.slider}}
-		$('#slider').slider({
+		$( "#slider" ).slider({
 			range: true,
 			values: [17, 67]
 		});
 		{{/if}}
 
 		{{#if ui.progressbar}}
-		$("#progressbar").progressbar({
+		$( "#progressbar" ).progressbar({
 			value: 20
 		});
 		{{/if}}
 
 		//hover states on the static widgets
-		$('#dialog_link, ul#icons li').hover(
-			function() { $(this).addClass('ui-state-hover'); },
-			function() { $(this).removeClass('ui-state-hover'); }
+		$( "#dialog_link, ul#icons li" ).hover(
+			function() { $(this).addClass( "ui-state-hover" ); },
+			function() { $(this).removeClass( "ui-state-hover" ); }
 		);
 	});
 	</script>
