@@ -30,7 +30,7 @@ var version = "jquery-ui-1.9.0pre",
 function dependencies( manifest ) {
 	var result = [];
 	for ( var component in manifest.dependencies ) {
-		if ( component != "jquery" ) {
+		if ( component !== "jquery" ) {
 			result.push( component.replace( /ui\./, "" ) );
 		}
 	}

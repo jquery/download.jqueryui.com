@@ -1,5 +1,4 @@
-;
-(function( $, undefined ) {
+;(function( $, undefined ) {
 
 	var dependencies = {},
 		dependents = {};
@@ -12,7 +11,7 @@
 			// Handle dependencies
 			if ( name ) {
 				// Whenever a checkbox is activated, also activate all parent dependencies
-				if ( value ) { 
+				if ( value ) {
 					if ( dependencies[ name ] ) {
 						check( dependencies[ name ], value );
 					}
@@ -82,4 +81,4 @@
 		}
 	});
 
-})( jQuery );
+}( jQuery ));
