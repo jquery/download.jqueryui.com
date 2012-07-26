@@ -158,7 +158,7 @@
 	font-size: 1.1em;
 }
 .download-builder input[type=submit] {
-	background: url("/img/download_button_on.png") repeat-x scroll 0 50% #222222;
+	background: url("download_button_on.png") repeat-x scroll 0 50% #222222;
 	border: 2px solid #AAAAAA;
 	color: #EEEEEE;
 	cursor: pointer;
