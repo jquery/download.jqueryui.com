@@ -2,10 +2,9 @@
 /*jshint node: true */
 "use strict";
 
-var fs = require( "fs" ),
-	connect = require( "connect" ),
-	handlebars = require( "handlebars" ),
+var connect = require( "connect" ),
 	formidable = require( "formidable" ),
+	frontend = require( "./build-frontend" ),
 	Builder = require( "./build-backend" );
 
 var httpPort = 8088,
@@ -16,15 +15,9 @@ var httpPort = 8088,
 		download: "/download"
 	};
 
-var homeTemplate = handlebars.compile( fs.readFileSync( "build-frontend.html", "utf8" ) );
-
-var categories = require( "./manifest" ).categories();
-
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
-		response.end( homeTemplate( {
-			categories: categories
-		}));
+		response.end( frontend.wrapped() );
 	});
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();

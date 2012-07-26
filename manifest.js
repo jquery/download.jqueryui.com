@@ -1,6 +1,6 @@
 var version = "jquery-ui-1.9.0pre",
 	coreRegex = /core|widget|mouse|position/,
-	dir = "versions/" + version,
+	dir = __dirname + "/versions/" + version,
 	fs = require( "fs" ),
 	glob = require( "glob-whatev" ).glob,
 	_ = require( "underscore" ),
