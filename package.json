@@ -10,7 +10,8 @@
 		"handlebars": "latest",
 		"rimraf": "2.0.1",
 		"underscore": "~1.3.3",
-		"winston": "latest"
+		"winston": "latest",
+		"zipstream": "git://github.com/rxaviers/node-zipstream.git"
 	},
 	"main": "build-frontend.js",
 	"engine": {
