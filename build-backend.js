@@ -220,6 +220,10 @@ Builder.prototype = {
 		callback( build );
 	},
 
+	filename: function() {
+		return this.basedir + ".zip";
+	},
+
 	writeTo: function( response, callback ) {
 		var that = this,
 			start = new Date();

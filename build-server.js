@@ -19,16 +19,15 @@ function route(app) {
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
-			var list = [],
-				field;
+			var field, builder,
+				list = [];
 			for ( field in fields ) {
 				list.push( field );
 			}
+			builder = new Builder( list );
 			response.setHeader( "Content-Type", "application/zip" );
-			response.setHeader( "Content-Disposition", "attachment; filename=jquery-ui-custom-1.9.zip" );
-			// TODO use child_process.fork and process.send to make building response async
-			// see https://gist.github.com/6d635e9001b92215266a
-			new Builder( list ).writeTo( response, function() {
+			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
+			builder.writeTo( response, function() {
 				response.end();
 			});
 		});
