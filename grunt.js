@@ -22,9 +22,6 @@ module.exports = function(grunt) {
 				smarttabs: true,
 				trailing: true,
 				onevar: true
-			},
-			globals: {
-				exports: true
 			}
 		}
 	});
