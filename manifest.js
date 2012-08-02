@@ -1,8 +1,7 @@
-var version = "jquery-ui-1.9.0pre",
-	coreRegex = /core|widget|mouse|position/,
-	dir = __dirname + "/versions/" + version,
-	fs = require( "fs" ),
+var coreRegex = /core|widget|mouse|position/,
 	glob = require( "glob-whatev" ).glob,
+	dir =  glob( __dirname + "/versions/*" )[0],
+	fs = require( "fs" ),
 	_ = require( "underscore" ),
 	dict = {
 		core: {
