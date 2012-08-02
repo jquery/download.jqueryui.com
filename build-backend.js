@@ -6,7 +6,6 @@ var async = require( "async" ),
 	fs = require( "fs" ),
 	glob = require( "glob-whatev" ).glob,
 	handlebars = require( "handlebars" ),
-	rimraf = require( "rimraf" ),
 	spawn = require( "child_process" ).spawn,
 	winston = require( "winston" ),
 	zipstream = require( "zipstream" );

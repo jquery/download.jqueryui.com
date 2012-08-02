@@ -4,11 +4,12 @@
 
 var connect = require( "connect" ),
 	formidable = require( "formidable" ),
+	argv = require( "optimist" ).argv,
 	frontend = require( "./build-frontend" ),
 	Builder = require( "./build-backend" );
 
-var httpPort = 8088,
-	httpHost = "localhost",
+var httpPort = argv.port || 8088,
+	httpHost = argv.host || "localhost",
 	staticDir = "app",
 	routes = {
 		home: "/",
