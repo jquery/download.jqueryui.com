@@ -11,3 +11,5 @@ master) and move the *.jquery.json files into that same folder.
 `node cli-test.js` to run the backend, outputs `result.zip`
 
 `node build-server.js` to run the server, go to the URL it outputs.
+
+Add `--port 3000` or `--host ...` to specify custom host and port.
