@@ -1,6 +1,3 @@
-/*jshint node: true */
-"use strict";
-
 var async = require( "async" ),
 	banner = require( "./banner" ),
 	fs = require( "fs" ),

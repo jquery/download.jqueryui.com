@@ -1,3 +1,4 @@
+/*jshint jquery: true */
 ;(function( $, undefined ) {
 
 	var dependencies = {},
@@ -37,9 +38,6 @@
 	}
 
 
-	/**
-	 * Init
-	 */
 	// Initializes dependencies and dependents auxiliary variables.
 	$( ".download-builder input[type=checkbox]" ).each(function() {
 		var checkbox = $( this ),
@@ -66,10 +64,7 @@
 	$( ".download-builder h2" ).after( drawToggleAll( "toggleAll" ) );
 	$( ".download-builder h3" ).after( drawToggleAll( "toggle" ) );
 
-
-	/**
-	 * Bind
-	 */
+	// binds click handlers on checkboxes
 	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
 		var target = $( event.target );
 		if ( target.parent().is( ".toggle" ) ) {

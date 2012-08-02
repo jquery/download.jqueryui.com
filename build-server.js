@@ -1,14 +1,10 @@
 #!/usr/bin/env node
-/*jshint node: true */
-"use strict";
-
 var connect = require( "connect" ),
 	formidable = require( "formidable" ),
 	argv = require( "optimist" ).argv,
 	frontend = require( "./build-frontend" ),
-	Builder = require( "./build-backend" );
-
-var httpPort = argv.port || 8088,
+	Builder = require( "./build-backend" ),
+	httpPort = argv.port || 8088,
 	httpHost = argv.host || "localhost",
 	staticDir = "app",
 	routes = {
@@ -23,8 +19,9 @@ function route(app) {
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
-			var list = [];
-			for ( var field in fields ) {
+			var list = [],
+				field;
+			for ( field in fields ) {
 				list.push( field );
 			}
 			response.setHeader( "Content-Type", "application/zip" );
@@ -39,8 +36,8 @@ function route(app) {
 }
 
 connect.createServer(
-	connect.router(route),
-	connect.static(staticDir)
+	connect.router( route ),
+	connect[ "static" ]( staticDir )
 ).listen(httpPort, httpHost, function() {
 	console.log( "HTTP Server running at http://%s:%d", httpHost, httpPort );
 });
