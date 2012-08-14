@@ -44,6 +44,24 @@ function successOrError( successMsg, success, errorMsg, error ) {
 }
 
 function cloneOrFetch( success, error ) {
+	var cloneOrFetchDocs = function() {
+		if ( fs.existsSync( "api.jqueryui.com" ) ) {
+			grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
+			grunt.utils.spawn({
+				cmd: "git",
+				args: [ "fetch" ],
+				opts: {
+					cwd: "api.jqueryui.com"
+				}
+			}, successOrError( "Fetched repo", success, "Error fetching repo", error ) );
+		} else {
+			grunt.log.writeln( "Cloning api.jqueryui.com repo" );
+			grunt.utils.spawn({
+				cmd: "git",
+				args: [ "clone", "git://github.com/jquery/api.jqueryui.com.git", "api.jqueryui.com" ]
+			}, successOrError( "Cloned repo", success, "Error cloning repo", error ) );
+		}
+	};
 	var fs = require( "fs" );
 	if ( fs.existsSync( "jquery-ui" ) ) {
 		grunt.log.writeln( "Fetch updates for jquery-ui repo" );
@@ -53,36 +71,54 @@ function cloneOrFetch( success, error ) {
 			opts: {
 				cwd: "jquery-ui"
 			}
-		}, successOrError( "Fetched repo", success, "Error fetching repo", error ) );
+		}, successOrError( "Fetched repo", cloneOrFetchDocs, "Error fetching repo", error ) );
 	} else {
 		grunt.log.writeln( "Cloning jquery-ui repo" );
 		grunt.utils.spawn({
 			cmd: "git",
 			args: [ "clone", "git://github.com/jquery/jquery-ui.git", "jquery-ui" ]
-		}, successOrError( "Cloned repo", success, "Error cloning repo", error ) );
+		}, successOrError( "Cloned repo", cloneOrFetchDocs, "Error cloning repo", error ) );
 	}
 }
 
 function checkout( branchOrTag, success, error ) {
-	grunt.log.writeln( "Checking out branch/tag: " + branchOrTag );
+	grunt.log.writeln( "Checking out jqueryui-ui branch/tag: " + branchOrTag );
 	grunt.utils.spawn({
 		cmd: "git",
 		args: [ "checkout", "-f", "origin/" + branchOrTag ],
 		opts: {
 			cwd: "jquery-ui"
 		}
-	}, successOrError( "Done with checkout", success, "Error checking out", error ) );
+	}, successOrError( "Done with checkout", function() {
+		grunt.log.writeln( "Checking out api.jqueryui.com/master" );
+		grunt.utils.spawn({
+			cmd: "git",
+			args: [ "checkout", "-f", "origin/master" ],
+			opts: {
+				cwd: "api.jqueryui.com"
+			}
+		}, successOrError( "Done with checkout", success, "Error checking out", error ) );
+	}, "Error checking out", error ) );
 }
 
 function install( success, error ) {
-	grunt.log.writeln( "Installing npm modules" );
+	grunt.log.writeln( "Installing jquery-ui npm modules" );
 	grunt.utils.spawn({
 		cmd: "npm",
 		args: [ "install" ],
 		opts: {
 			cwd: "jquery-ui"
 		}
-	}, successOrError( "Installed npm modules", success, "Error installing npm modules", error ) );
+	}, successOrError( "Installed npm modules", function() {
+		grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
+		grunt.utils.spawn({
+			cmd: "npm",
+			args: [ "install" ],
+			opts: {
+				cwd: "api.jqueryui.com"
+			}
+		}, successOrError( "Installed npm modules", success, "Error installing npm modules", error ) );
+	}, "Error installing npm modules", error ) );
 }
 
 function build( success, error ) {
@@ -100,7 +136,16 @@ function build( success, error ) {
 			opts: {
 				cwd: "jquery-ui"
 			}
-		}, successOrError( "Done building", success, "Error building", error ) );
+		}, successOrError( "Done building", function() {
+			grunt.log.writeln( "Building API documentation for jQuery UI" );
+			grunt.utils.spawn({
+				cmd: "grunt",
+				args: [ "build-xml-entries" ],
+				opts: {
+					cwd: "api.jqueryui.com"
+				}
+			}, successOrError( "Done building", success, "Error building", error ) );
+		}, "Error building", error ) );
 	});
 }
 
@@ -109,7 +154,12 @@ function copy( success, error ) {
 	grunt.utils.spawn({
 		cmd: "cp",
 		args: [ "-r", "jquery-ui/dist/" + dir, "versions/" + dir ]
-	}, successOrError( "Copied release over to versions/" + dir, success, "Error copying release over to versions/" + dir, error ) );
+	}, successOrError( "Copied release over to versions/" + dir, function() {
+		grunt.utils.spawn({
+			cmd: "cp",
+			args: [ "-r", "api.jqueryui.com/dist/wordpress/posts/post/", "versions/" + dir + "docs/" ]
+		}, successOrError( "Copied docs over to versions/" + dir + "docs/", success, "Error copying release over to versions/" + dir + "docs/", error ) );
+	}, "Error copying release over to versions/" + dir, error ) );
 }
 
 grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( branchOrTag ) {
