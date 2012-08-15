@@ -15,6 +15,7 @@ var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8
 	commonFiles = [],
 	componentFiles = [],
 	demoFiles = [],
+	docFiles = [],
 	imageFiles = {},
 	jqueryFilename;
 
@@ -79,10 +80,14 @@ componentFiles = [
 // Demo files
 demoFiles = glob( input + "/demos/*/**" ).filter( noDirectory ).map( stripInput );
 
+// Doc files
+docFiles = glob( input + "/docs/*" ).map( stripInput );
+
 // Cache them
 commonFiles.forEach( cacheIt );
 componentFiles.forEach( cacheIt );
 demoFiles.forEach( cacheIt );
+docFiles.forEach( cacheIt );
 
 // Auxiliary variables
 imageFiles = glob( input + "/themes/base/images/*" ).map( stripInput );
@@ -163,7 +168,7 @@ Builder.prototype = {
 		demoFiles.filter(function( filepath ) {
 			var componentSubdir = filepath.split( "/" )[ 1 ];
 			return selected( componentSubdir );
-		}).forEach( addEach( [ "development-bundle" ] ));
+		}).forEach( addEach( [ "development-bundle" ] ) );
 
 		// Full
 		[ "development-bundle/ui/jquery-ui-" + pkg.version + ".custom.js",
@@ -201,9 +206,22 @@ Builder.prototype = {
 			});
 		});
 
+		// Doc files
+		docFiles.filter(function( field ) {
+			return !(/effect/).test( field );
+		}).filter( selected ).forEach( addEach( [ "development-bundle" ] ) );
+		this.fields.filter(function( field ) {
+			return (/effect-/).test( field );
+		}).map(function( field ) {
+			return field.replace( /^effect-(.*)$/, "docs/$1-effect.html" );
+		}).forEach( addEach( [ "development-bundle" ] ) );
+
 		// Ad hoc
 		if ( this.fields.indexOf( "datepicker" ) >= 0 ) {
-			[ "ui/i18n/jquery-ui-i18n.js", "ui/minified/i18n/jquery-ui-i18n.min.js" ].forEach( addEach( ["development-bundle"] ) );
+			[ "ui/i18n/jquery-ui-i18n.js", "ui/minified/i18n/jquery-ui-i18n.min.js" ].forEach( addEach( [ "development-bundle" ] ) );
+		}
+		if ( this.fields.indexOf( "effect-scale" ) >= 0 ) {
+			[ "docs/puff-effect.html", "docs/size-effect.html" ].forEach( addEach( [ "development-bundle" ] ) );
 		}
 		imageFiles.forEach(function( filepath ) {
 			add( filepath, [ filepath.replace( "themes", "css" ) ] );
