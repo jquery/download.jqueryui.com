@@ -93,6 +93,7 @@ function checkout( branchOrTag, success, error ) {
 		grunt.log.writeln( "Checking out api.jqueryui.com/master" );
 		grunt.utils.spawn({
 			cmd: "git",
+			// change this to 1-9 once api docs master goes to 1.10
 			args: [ "checkout", "-f", "origin/master" ],
 			opts: {
 				cwd: "api.jqueryui.com"
