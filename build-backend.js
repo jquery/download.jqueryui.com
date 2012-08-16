@@ -147,10 +147,8 @@ Builder.prototype = {
 					data: cache[ src ]
 				});
 			},
-			addEach = function( dst ) {
-				return function( filepath ) {
-					add( filepath, dst.concat( filepath ) );
-				};
+			addEach = function( filepath ) {
+				add( filepath, [ "development-bundle" ].concat( filepath ) );
 			},
 			basedir = this.basedir,
 			build = [],
@@ -163,12 +161,12 @@ Builder.prototype = {
 				return selectedRe.test( filepath );
 			};
 
-		commonFiles.forEach( addEach( [ "development-bundle" ] ) );
-		componentFiles.filter( selected ).forEach( addEach( [ "development-bundle" ] ) );
+		commonFiles.forEach( addEach );
+		componentFiles.filter( selected ).forEach( addEach );
 		demoFiles.filter(function( filepath ) {
 			var componentSubdir = filepath.split( "/" )[ 1 ];
 			return selected( componentSubdir );
-		}).forEach( addEach( [ "development-bundle" ] ) );
+		}).forEach( addEach );
 
 		// Full
 		[ "development-bundle/ui/jquery-ui-" + pkg.version + ".custom.js",
@@ -209,19 +207,19 @@ Builder.prototype = {
 		// Doc files
 		docFiles.filter(function( field ) {
 			return !(/effect/).test( field );
-		}).filter( selected ).forEach( addEach( [ "development-bundle" ] ) );
+		}).filter( selected ).forEach( addEach );
 		this.fields.filter(function( field ) {
 			return (/effect-/).test( field );
 		}).map(function( field ) {
 			return field.replace( /^effect-(.*)$/, "docs/$1-effect.html" );
-		}).forEach( addEach( [ "development-bundle" ] ) );
+		}).forEach( addEach );
 
 		// Ad hoc
 		if ( this.fields.indexOf( "datepicker" ) >= 0 ) {
-			[ "ui/i18n/jquery-ui-i18n.js", "ui/minified/i18n/jquery-ui-i18n.min.js" ].forEach( addEach( [ "development-bundle" ] ) );
+			[ "ui/i18n/jquery-ui-i18n.js", "ui/minified/i18n/jquery-ui-i18n.min.js" ].forEach( addEach );
 		}
 		if ( this.fields.indexOf( "effect-scale" ) >= 0 ) {
-			[ "docs/puff-effect.html", "docs/size-effect.html" ].forEach( addEach( [ "development-bundle" ] ) );
+			[ "docs/puff-effect.html", "docs/size-effect.html" ].forEach( addEach );
 		}
 		imageFiles.forEach(function( filepath ) {
 			add( filepath, [ filepath.replace( "themes", "css" ) ] );
