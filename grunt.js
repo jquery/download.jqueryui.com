@@ -1,3 +1,6 @@
+var async = require( "async" );
+var fs = require( "fs" );
+
 module.exports = function(grunt) {
 
 grunt.initConfig({
@@ -27,154 +30,178 @@ grunt.initConfig({
 
 grunt.registerTask( "default", "lint" );
 
-function successOrError( successMsg, success, errorMsg, error ) {
-	return function( errorResult, doneResult ) {
-		if ( errorResult ) {
-			grunt.log.error( errorMsg + " - " + errorResult.stderr );
-			if ( error ) {
-				error( errorResult );
-			}
-		} else {
+function log( callback, successMsg, errorMsg ) {
+	return function( error, result, code ) {
+		if ( error && errorMsg ) {
+			grunt.log.error( errorMsg + ": " + error.stderr );
+		} else if ( ! error && successMsg ) {
 			grunt.log.ok( successMsg );
-			if ( success ) {
-				success( doneResult );
-			}
 		}
+		callback( error, result, code );
 	};
 }
 
-function cloneOrFetch( success, error ) {
-	var cloneOrFetchDocs = function() {
-		if ( fs.existsSync( "api.jqueryui.com" ) ) {
-			grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
+function cloneOrFetch( callback ) {
+	async.series([
+		function( callback ) {
+			if ( fs.existsSync( "jquery-ui" ) ) {
+				grunt.log.writeln( "Fetch updates for jquery-ui repo" );
+				grunt.utils.spawn({
+					cmd: "git",
+					args: [ "fetch" ],
+					opts: {
+						cwd: "jquery-ui"
+					}
+				}, log( callback, "Fetched repo", "Error fetching repo" ) );
+			} else {
+				grunt.log.writeln( "Cloning jquery-ui repo" );
+				grunt.utils.spawn({
+					cmd: "git",
+					args: [ "clone", "git://github.com/jquery/jquery-ui.git", "jquery-ui" ]
+				}, log( callback, "Cloned repo", "Error cloning repo" ) );
+			}
+		},
+		function() {
+			if ( fs.existsSync( "api.jqueryui.com" ) ) {
+				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
+				grunt.utils.spawn({
+					cmd: "git",
+					args: [ "fetch" ],
+					opts: {
+						cwd: "api.jqueryui.com"
+					}
+				}, log( callback, "Fetched repo", "Error fetching repo" ) );
+			} else {
+				grunt.log.writeln( "Cloning api.jqueryui.com repo" );
+				grunt.utils.spawn({
+					cmd: "git",
+					args: [ "clone", "git://github.com/jquery/api.jqueryui.com.git", "api.jqueryui.com" ]
+				}, log( callback, "Cloned repo", "Error cloning repo" ) );
+			}
+		}
+	]);
+}
+
+function checkout( branchOrTag ) {
+	return function( callback ) {
+		async.series([
+			function( callback ) {
+				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + branchOrTag );
+				grunt.utils.spawn({
+					cmd: "git",
+					args: [ "checkout", "-f", "origin/" + branchOrTag ],
+					opts: {
+						cwd: "jquery-ui"
+					}
+				}, log( callback, "Done with checkout", "Error checking out" ) );
+			},
+			function() {
+				grunt.log.writeln( "Checking out api.jqueryui.com/master" );
+				grunt.utils.spawn({
+					cmd: "git",
+					args: [ "checkout", "-f", "origin/master" ],
+					opts: {
+						cwd: "api.jqueryui.com"
+					}
+				}, log( callback, "Done with checkout", "Error checking out" ) );
+			}
+		]);
+	};
+}
+
+function install( callback ) {
+	async.series([
+		function( callback ) {
+			grunt.log.writeln( "Installing jquery-ui npm modules" );
 			grunt.utils.spawn({
-				cmd: "git",
-				args: [ "fetch" ],
+				cmd: "npm",
+				args: [ "install" ],
+				opts: {
+					cwd: "jquery-ui"
+				}
+			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
+		},
+		function() {
+			grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
+			grunt.utils.spawn({
+				cmd: "npm",
+				args: [ "install" ],
 				opts: {
 					cwd: "api.jqueryui.com"
 				}
-			}, successOrError( "Fetched repo", success, "Error fetching repo", error ) );
-		} else {
-			grunt.log.writeln( "Cloning api.jqueryui.com repo" );
+			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
+		}
+	]);
+}
+
+function build( callback ) {
+	async.series([
+		function( callback ) {
+			grunt.log.writeln( "Building jQuery UI" );
 			grunt.utils.spawn({
-				cmd: "git",
-				args: [ "clone", "git://github.com/jquery/api.jqueryui.com.git", "api.jqueryui.com" ]
-			}, successOrError( "Cloned repo", success, "Error cloning repo", error ) );
-		}
-	};
-	var fs = require( "fs" );
-	if ( fs.existsSync( "jquery-ui" ) ) {
-		grunt.log.writeln( "Fetch updates for jquery-ui repo" );
-		grunt.utils.spawn({
-			cmd: "git",
-			args: [ "fetch" ],
-			opts: {
-				cwd: "jquery-ui"
-			}
-		}, successOrError( "Fetched repo", cloneOrFetchDocs, "Error fetching repo", error ) );
-	} else {
-		grunt.log.writeln( "Cloning jquery-ui repo" );
-		grunt.utils.spawn({
-			cmd: "git",
-			args: [ "clone", "git://github.com/jquery/jquery-ui.git", "jquery-ui" ]
-		}, successOrError( "Cloned repo", cloneOrFetchDocs, "Error cloning repo", error ) );
-	}
-}
-
-function checkout( branchOrTag, success, error ) {
-	grunt.log.writeln( "Checking out jqueryui-ui branch/tag: " + branchOrTag );
-	grunt.utils.spawn({
-		cmd: "git",
-		args: [ "checkout", "-f", "origin/" + branchOrTag ],
-		opts: {
-			cwd: "jquery-ui"
-		}
-	}, successOrError( "Done with checkout", function() {
-		grunt.log.writeln( "Checking out api.jqueryui.com/master" );
-		grunt.utils.spawn({
-			cmd: "git",
-			// change this to 1-9 once api docs master goes to 1.10
-			args: [ "checkout", "-f", "origin/master" ],
-			opts: {
-				cwd: "api.jqueryui.com"
-			}
-		}, successOrError( "Done with checkout", success, "Error checking out", error ) );
-	}, "Error checking out", error ) );
-}
-
-function install( success, error ) {
-	grunt.log.writeln( "Installing jquery-ui npm modules" );
-	grunt.utils.spawn({
-		cmd: "npm",
-		args: [ "install" ],
-		opts: {
-			cwd: "jquery-ui"
-		}
-	}, successOrError( "Installed npm modules", function() {
-		grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
-		grunt.utils.spawn({
-			cmd: "npm",
-			args: [ "install" ],
-			opts: {
-				cwd: "api.jqueryui.com"
-			}
-		}, successOrError( "Installed npm modules", success, "Error installing npm modules", error ) );
-	}, "Error installing npm modules", error ) );
-}
-
-function build( success, error ) {
-	grunt.log.writeln( "Building jQuery UI" );
-	grunt.utils.spawn({
-		cmd: "grunt",
-		args: [ "manifest" ],
-		opts: {
-			cwd: "jquery-ui"
-		}
-	}, function() {
-		grunt.utils.spawn({
-			cmd: "grunt",
-			args: [ "release" ],
-			opts: {
-				cwd: "jquery-ui"
-			}
-		}, successOrError( "Done building", function() {
+				cmd: "grunt",
+				args: [ "manifest" ],
+				opts: {
+					cwd: "jquery-ui"
+				}
+			}, log( callback, "Done building manifest", "Error building manifest" ) );
+		},
+		function( callback ) {
+			grunt.utils.spawn({
+				cmd: "grunt",
+				args: [ "release" ],
+				opts: {
+					cwd: "jquery-ui"
+				}
+			}, log( callback, "Done building release", "Error building release" ) );
+		},
+		function() {
 			grunt.log.writeln( "Building API documentation for jQuery UI" );
+			if ( !fs.existsSync( "api.jqueryui.com/config.json" ) ) {
+				grunt.file.copy( "api.jqueryui.com/config-sample.json", "api.jqueryui.com/config.json" );
+				grunt.log.writeln( "Copied config-sample.json to config.json" );
+			}
 			grunt.utils.spawn({
 				cmd: "grunt",
 				args: [ "build-xml-entries" ],
 				opts: {
 					cwd: "api.jqueryui.com"
 				}
-			}, successOrError( "Done building", success, "Error building", error ) );
-		}, "Error building", error ) );
-	});
+			}, log( callback, "Done building documentation", "Error building documentation" ) );
+		}
+	]);
 }
 
-function copy( success, error ) {
+function copy( callback ) {
 	var dir = require( "path" ).basename( grunt.file.expandDirs( "jquery-ui/dist/jquery-ui-*" )[ 0 ] );
-	grunt.utils.spawn({
-		cmd: "cp",
-		args: [ "-r", "jquery-ui/dist/" + dir, "versions/" + dir ]
-	}, successOrError( "Copied release over to versions/" + dir, function() {
-		grunt.utils.spawn({
-			cmd: "cp",
-			args: [ "-r", "api.jqueryui.com/dist/wordpress/posts/post/", "versions/" + dir + "docs/" ]
-		}, successOrError( "Copied docs over to versions/" + dir + "docs/", success, "Error copying release over to versions/" + dir + "docs/", error ) );
-	}, "Error copying release over to versions/" + dir, error ) );
+	grunt.file.mkdir( "versions" );
+	async.series([
+		function( callback ) {
+			grunt.log.writeln( "Copying jQuery UI release over to versions/" + dir );
+			grunt.utils.spawn({
+				cmd: "cp",
+				args: [ "-r", "jquery-ui/dist/" + dir, "versions/" + dir ]
+			}, log( callback, "Done copying", "Error copying" ) );
+		},
+		function() {
+			grunt.log.writeln( "Copying API documentation for jQuery UI over to versions/" + dir + "docs/" );
+			grunt.utils.spawn({
+				cmd: "cp",
+				args: [ "-r", "api.jqueryui.com/dist/wordpress/posts/post/", "versions/" + dir + "docs/" ]
+			}, log( callback, "Done copying", "Error copying" ) );
+		}
+	]);
 }
 
 grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( branchOrTag ) {
 	var done = this.async();
-	grunt.file.mkdir( "versions" );
-	cloneOrFetch(function() {
-		checkout( branchOrTag, function() {
-			install(function() {
-				build(function() {
-					copy( done );
-				});
-			});
-		});
-	});
+	async.series([
+		cloneOrFetch,
+		checkout( branchOrTag ),
+		install,
+		build,
+		copy
+	], done );
 });
 
 };
