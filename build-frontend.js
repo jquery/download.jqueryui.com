@@ -4,8 +4,9 @@ var fs = require( "fs" ),
 	wrapperTemplate = handlebars.compile( fs.readFileSync( __dirname + "/build-frontend-wrapper.html", "utf8" ) ),
 	categories = require( __dirname + "/manifest" ).categories();
 
-module.exports = function() {
+module.exports = function( action ) {
 	return homeTemplate( {
+		action: action || "/download",
 		categories: categories
 	});
 };
