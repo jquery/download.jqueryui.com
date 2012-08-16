@@ -3,13 +3,15 @@ var async = require( "async" ),
 	fs = require( "fs" ),
 	glob = require( "glob-whatev" ).glob,
 	handlebars = require( "handlebars" ),
+	path = require( "path" ),
 	spawn = require( "child_process" ).spawn,
 	winston = require( "winston" ),
 	zipstream = require( "zipstream" );
 
 var input = glob( "versions/*" )[0];
 
-var indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) ),
+var docsTemplate = handlebars.compile( fs.readFileSync( "docs-wrapper.html", "utf8" ) ),
+	indexTemplate = handlebars.compile( fs.readFileSync( "zip-index.html", "utf8" ) ),
 	pkg = JSON.parse( fs.readFileSync( input + "/package.json" ) ),
 	cache = {},
 	commonFiles = [],
@@ -150,6 +152,15 @@ Builder.prototype = {
 			addEach = function( filepath ) {
 				add( filepath, [ "development-bundle" ].concat( filepath ) );
 			},
+			addEachDoc = function( filepath ) {
+				build.push({
+					path: [ basedir, "development-bundle", filepath ].join( "/" ),
+					data: docsTemplate({
+						component: path.basename( filepath ).replace(/\..*/, ""),
+						body: cache[ filepath ]
+					})
+				});
+			},
 			basedir = this.basedir,
 			build = [],
 			cssFull = this.cssFull,
@@ -207,12 +218,12 @@ Builder.prototype = {
 		// Doc files
 		docFiles.filter(function( field ) {
 			return !(/effect/).test( field );
-		}).filter( selected ).forEach( addEach );
+		}).filter( selected ).forEach( addEachDoc );
 		this.fields.filter(function( field ) {
 			return (/effect-/).test( field );
 		}).map(function( field ) {
 			return field.replace( /^effect-(.*)$/, "docs/$1-effect.html" );
-		}).forEach( addEach );
+		}).forEach( addEachDoc );
 
 		// Ad hoc
 		if ( this.fields.indexOf( "datepicker" ) >= 0 ) {
