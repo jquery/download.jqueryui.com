@@ -14,8 +14,14 @@
 		"winston": "latest",
 		"zipstream": "git://github.com/rxaviers/node-zipstream.git"
 	},
+	"devDependencies": {
+		"nodeunit": "~0.7.4"
+	},
 	"main": "build-frontend.js",
 	"engine": {
 		"node": ">=0.8.x"
+	},
+	"scripts": {
+		"test": "nodeunit test"
 	}
 }
