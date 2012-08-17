@@ -1,35 +1,24 @@
 var Builder = require( "../build-backend" ),
-	fixtures = require( "./fixtures/builder" ),
-	fs = require( "fs" ),
-	glob = require( "glob-whatev" ).glob,
-	spawn = require( "child_process" ).spawn,
-	tmp = require( "tmp" ),
-	zlib = require( "zlib" );
+	allComponents = "widget core mouse position draggable droppable resizable selectable sortable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
+	allWidgets = "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),
+	allEffects = "effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
+	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
+	someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " );
 
 
-function build( components, cb ) {
-	tmp.file(function( err, buildPath ) {
-		if (err) throw err;
-		tmp.dir(function( err, destinationPath ) {
-			if (err) throw err;
-			var builder = new Builder( components ),
-				stream = fs.createWriteStream( buildPath );
-			builder.writeTo( stream, function() {
-				stream.end();
-				var child = spawn( "unzip", [ "-x", buildPath ], {
-					cwd: destinationPath
-				});
-				child.stderr.on( "data", function( data ) {
-					throw data.toString();
-				});
-				child.on( "exit", function( code ) {
-					if ( code !== 0 ) {
-						throw "unzip failed";
-					}
-					cb( [ destinationPath, builder.filename().replace( /.zip/, "" ) ].join( "/" ) );
-				});
-			});
-		});
+function filePresent( build, filepath ) {
+	var filepathRe = new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
+	return build.filter(function( build_filepath ) {
+		return filepathRe.test( build_filepath );
+	}).length > 0;
+}
+
+function build( components, callback ) {
+	var builder = new Builder( components );
+	builder.build(function( build ) {
+		callback( build.map(function( build_item ) {
+			return build_item.path.split( "/" ).slice( 1 ).join( "/" );
+		} ) );
 	});
 }
 
@@ -84,12 +73,12 @@ var skipFiles = [
 	"development-bundle/MANIFEST"
 ];
 var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
-function commonFilesCheck( test, basepath ) {
+function commonFilesCheck( test, build ) {
 	commonFiles.forEach(function( filepath ) {
-		test.ok( !! ( glob( [ basepath, filepath ].join( "/" ) ).length ), "Missing a common file \"" + filepath + "\"." );
+		test.ok( filePresent( build, filepath ), "Missing a common file \"" + filepath + "\"." );
 	});
 	skipFiles.forEach(function( filepath ) {
-		test.ok( ! ( glob( [ basepath, filepath ].join( "/" ) ).length ), "Should not include \"" + filepath + "\"." );
+		test.ok( !filePresent( build, filepath ), "Should not include \"" + filepath + "\"." );
 	});
 }
 
@@ -101,84 +90,84 @@ componentFiles = {
 		"development-bundle/ui/minified/jquery.ui.{component}.min.js"
 	],
 	"widget": [
-		"development-bundle/demos/widget",
+		"development-bundle/demos/widget/*",
 		"development-bundle/docs/widget.html"
 	],
 	"core": [],
 	"mouse": [],
 	"position": [
-		"development-bundle/demos/position",
+		"development-bundle/demos/position/*",
 		"development-bundle/docs/position.html"
 	],
 	"draggable": [
-		"development-bundle/demos/draggable",
+		"development-bundle/demos/draggable/*",
 		"development-bundle/docs/draggable.html"
 	],
 	"droppable": [
-		"development-bundle/demos/droppable",
+		"development-bundle/demos/droppable/*",
 		"development-bundle/docs/droppable.html"
 	],
 	"resizable": [
-		"development-bundle/demos/resizable",
+		"development-bundle/demos/resizable/*",
 		"development-bundle/docs/resizable.html"
 	],
 	"selectable": [
-		"development-bundle/demos/selectable",
+		"development-bundle/demos/selectable/*",
 		"development-bundle/docs/selectable.html"
 	],
 	"sortable": [
-		"development-bundle/demos/sortable",
+		"development-bundle/demos/sortable/*",
 		"development-bundle/docs/sortable.html"
 	],
 	"accordion": [
-		"development-bundle/demos/accordion",
+		"development-bundle/demos/accordion/*",
 		"development-bundle/docs/accordion.html"
 	],
 	"autocomplete": [
-		"development-bundle/demos/autocomplete",
+		"development-bundle/demos/autocomplete/*",
 		"development-bundle/docs/autocomplete.html"
 	],
 	"button": [
-		"development-bundle/demos/button",
+		"development-bundle/demos/button/*",
 		"development-bundle/docs/button.html"
 	],
 	"datepicker": [
-		"development-bundle/ui/i18n",
+		"development-bundle/ui/i18n/*",
 		"development-bundle/ui/i18n/jquery-ui-i18n.js",
 		"development-bundle/ui/i18n/jquery.ui.datepicker-*.js",
-		"development-bundle/demos/datepicker",
+		"development-bundle/demos/datepicker/*",
 		"development-bundle/docs/datepicker.html"
 	],
 	"dialog": [
-		"development-bundle/demos/dialog",
+		"development-bundle/demos/dialog/*",
 		"development-bundle/docs/dialog.html"
 	],
 	"menu": [
-		"development-bundle/demos/menu",
+		"development-bundle/demos/menu/*",
 		"development-bundle/docs/menu.html"
 	],
 	"progressbar": [
-		"development-bundle/demos/progressbar",
+		"development-bundle/demos/progressbar/*",
 		"development-bundle/docs/progressbar.html"
 	],
 	"slider": [
-		"development-bundle/demos/slider",
+		"development-bundle/demos/slider/*",
 		"development-bundle/docs/slider.html"
 	],
 	"spinner": [
-		"development-bundle/demos/spinner",
+		"development-bundle/demos/spinner/*",
 		"development-bundle/docs/spinner.html"
 	],
 	"tabs": [
-		"development-bundle/demos/tabs",
+		"development-bundle/demos/tabs/*",
 		"development-bundle/docs/tabs.html"
 	],
 	"tooltip": [
-		"development-bundle/demos/tooltip",
+		"development-bundle/demos/tooltip/*",
 		"development-bundle/docs/tooltip.html"
 	],
 	"effect": [
-		"development-bundle/demos/effect"
+		"development-bundle/demos/effect/*"
 	],
 	"effect-blind": [
 		"development-bundle/docs/blind-effect.html"
@@ -231,15 +220,15 @@ function replaceComponent( component ) {
 		return filepath.replace( "{component}", component );
 	};
 }
-function componentFilesCheck( test, basepath, components ) {
+function componentFilesCheck( test, build, components ) {
 	Object.keys( componentFiles ).forEach(function( component ) {
 		if ( components.indexOf( component ) >= 0 ) {
 			componentFiles.all.map( replaceComponent( component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( !! ( glob( [ basepath, filepath ].join( "/" ) ).length), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
+				test.ok( filePresent( build, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		} else {
 			componentFiles.all.map( replaceComponent( component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( ! ( glob( [ basepath, filepath ].join( "/" ) ).length ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
+				test.ok( !filePresent( build, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		}
 	});
@@ -248,47 +237,47 @@ function componentFilesCheck( test, basepath, components ) {
 
 module.exports = {
 	"test: select all components": function( test ) {
-		var components = fixtures.allComponents;
+		var components = allComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( path ) {
-			commonFilesCheck( test, path );
-			componentFilesCheck( test, path, components );
+		build( components, function( build ) {
+			commonFilesCheck( test, build );
+			componentFilesCheck( test, build, components );
 			test.done();
 		});
 	},
 	"test: select all widgets": function( test ) {
-		var components = fixtures.allWidgets;
+		var components = allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( path ) {
-			commonFilesCheck( test, path );
-			componentFilesCheck( test, path, components );
+		build( components, function( build ) {
+			commonFilesCheck( test, build );
+			componentFilesCheck( test, build, components );
 			test.done();
 		});
 	},
 	"test: select all effects": function( test ) {
-		var components = fixtures.allEffects;
+		var components = allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( path ) {
-			commonFilesCheck( test, path );
-			componentFilesCheck( test, path, components );
+		build( components, function( build ) {
+			commonFilesCheck( test, build );
+			componentFilesCheck( test, build, components );
 			test.done();
 		});
 	},
 	"test: select some widgets (1)": function( test ) {
-		var components = fixtures.someWidgets1;
+		var components = someWidgets1;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( path ) {
-			commonFilesCheck( test, path );
-			componentFilesCheck( test, path, components );
+		build( components, function( build ) {
+			commonFilesCheck( test, build );
+			componentFilesCheck( test, build, components );
 			test.done();
 		});
 	},
 	"test: select some widgets (2)": function( test ) {
-		var components = fixtures.someWidgets2;
+		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( path ) {
-			commonFilesCheck( test, path );
-			componentFilesCheck( test, path, components );
+		build( components, function( build ) {
+			commonFilesCheck( test, build );
+			componentFilesCheck( test, build, components );
 			test.done();
 		});
 	}
