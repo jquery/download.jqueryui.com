@@ -1,4 +1,4 @@
-var banner = require( "./banner.js" );
+var banner = require( "./lib/banner.js" );
 console.log( banner({
 	title: "jQuery UI",
 	version: "1.9.0",

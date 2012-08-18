@@ -1,8 +1,8 @@
 var fs = require( "fs" ),
 	handlebars = require( "handlebars" ),
-	homeTemplate = handlebars.compile( fs.readFileSync( __dirname + "/build-frontend.html", "utf8" ) ),
-	wrapperTemplate = handlebars.compile( fs.readFileSync( __dirname + "/build-frontend-wrapper.html", "utf8" ) ),
-	categories = require( __dirname + "/manifest" ).categories();
+	homeTemplate = handlebars.compile( fs.readFileSync( __dirname + "/template/frontend_body.html", "utf8" ) ),
+	wrapperTemplate = handlebars.compile( fs.readFileSync( __dirname + "/template/frontend.html", "utf8" ) ),
+	categories = require( "./lib/manifest" ).categories();
 
 module.exports = function( action ) {
 	return homeTemplate( {
