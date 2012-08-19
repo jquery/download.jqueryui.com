@@ -3,29 +3,35 @@
 <div class="download-builder">
 	<form action="{{action}}" method="POST">
 		<div class="download-builder-header">
-			<h2>Components</h2>
+			<h2>Version</h2>
+			<p class="component-title">{{pkg.version}}</p>
 		</div>
-		{{#each categories}}
-			<fieldset class="ui-widget ui-widget-content">
-				<div>
-					<div class="component-group-desc">
-						<h3>{{name}}</h3>
-						<p>{{description}}</p>
+		<div class="components">
+			<div class="download-builder-header">
+				<h2>Components</h2>
+			</div>
+			{{#each categories}}
+				<fieldset class="ui-widget ui-widget-content">
+					<div>
+						<div class="component-group-desc">
+							<h3>{{name}}</h3>
+							<p>{{description}}</p>
+						</div>
+						<div class="component-group-list">
+						{{#each components}}
+							<label title="{{description}}">
+								<div>
+									<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+									<span class="component-title">{{title}}</span>
+									<span class="component-desc">{{description}}</span>
+								</div>
+							</label>
+						{{/each}}
+						</div>
 					</div>
-					<div class="component-group-list">
-					{{#each components}}
-						<label title="{{description}}">
-							<div>
-								<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
-								<span class="component-title">{{title}}</span>
-								<span class="component-desc">{{description}}</span>
-							</div>
-						</label>
-					{{/each}}
-					</div>
-				</div>
-			</fieldset>
-		{{/each}}
+				</fieldset>
+			{{/each}}
+		</div>
 		<input type="submit" class="ui-widget-content" value="Download">
 	</form>
 </div>
