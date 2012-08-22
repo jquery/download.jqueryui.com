@@ -61,8 +61,8 @@
 	});
 
 	// Generating toggle all checkboxes
-	$( ".download-builder h2" ).after( drawToggleAll( "toggleAll" ) );
-	$( ".download-builder h3" ).after( drawToggleAll( "toggle" ) );
+	$( ".download-builder .components h2" ).after( drawToggleAll( "toggleAll" ) );
+	$( ".download-builder .components h3" ).after( drawToggleAll( "toggle" ) );
 
 	// binds click handlers on checkboxes
 	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
