@@ -4,6 +4,7 @@ var connect = require( "connect" ),
 	argv = require( "optimist" ).argv,
 	frontend = require( "./frontend" ),
 	Builder = require( "./lib/builder" ),
+  ThemeRoller = require( "./lib/themeroller" ),
 	httpPort = argv.port || 8088,
 	httpHost = argv.host || "localhost",
 	staticDir = "app",
@@ -24,7 +25,8 @@ function route(app) {
 			for ( field in fields ) {
 				list.push( field );
 			}
-			builder = new Builder( list );
+			var theme = new ThemeRoller();
+			builder = new Builder( list, theme );
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 			builder.writeTo( response, function() {

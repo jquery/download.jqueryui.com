@@ -1,4 +1,5 @@
 var Builder = require( "../lib/builder" ),
+	ThemeRoller = require( "../lib/themeroller" ),
 	allComponents = "widget core mouse position draggable droppable resizable selectable sortable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
 	allWidgets = "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),
 	allEffects = "effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
@@ -13,13 +14,27 @@ function filePresent( build, filepath ) {
 	}).length > 0;
 }
 
-function build( components, callback ) {
-	var builder = new Builder( components );
+function build( components, theme, callback ) {
+	var builder = new Builder( components, theme );
 	builder.build(function( build ) {
 		callback( build.map(function( build_item ) {
 			return build_item.path.split( "/" ).slice( 1 ).join( "/" );
 		} ) );
 	});
+}
+
+function replace( variable, value ) {
+	return function( filepath ) {
+		if ( filepath instanceof RegExp ) {
+			filepath = filepath.toString().replace(/^\//, "").replace(/\/$/, "");
+			return new RegExp( filepath.replace( "\\{" + variable + "\\}", value ) );
+		}
+		return filepath.replace( "{" + variable + "}", value );
+	};
+}
+
+function flatten( flat, arr ) {
+	return flat.concat( arr );
 }
 
 
@@ -46,26 +61,43 @@ var commonFiles = [
 	"development-bundle/external/jquery.mousewheel.js",
 	"development-bundle/external/jshint.js",
 	"development-bundle/external/qunit.css",
-	"development-bundle/ui/jquery-ui-*.*.*.custom.js",
-	"development-bundle/ui/minified/jquery-ui-*.*.*.custom.min.js",
+	"development-bundle/themes/base/jquery.ui.all.css",
+	"development-bundle/themes/base/jquery.ui.base.css",
+	"development-bundle/themes/base/jquery.ui.theme.css",
+	"development-bundle/themes/base/jquery-ui.css",
+	"development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png",
+	"development-bundle/themes/base/images/ui-bg_flat_75_ffffff_40x100.png",
+	"development-bundle/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png",
+	"development-bundle/themes/base/images/ui-bg_glass_65_ffffff_1x400.png",
+	"development-bundle/themes/base/images/ui-bg_glass_75_dadada_1x400.png",
+	"development-bundle/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png",
+	"development-bundle/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png",
+	"development-bundle/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png",
+	"development-bundle/themes/base/images/ui-icons_2e83ff_256x240.png",
+	"development-bundle/themes/base/images/ui-icons_222222_256x240.png",
+	"development-bundle/themes/base/images/ui-icons_454545_256x240.png",
+	"development-bundle/themes/base/images/ui-icons_888888_256x240.png",
+	"development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png",
+	"development-bundle/themes/base/minified/jquery.ui.theme.min.css",
+	"development-bundle/themes/base/minified/jquery-ui.min.css",
+	"development-bundle/themes/base/minified/images/ui-bg_flat_0_aaaaaa_40x100.png",
+	"development-bundle/themes/base/minified/images/ui-bg_flat_75_ffffff_40x100.png",
+	"development-bundle/themes/base/minified/images/ui-bg_glass_55_fbf9ee_1x400.png",
+	"development-bundle/themes/base/minified/images/ui-bg_glass_65_ffffff_1x400.png",
+	"development-bundle/themes/base/minified/images/ui-bg_glass_75_dadada_1x400.png",
+	"development-bundle/themes/base/minified/images/ui-bg_glass_75_e6e6e6_1x400.png",
+	"development-bundle/themes/base/minified/images/ui-bg_glass_95_fef1ec_1x400.png",
+	"development-bundle/themes/base/minified/images/ui-bg_highlight-soft_75_cccccc_1x100.png",
+	"development-bundle/themes/base/minified/images/ui-icons_2e83ff_256x240.png",
+	"development-bundle/themes/base/minified/images/ui-icons_222222_256x240.png",
+	"development-bundle/themes/base/minified/images/ui-icons_454545_256x240.png",
+	"development-bundle/themes/base/minified/images/ui-icons_888888_256x240.png",
+	"development-bundle/themes/base/minified/images/ui-icons_cd0a0a_256x240.png",
+	"development-bundle/ui/jquery-ui.custom.js",
+	"development-bundle/ui/minified/jquery-ui.custom.min.js",
 	/js\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
 	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.js/,
-	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/,
-	/css\/base\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.css/,
-	/css\/base\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.css/,
-	"css/base/images/ui-bg_glass_95_fef1ec_1x400.png",
-	"css/base/images/ui-icons_222222_256x240.png",
-	"css/base/images/ui-icons_454545_256x240.png",
-	"css/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png",
-	"css/base/images/ui-bg_glass_75_e6e6e6_1x400.png",
-	"css/base/images/ui-bg_flat_0_aaaaaa_40x100.png",
-	"css/base/images/ui-icons_888888_256x240.png",
-	"css/base/images/ui-bg_glass_65_ffffff_1x400.png",
-	"css/base/images/ui-bg_glass_55_fbf9ee_1x400.png",
-	"css/base/images/ui-icons_2e83ff_256x240.png",
-	"css/base/images/ui-icons_cd0a0a_256x240.png",
-	"css/base/images/ui-bg_flat_75_ffffff_40x100.png",
-	"css/base/images/ui-bg_glass_75_dadada_1x400.png"
+	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/
 ];
 var skipFiles = [
 	"development-bundle/demos/index.html",
@@ -82,7 +114,7 @@ function commonFilesCheck( test, build ) {
 }
 
 
-componentFiles = {
+var componentFiles = {
 	"all": [
 		"development-bundle/ui.{component}.jquery.json",
 		"development-bundle/ui/jquery.ui.{component}.js",
@@ -108,11 +140,15 @@ componentFiles = {
 	],
 	"resizable": [
 		"development-bundle/demos/resizable/*",
-		"development-bundle/docs/resizable.html"
+		"development-bundle/docs/resizable.html",
+		"development-bundle/themes/base/jquery.ui.resizable.css",
+		"development-bundle/themes/base/minified/jquery.ui.resizable.min.css"
 	],
 	"selectable": [
 		"development-bundle/demos/selectable/*",
-		"development-bundle/docs/selectable.html"
+		"development-bundle/docs/selectable.html",
+		"development-bundle/themes/base/jquery.ui.selectable.css",
+		"development-bundle/themes/base/minified/jquery.ui.selectable.min.css"
 	],
 	"sortable": [
 		"development-bundle/demos/sortable/*",
@@ -120,50 +156,72 @@ componentFiles = {
 	],
 	"accordion": [
 		"development-bundle/demos/accordion/*",
-		"development-bundle/docs/accordion.html"
+		"development-bundle/docs/accordion.html",
+		"development-bundle/themes/base/jquery.ui.accordion.css",
+		"development-bundle/themes/base/minified/jquery.ui.accordion.min.css"
 	],
 	"autocomplete": [
 		"development-bundle/demos/autocomplete/*",
-		"development-bundle/docs/autocomplete.html"
+		"development-bundle/docs/autocomplete.html",
+		"development-bundle/themes/base/jquery.ui.autocomplete.css",
+		"development-bundle/themes/base/minified/jquery.ui.autocomplete.min.css"
 	],
 	"button": [
 		"development-bundle/demos/button/*",
-		"development-bundle/docs/button.html"
+		"development-bundle/docs/button.html",
+		"development-bundle/themes/base/jquery.ui.button.css",
+		"development-bundle/themes/base/minified/jquery.ui.button.min.css"
 	],
 	"datepicker": [
-		"development-bundle/ui/i18n/*",
-		"development-bundle/ui/i18n/jquery-ui-i18n.js",
-		"development-bundle/ui/i18n/jquery.ui.datepicker-*.js",
 		"development-bundle/demos/datepicker/*",
-		"development-bundle/docs/datepicker.html"
+		"development-bundle/docs/datepicker.html",
+		"development-bundle/themes/base/jquery.ui.datepicker.css",
+		"development-bundle/themes/base/minified/jquery.ui.datepicker.min.css",
+		"development-bundle/ui/i18n/*",
+		"development-bundle/ui/i18n/jquery.ui.datepicker-*.js",
+		"development-bundle/ui/i18n/jquery-ui-i18n.js"
 	],
 	"dialog": [
 		"development-bundle/demos/dialog/*",
-		"development-bundle/docs/dialog.html"
+		"development-bundle/docs/dialog.html",
+		"development-bundle/themes/base/jquery.ui.dialog.css",
+		"development-bundle/themes/base/minified/jquery.ui.dialog.min.css"
 	],
 	"menu": [
 		"development-bundle/demos/menu/*",
-		"development-bundle/docs/menu.html"
+		"development-bundle/docs/menu.html",
+		"development-bundle/themes/base/jquery.ui.menu.css",
+		"development-bundle/themes/base/minified/jquery.ui.menu.min.css"
 	],
 	"progressbar": [
 		"development-bundle/demos/progressbar/*",
-		"development-bundle/docs/progressbar.html"
+		"development-bundle/docs/progressbar.html",
+		"development-bundle/themes/base/jquery.ui.progressbar.css",
+		"development-bundle/themes/base/minified/jquery.ui.progressbar.min.css"
 	],
 	"slider": [
 		"development-bundle/demos/slider/*",
-		"development-bundle/docs/slider.html"
+		"development-bundle/docs/slider.html",
+		"development-bundle/themes/base/jquery.ui.slider.css",
+		"development-bundle/themes/base/minified/jquery.ui.slider.min.css"
 	],
 	"spinner": [
 		"development-bundle/demos/spinner/*",
-		"development-bundle/docs/spinner.html"
+		"development-bundle/docs/spinner.html",
+		"development-bundle/themes/base/jquery.ui.spinner.css",
+		"development-bundle/themes/base/minified/jquery.ui.spinner.min.css"
 	],
 	"tabs": [
 		"development-bundle/demos/tabs/*",
-		"development-bundle/docs/tabs.html"
+		"development-bundle/docs/tabs.html",
+		"development-bundle/themes/base/jquery.ui.tabs.css",
+		"development-bundle/themes/base/minified/jquery.ui.tabs.min.css"
 	],
 	"tooltip": [
 		"development-bundle/demos/tooltip/*",
-		"development-bundle/docs/tooltip.html"
+		"development-bundle/docs/tooltip.html",
+		"development-bundle/themes/base/jquery.ui.tooltip.css",
+		"development-bundle/themes/base/minified/jquery.ui.tooltip.min.css"
 	],
 	"effect": [
 		"development-bundle/demos/effect/*"
@@ -210,23 +268,17 @@ componentFiles = {
 		"development-bundle/docs/transfer-effect.html"
 	]
 };
-var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce(function(
-sum, component ) {
+var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce(function( sum, component ) {
 	return sum + componentFiles.all.length + componentFiles[ component ].length;
 }, 0 );
-function replaceComponent( component ) {
-	return function( filepath ) {
-		return filepath.replace( "{component}", component );
-	};
-}
 function componentFilesCheck( test, build, components ) {
 	Object.keys( componentFiles ).forEach(function( component ) {
 		if ( components.indexOf( component ) >= 0 ) {
-			componentFiles.all.map( replaceComponent( component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
+			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
 				test.ok( filePresent( build, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		} else {
-			componentFiles.all.map( replaceComponent( component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
+			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
 				test.ok( !filePresent( build, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		}
@@ -234,20 +286,103 @@ function componentFilesCheck( test, build, components ) {
 }
 
 
+var themeFiles = {
+	"all": [
+		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.css/,
+		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.css/,
+		"development-bundle/themes/{folder_name}/jquery.ui.all.css",
+		"development-bundle/themes/{folder_name}/jquery.ui.base.css",
+		"development-bundle/themes/{folder_name}/jquery.ui.{component}.css",
+		"development-bundle/themes/{folder_name}/jquery-ui.css",
+		"development-bundle/themes/{folder_name}/minified/jquery.ui.{component}.min.css",
+		"development-bundle/themes/{folder_name}/minified/jquery-ui.min.css"
+	],
+	"anyTheme": [
+		"css/{folder_name}/images/*",
+		"development-bundle/themes/{folder_name}/jquery.ui.theme.css",
+		"development-bundle/themes/{folder_name}/images/*",
+		"development-bundle/themes/{folder_name}/minified/jquery.ui.theme.min.css",
+		"development-bundle/themes/{folder_name}/minified/images/*"
+	]
+};
+var themeComponents = "accordion autocomplete button core datepicker dialog menu progressbar resizable selectable slider spinner tabs tooltip".split( " " ),
+	themeComponentsRe = new RegExp( themeComponents.join( "|" ) );
+function themeComponentOnly( component ) {
+	return themeComponentsRe.test( component );
+}
+var THEME_FILES_TESTCASES = function( components ) {
+	return Object.keys( themeFiles ).reduce(function( sum, group ) {
+		return sum + themeFiles[ group ].reduce(function( sum, themeFile ) {
+			return sum + ( (/\{component\}/).test( themeFile.toString() ) ? components.filter( themeComponentOnly ).length : 1 );
+		}, 0);
+	}, 0 );
+};
+function themeFilesCheck( test, build, components, theme ) {
+	var expandComponents = function( themeFile ) {
+		// For every themeFile that has a {component} variable, replicate themeFile for each component (expanding each component).
+		if ( (/\{component\}/).test( themeFile.toString() ) ) {
+			return components.filter( themeComponentOnly ).map(function( component ) {
+				return replace( "component", component )( themeFile );
+			});
+		}
+		return themeFile;
+	};
+	themeFiles.all.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
+			test.ok( filePresent( build, filepath ), "Missing a theme file \"" + filepath + "\"." );
+	});
+	themeFiles.anyTheme.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
+		if ( theme.isNull ) {
+			test.ok( !filePresent( build, filepath ), "Should not include the theme file \"" + filepath + "\"." );
+		} else {
+			test.ok( filePresent( build, filepath ), "Missing a theme file \"" + filepath + "\"." );
+		}
+	});
+}
+
+
+var theme = new ThemeRoller(),
+	namedTheme = new ThemeRoller({
+		folderName: "mytheme"
+	}),
+	noTheme = new ThemeRoller( null );
+
 module.exports = {
-	"test: select all components": function( test ) {
-		var components = allComponents;
-		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( build ) {
-			commonFilesCheck( test, build );
-			componentFilesCheck( test, build, components );
-			test.done();
-		});
+	"test: select all components": {
+		"with a theme": function( test ) {
+			var components = allComponents;
+			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			build( components, theme, function( build ) {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				themeFilesCheck( test, build, components, theme );
+				test.done();
+			});
+		},
+		"with a named theme": function( test ) {
+			var components = allComponents;
+			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			build( components, namedTheme, function( build ) {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				themeFilesCheck( test, build, components, namedTheme );
+				test.done();
+			});
+		},
+		"no theme": function( test ) {
+			var components = allComponents;
+			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			build( components, noTheme, function( build ) {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				themeFilesCheck( test, build, components, noTheme );
+				test.done();
+			});
+		},
 	},
 	"test: select all widgets": function( test ) {
 		var components = allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( build ) {
+		build( components, theme, function( build ) {
 			commonFilesCheck( test, build );
 			componentFilesCheck( test, build, components );
 			test.done();
@@ -256,25 +391,49 @@ module.exports = {
 	"test: select all effects": function( test ) {
 		var components = allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( build ) {
+		build( components, theme, function( build ) {
 			commonFilesCheck( test, build );
 			componentFilesCheck( test, build, components );
 			test.done();
 		});
 	},
-	"test: select some widgets (1)": function( test ) {
-		var components = someWidgets1;
-		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( build ) {
-			commonFilesCheck( test, build );
-			componentFilesCheck( test, build, components );
-			test.done();
-		});
+	"test: select some widgets (1)": {
+		"with a theme": function( test ) {
+			var components = someWidgets1;
+			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			build( components, theme, function( build ) {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				themeFilesCheck( test, build, components, theme );
+				test.done();
+			});
+		},
+		"with a named theme": function( test ) {
+			var components = someWidgets1;
+			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			build( components, namedTheme, function( build ) {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				themeFilesCheck( test, build, components, namedTheme );
+				test.done();
+			});
+		},
+		"no theme": 
+		 function( test ) {
+			var components = someWidgets1;
+			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			build( components, noTheme, function( build ) {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				themeFilesCheck( test, build, components, noTheme );
+				test.done();
+			});
+		},
 	},
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, function( build ) {
+		build( components, theme, function( build ) {
 			commonFilesCheck( test, build );
 			componentFilesCheck( test, build, components );
 			test.done();
