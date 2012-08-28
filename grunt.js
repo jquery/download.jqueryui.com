@@ -211,7 +211,7 @@ grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branc
 	async.series([
     setup,
 		cloneOrFetch,
-		checkout( branchOrTag ),
+		checkout( branchOrTag || "master" ),
 		install,
 		build,
 		copy
