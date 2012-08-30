@@ -1,6 +1,13 @@
 /*jshint jquery: true */
 ;(function( $, undefined ) {
 
+	// rewrite form action for testing on staging
+	if ( /^stage\./.test( location.host ) ) {
+		$( ".download-builder form" ).attr( "action", function(index, href) {
+			return href.replace(/(download\.)/, "stage.$1");
+		});
+	}
+
 	var dependencies = {},
 		dependents = {};
 
