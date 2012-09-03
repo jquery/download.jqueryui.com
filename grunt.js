@@ -1,12 +1,12 @@
 var async = require( "async" );
 var fs = require( "fs" );
 
-module.exports = function(grunt) {
+module.exports = function( grunt ) {
 
 grunt.initConfig({
 	pkg: "<json:package.json>",
 	lint: {
-		files: [ "*.js", "app/**/*.js" ]
+		files: [ "*.js", "lib/**/*.js", "app/**/*.js" ]
 	},
 	jshint: {
 		options: {
@@ -209,7 +209,7 @@ function copy( callback ) {
 grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( branchOrTag ) {
 	var done = this.async();
 	async.series([
-    setup,
+		setup,
 		cloneOrFetch,
 		checkout( branchOrTag || "master" ),
 		install,

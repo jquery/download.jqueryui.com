@@ -1,4 +1,4 @@
-/*jshint jquery: true */
+/*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
 	// rewrite form action for testing on staging
