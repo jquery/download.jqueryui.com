@@ -7,7 +7,7 @@ var Builder = require( "../lib/builder" ),
 
 
 function filePresent( build, filepath ) {
-	var filepathRe = new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
+	var filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
 	return build.filter(function( build_filepath ) {
 		return filepathRe.test( build_filepath );
 	}).length > 0;
@@ -27,7 +27,7 @@ var commonFiles = [
 	"index.html",
 	"development-bundle/AUTHORS.txt",
 	"development-bundle/MIT-LICENSE.txt",
-	"development-bundle/jquery-*.*.*.js",
+	/development-bundle\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
 	"development-bundle/package.json",
 	"development-bundle/demos/demos.css",
 	"development-bundle/demos/images/demo-spindown-open.gif",
@@ -48,12 +48,11 @@ var commonFiles = [
 	"development-bundle/external/qunit.css",
 	"development-bundle/ui/jquery-ui-*.*.*.custom.js",
 	"development-bundle/ui/minified/jquery-ui-*.*.*.custom.min.js",
-	"js/jquery-*.*.*.js",
-	"js/jquery-*.*.*.min.js",
-	"js/jquery-*.*.*.custom.js",
-	"js/jquery-*.*.*.custom.min.js",
-	"css/base/jquery-ui-*.*.*.custom.css",
-	"css/base/jquery-ui-*.*.*.custom.min.css",
+	/js\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
+	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.js/,
+	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/,
+	/css\/base\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.css/,
+	/css\/base\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.css/,
 	"css/base/images/ui-bg_glass_95_fef1ec_1x400.png",
 	"css/base/images/ui-icons_222222_256x240.png",
 	"css/base/images/ui-icons_454545_256x240.png",
