@@ -1,0 +1,327 @@
+<!-- Download theme button -->
+<a href="/download?themeParams={{{url}}}" id="downloadTheme" class="corner-all"><span class="icon"></span><strong>Download</strong> theme</a>
+
+<form method="get" action="/" id="themeConfig">
+	<fieldset class="clearfix">
+
+		<div class="theme-group clearfix" id="global-font">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<a href="#">Font Settings</a>
+			</div><!-- /theme group header -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group clearfix">
+					<label for="ffDefault">Family</label>
+					<input type="text" name="ffDefault" id="ffDefault" class="ffDefault" value="{{ffDefault}}" size="8" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fwDefault">Weight</label>
+					<select name="fwDefault" class="fwDefault" id="fwDefault">
+						<option value="normal"{{selected fwDefault "normal"}}>normal</option>
+						<option value="bold"{{selected fwDefault "bold"}}>bold</option>
+					</select>
+				</div>
+				<div class="field-group clearfix">
+					<label for="fsDefault">Size</label>
+					<input type="text" name="fsDefault" id="fsDefault" class="fsDefault" value="{{fsDefault}}"  size="3" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->
+	
+		<div class="theme-group clearfix" id="global-corners">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<a href="#">Corner Radius</a>
+			</div><!-- /theme group header -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-corners clearfix">
+					<label for="cornerRadius">Corners:</label>
+					<input type="text" value="{{cornerRadius}}" name="cornerRadius" id="cornerRadius" class="cornerRadius" />
+				</div>
+				<p id="cornerWarning"><em><strong>Note:</strong> ThemeRoller uses CSS3 border-radius for corner rounding, which is not currently supported by Internet Explorer.</em></p>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->
+	
+		<div class="theme-group clearfix" id="Header">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-widget-header">abc</div>
+				<a href="#">Header/Toolbar</a>
+			</div><!-- /theme group header -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorHeader" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorHeader" id="bgColorHeader" class="hex" value="{{bgColorHeader}}" />
+					<select name="bgTextureHeader" class="texture">
+						{{textureOptions bgTextureHeader "false"}}
+					</select>
+					<input type="text" name="bgImgOpacityHeader" class="opacity" value="{{bgImgOpacityHeader}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorHeader">Border</label>
+					<input type="text" name="borderColorHeader" id="borderColorHeader" class="hex" value="{{borderColorHeader}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcHeader">Text</label>
+					<input type="text" name="fcHeader" id="fcHeader" class="hex" value="{{fcHeader}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorHeader">Icon</label>
+					<input type="text" name="iconColorHeader" id="iconColorHeader" class="hex" value="{{iconColorHeader}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->			
+		
+		<div class="theme-group clearfix" id="ContentArea">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-widget-content">abc</div>
+				<a href="#">Content</a>
+			</div><!-- /theme group Content -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorContent" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorContent" id="bgColorContent" class="hex" value="{{bgColorContent}}" />
+					<select name="bgTextureContent" class="texture">
+					{{textureOptions bgTextureContent "true"}}
+					</select>
+					<input type="text" name="bgImgOpacityContent" class="opacity" value="{{bgImgOpacityContent}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorContent">Border</label>
+					<input type="text" name="borderColorContent" id="borderColorContent" class="hex" value="{{borderColorContent}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcContent">Text</label>
+					<input type="text" name="fcContent" id="fcContent" class="hex" value="{{fcContent}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorContent">Icon</label>
+					<input type="text" name="iconColorContent" id="iconColorContent" class="hex" value="{{iconColorContent}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->		
+
+		<div class="theme-group clearfix" id="Default">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-state-default">abc</div>
+				<a href="#">Clickable: default state</a>
+				
+			</div><!-- /theme group Default -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorDefault" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorDefault" id="bgColorDefault" class="hex" value="{{bgColorDefault}}" />
+					<select name="bgTextureDefault" class="texture">
+					{{textureOptions bgTextureDefault "false"}}
+					</select>
+					<input type="text" name="bgImgOpacityDefault" class="opacity" value="{{bgImgOpacityDefault}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorDefault">Border</label>
+					<input type="text" name="borderColorDefault" id="borderColorDefault" class="hex" value="{{borderColorDefault}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcDefault">Text</label>
+					<input type="text" name="fcDefault" id="fcDefault" class="hex" value="{{fcDefault}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorDefault">Icon</label>
+					<input type="text" name="iconColorDefault" id="iconColorDefault" class="hex" value="{{iconColorDefault}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->	
+	
+		<div class="theme-group clearfix" id="Hover">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-state-hover">abc</div>
+				<a href="#">Clickable: hover state</a>
+			</div><!-- /theme group Hover -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorHover" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorHover" id="bgColorHover" class="hex" value="{{bgColorHover}}" />
+					<select name="bgTextureHover" class="texture">
+					{{textureOptions bgTextureHover "false"}}
+					</select>
+					<input type="text" name="bgImgOpacityHover" class="opacity" value="{{bgImgOpacityHover}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorHover">Border</label>
+					<input type="text" name="borderColorHover" id="borderColorHover" class="hex" value="{{borderColorHover}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcHover">Text</label>
+					<input type="text" name="fcHover" id="fcHover" class="hex" value="{{fcHover}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorHover">Icon</label>
+					<input type="text" name="iconColorHover" id="iconColorHover" class="hex" value="{{iconColorHover}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->	
+
+		<div class="theme-group clearfix" id="Active">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-state-active">abc</div>
+				<a href="#">Clickable: active state</a>
+			</div><!-- /theme group Active -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorActive" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorActive" id="bgColorActive" class="hex" value="{{bgColorActive}}" />
+					<select name="bgTextureActive" class="texture">
+					{{textureOptions bgTextureActive "false"}}
+					</select>
+					<input type="text" name="bgImgOpacityActive" class="opacity" value="{{bgImgOpacityActive}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorActive">Border</label>
+					<input type="text" name="borderColorActive" id="borderColorActive" class="hex" value="{{borderColorActive}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcActive">Text</label>
+					<input type="text" name="fcActive" id="fcActive" class="hex" value="{{fcActive}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorActive">Icon</label>
+					<input type="text" name="iconColorActive" id="iconColorActive" class="hex" value="{{iconColorActive}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->	
+							
+		<div class="theme-group clearfix" id="Highlight">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-state-highlight">abc</div>
+				<a href="#">Highlight</a>
+			</div><!-- /theme group Highlight -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorHighlight" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorHighlight" id="bgColorHighlight" class="hex" value="{{bgColorHighlight}}" />
+					<select name="bgTextureHighlight" class="texture">
+					{{textureOptions bgTextureHighlight "false"}}
+					</select>
+					<input type="text" name="bgImgOpacityHighlight" class="opacity" value="{{bgImgOpacityHighlight}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorHighlight">Border</label>
+					<input type="text" name="borderColorHighlight" id="borderColorHighlight" class="hex" value="{{borderColorHighlight}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcHighlight">Text</label>
+					<input type="text" name="fcHighlight" id="fcHighlight" class="hex" value="{{fcHighlight}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorHighlight">Icon</label>
+					<input type="text" name="iconColorHighlight" id="iconColorHighlight" class="hex" value="{{iconColorHighlight}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->			
+	
+		<div class="theme-group clearfix" id="Error">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<div class="state-preview corner-all ui-state-error">abc</div>
+				<a href="#">Error</a>
+			</div><!-- /theme group Error -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorError" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorError" id="bgColorError" class="hex" value="{{bgColorError}}" />
+					<select name="bgTextureError" class="texture">
+					{{textureOptions bgTextureError "false"}}
+					</select>
+					<input type="text" name="bgImgOpacityError" class="opacity" value="{{bgImgOpacityError}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-border clearfix">
+					<label for="borderColorError">Border</label>
+					<input type="text" name="borderColorError" id="borderColorError" class="hex" value="{{borderColorError}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="fcError">Text</label>
+					<input type="text" name="fcError" id="fcError" class="hex" value="{{fcError}}" size="6" />
+				</div>
+				<div class="field-group clearfix">
+					<label for="iconColorError">Icon</label>
+					<input type="text" name="iconColorError" id="iconColorError" class="hex" value="{{iconColorError}}" size="6" />
+				</div>
+			</div><!-- /theme group content -->
+		</div><!-- /theme group -->		
+
+		<div class="theme-group clearfix" id="Overlay">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<a href="#">Modal Screen for Overlays </a>
+			</div><!-- /theme group Overlay -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorOverlay" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorOverlay" id="bgColorOverlay" class="hex" value="{{bgColorOverlay}}" />
+					<select name="bgTextureOverlay" class="texture">
+					{{textureOptions bgTextureOverlay "true"}}
+					</select>
+					<input type="text" name="bgImgOpacityOverlay" class="opacity" value="{{bgImgOpacityOverlay}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-opacity clearfix">
+					<label for="opacityOverlay">Overlay Opacity:</label>
+					<input type="text" name="opacityOverlay" id="opacityOverlay" class="opacity" value="{{opacityOverlayPerc}}" />
+					<span class="opacity-per">%</span>
+				</div>	
+			</div><!-- /theme group Overlay -->
+		</div><!-- /theme group -->		
+		
+		<div class="theme-group clearfix" id="Shadow">
+			<div class="theme-group-header state-default">
+				<span class="icon icon-triangle-1-e">Collapse</span>
+				<a href="#">Drop Shadows</a>
+			</div><!-- /theme group Shadow -->
+			<div class="theme-group-content corner-bottom clearfix">
+				<div class="field-group field-group-background clearfix">
+					<label for="bgColorShadow" class="background">Background color &amp; texture</label>
+					<input type="text" name="bgColorShadow" id="bgColorShadow" class="hex" value="{{bgColorShadow}}" />
+					<select name="bgTextureShadow" class="texture">
+					{{textureOptions bgTextureShadow "true"}}
+					</select>
+					<input type="text" name="bgImgOpacityShadow" id="bgImgOpacityShadow" class="opacity" value="{{bgImgOpacityShadow}}" />
+					<span class="opacity-per">%</span>
+				</div>
+				<div class="field-group field-group-opacity clearfix">
+					<label for="opacityShadow">Shadow Opacity:</label>
+					<input type="text" name="opacityShadow" id="opacityShadow" class="opacity" value="{{opacityShadowPerc}}" />
+					<span class="opacity-per">%</span>
+				</div>	
+				<div class="field-group clearfix">
+					<label for="thicknessShadow">Shadow Thickness:</label>
+					<input type="text" name="thicknessShadow" id="thicknessShadow" class="offset" value="{{thicknessShadow}}" />
+				</div>	
+				<div class="field-group clearfix">
+					<label for="offsetTopShadow">Top Offset:</label>
+					<input type="text" name="offsetTopShadow" id="offsetTopShadow" class="offset" value="{{offsetTopShadow}}" />
+				</div>	
+				<div class="field-group clearfix">
+					<label for="offsetLeftShadow">Left Offset:</label>
+					<input type="text" name="offsetLeftShadow" id="offsetLeftShadow" class="offset" value="{{offsetLeftShadow}}" />
+				</div>						
+				<div class="field-group field-group-corners clearfix">
+					<label for="cornerRadiusShadow">Corners:</label>
+					<input type="text" value="{{cornerRadiusShadow}}" name="cornerRadiusShadow" id="cornerRadiusShadow" class="cornerRadius" />
+				</div>
+			</div><!-- /theme group Shadow -->
+		</div><!-- /theme group -->						
+		
+		<button type="submit" name="submit" id="submitBtn">Preview Changes</button>		
+	</fieldset>
+</form>

@@ -2,7 +2,8 @@
 var connect = require( "connect" ),
 	formidable = require( "formidable" ),
 	argv = require( "optimist" ).argv,
-	frontend = require( "./frontend" ),
+	download = require( "./download" ),
+	themeroller = require( "./themeroller" ),
 	Builder = require( "./lib/builder" ),
   ThemeRoller = require( "./lib/themeroller" ),
 	httpPort = argv.port || 8088,
@@ -10,12 +11,15 @@ var connect = require( "connect" ),
 	staticDir = "app",
 	routes = {
 		home: "/",
-		download: "/download"
-	};
+		download: "/download",
+		themeroller: "/themeroller",
+		themerollerParseTheme: "/themeroller/parsetheme.css"
+	},
+	url = require( "url" );
 
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
-		response.end( frontend.wrapped() );
+		response.end( download.index() );
 	});
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
@@ -33,6 +37,16 @@ function route(app) {
 				response.end();
 			});
 		});
+	});
+	app.get( routes.themeroller, function( request, response, next ) {
+		response.end( themeroller.index() );
+	});
+	app.get( routes.themerollerParseTheme, function( request, response, next ) {
+		var url_parts = url.parse(request.url, true);
+		var query = url_parts.query;
+		console.log( query ); // FIXME remove me
+		response.setHeader( "Content-Type", "text/css" );
+		response.end( themeroller.parseTheme( query ) );
 	});
 }
 
