@@ -34,12 +34,13 @@
 		</div>
 		<div class="download-builder-header">
 			<h2>Theme</h2>
+			<!-- FIXME: TODO? Link ThemeRoller using theme params -->
 			<p class="component-title">Select the theme you want to include or <a href="themeroller">design a custom theme</a></p>
 			<div class="field-pair">
 				<select data-filesize="152" id="theme" name="theme">
 					<option value="none">No Theme</option>
 					{{#each themeGallery}}
-						<option value="{{url}}">{{name}}</option>	
+						<option value="{{serializedVars}}"{{isSelectedTheme this ../selectedTheme}}>{{name}}</option>	
 					{{/each}}
 				</select>
 			</div>

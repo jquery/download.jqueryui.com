@@ -1,4 +1,5 @@
 /*jshint jquery: true, browser: true */
+// FIXME when a theme gallery is picked, rollyourown settings are not updated!
 // FIXME coding standards
 ;(function( $, undefined ) {
 
@@ -273,7 +274,7 @@
 
 		//DL theme button
 		$('#downloadTheme').click(function(){
-			// FIXME shouldn't we refresh/update its href on form.change?
+			// FIXME shouldn't we refresh/update the href on form.change?
 			// Issue: if user right clicks to copy its url, he will copy a wrong/outdated link.
 			var href = $('link[href*=parsetheme\\.css]:last').attr('href');
 			href = href.replace('','');
@@ -301,7 +302,7 @@
 			.each(function(){
 				var straightToDownload = (bookmarklet) ? '&ui-version=1.7&download=true' : '';
 				$(this).after(
-				'<a href="/?themeParams=' + escape( '?'+ $(this).attr('href').split('?')[1] ) + straightToDownload + '" class="download" title="Download this theme">Download</a>'+
+				'<a href="/?themeParams=' + escape( $(this).attr('href').split('?')[1] ) + straightToDownload + '" class="download" title="Download this theme">Download</a>'+
 				'<a href="#" class="edit" title="Customize this theme">Edit</a>');
 			})
 			.parent()

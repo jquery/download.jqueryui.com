@@ -15,23 +15,18 @@ var connect = require( "connect" ),
 		themeroller: "/themeroller",
 		themerollerParseTheme: "/themeroller/parsetheme.css"
 	},
-	url = require( "url" );
-
-function urlQuery( requestUrl ) {
-		var urlParts = url.parse( requestUrl, true );
-		return urlParts.query;
-}
+	deserialize = require( "./lib/util" ).deserialize;
 
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
-		response.end( download.index( urlQuery( request.url ) ) );
+		response.end( download.index( deserialize( request.url ) ) );
 	});
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
 			var field, builder, themeVars,
 				components = [];
-			themeVars = fields.theme == "none" ? null : urlQuery( "?" + fields.theme );
+			themeVars = fields.theme == "none" ? null : deserialize( "?" + fields.theme );
 			delete fields.theme;
 			for ( field in fields ) {
 				components.push( field );
@@ -46,11 +41,11 @@ function route(app) {
 		});
 	});
 	app.get( routes.themeroller, function( request, response, next ) {
-		response.end( themeroller.index( urlQuery( request.url ) ) );
+		response.end( themeroller.index( deserialize( request.url ) ) );
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "text/css" );
-		response.end( themeroller.css( urlQuery( request.url ) ) );
+		response.end( themeroller.css( deserialize( request.url ) ) );
 	});
 }
 

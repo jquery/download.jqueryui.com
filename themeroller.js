@@ -3,10 +3,11 @@
 var _ = require( "underscore" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
-	textures = require( "./lib/themeroller.textures.js" ),
+	textures = require( "./lib/themeroller.textures" ),
+	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
-// Returns selected if param == value
+// Returns 'selected="selected"' if param == value
 Handlebars.registerHelper( "selected", function( param, value ) {
 	return param == value ? "selected=\"selected\"" : "";
 });
@@ -34,8 +35,8 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 	return optSet;
 });
 
-Handlebars.registerHelper( "themeParams", function( url ) {
-	return url.length > 0 ? "?themeParams=" + escape( url ) : "";
+Handlebars.registerHelper( "themeParams", function( serializedVars ) {
+	return serializedVars.length > 0 ? "?themeParams=" + escape( serializedVars ) : "";
 });
 
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
@@ -52,8 +53,10 @@ module.exports = {
 			body: bodyTemplate({
 				appinterface: appinterfaceTemplate({
 					help: helpTemplate(),
-					rollyourown: rollyourownTemplate( theme.vars ),
-					themegallery: themegalleryTemplate()
+					rollyourown: rollyourownTemplate( theme ),
+					themegallery: themegalleryTemplate({
+						themeGallery: themeGallery
+					})
 				})
 			})
 		});
@@ -61,7 +64,6 @@ module.exports = {
 
 	css: function( vars ) {
 		var theme = new ThemeRoller( _.extend( { dynamicImage: true }, vars ) );
-		console.log( "theme.vars", theme.vars );
 		return theme.css();
 	}
 };

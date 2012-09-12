@@ -1,5 +1,5 @@
 <!-- Download theme button -->
-<a href="/{{themeParams url}}" id="downloadTheme" class="corner-all"><span class="icon"></span><strong>Download</strong> theme</a>
+<a href="/{{themeParams serializedVars}}" id="downloadTheme" class="corner-all"><span class="icon"></span><strong>Download</strong> theme</a>
 
 <form method="get" action="/" id="themeConfig">
 	<fieldset class="clearfix">
@@ -12,18 +12,18 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group clearfix">
 					<label for="ffDefault">Family</label>
-					<input type="text" name="ffDefault" id="ffDefault" class="ffDefault" value="{{ffDefault}}" size="8" />
+					<input type="text" name="ffDefault" id="ffDefault" class="ffDefault" value="{{vars.ffDefault}}" size="8" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fwDefault">Weight</label>
 					<select name="fwDefault" class="fwDefault" id="fwDefault">
-						<option value="normal"{{selected fwDefault "normal"}}>normal</option>
-						<option value="bold"{{selected fwDefault "bold"}}>bold</option>
+						<option value="normal"{{selected vars.fwDefault "normal"}}>normal</option>
+						<option value="bold"{{selected vars.fwDefault "bold"}}>bold</option>
 					</select>
 				</div>
 				<div class="field-group clearfix">
 					<label for="fsDefault">Size</label>
-					<input type="text" name="fsDefault" id="fsDefault" class="fsDefault" value="{{fsDefault}}"  size="3" />
+					<input type="text" name="fsDefault" id="fsDefault" class="fsDefault" value="{{vars.fsDefault}}"  size="3" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->
@@ -36,7 +36,7 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-corners clearfix">
 					<label for="cornerRadius">Corners:</label>
-					<input type="text" value="{{cornerRadius}}" name="cornerRadius" id="cornerRadius" class="cornerRadius" />
+					<input type="text" value="{{vars.cornerRadius}}" name="cornerRadius" id="cornerRadius" class="cornerRadius" />
 				</div>
 				<p id="cornerWarning"><em><strong>Note:</strong> ThemeRoller uses CSS3 border-radius for corner rounding, which is not currently supported by Internet Explorer.</em></p>
 			</div><!-- /theme group content -->
@@ -51,24 +51,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorHeader" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorHeader" id="bgColorHeader" class="hex" value="{{bgColorHeader}}" />
+					<input type="text" name="bgColorHeader" id="bgColorHeader" class="hex" value="{{vars.bgColorHeader}}" />
 					<select name="bgTextureHeader" class="texture">
-						{{textureOptions bgTextureHeader "false"}}
+						{{textureOptions vars.bgTextureHeader "false"}}
 					</select>
-					<input type="text" name="bgImgOpacityHeader" class="opacity" value="{{bgImgOpacityHeader}}" />
+					<input type="text" name="bgImgOpacityHeader" class="opacity" value="{{vars.bgImgOpacityHeader}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorHeader">Border</label>
-					<input type="text" name="borderColorHeader" id="borderColorHeader" class="hex" value="{{borderColorHeader}}" size="6" />
+					<input type="text" name="borderColorHeader" id="borderColorHeader" class="hex" value="{{vars.borderColorHeader}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcHeader">Text</label>
-					<input type="text" name="fcHeader" id="fcHeader" class="hex" value="{{fcHeader}}" size="6" />
+					<input type="text" name="fcHeader" id="fcHeader" class="hex" value="{{vars.fcHeader}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorHeader">Icon</label>
-					<input type="text" name="iconColorHeader" id="iconColorHeader" class="hex" value="{{iconColorHeader}}" size="6" />
+					<input type="text" name="iconColorHeader" id="iconColorHeader" class="hex" value="{{vars.iconColorHeader}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->			
@@ -82,24 +82,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorContent" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorContent" id="bgColorContent" class="hex" value="{{bgColorContent}}" />
+					<input type="text" name="bgColorContent" id="bgColorContent" class="hex" value="{{vars.bgColorContent}}" />
 					<select name="bgTextureContent" class="texture">
-					{{textureOptions bgTextureContent "true"}}
+					{{textureOptions vars.bgTextureContent "true"}}
 					</select>
-					<input type="text" name="bgImgOpacityContent" class="opacity" value="{{bgImgOpacityContent}}" />
+					<input type="text" name="bgImgOpacityContent" class="opacity" value="{{vars.bgImgOpacityContent}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorContent">Border</label>
-					<input type="text" name="borderColorContent" id="borderColorContent" class="hex" value="{{borderColorContent}}" size="6" />
+					<input type="text" name="borderColorContent" id="borderColorContent" class="hex" value="{{vars.borderColorContent}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcContent">Text</label>
-					<input type="text" name="fcContent" id="fcContent" class="hex" value="{{fcContent}}" size="6" />
+					<input type="text" name="fcContent" id="fcContent" class="hex" value="{{vars.fcContent}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorContent">Icon</label>
-					<input type="text" name="iconColorContent" id="iconColorContent" class="hex" value="{{iconColorContent}}" size="6" />
+					<input type="text" name="iconColorContent" id="iconColorContent" class="hex" value="{{vars.iconColorContent}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->		
@@ -114,24 +114,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorDefault" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorDefault" id="bgColorDefault" class="hex" value="{{bgColorDefault}}" />
+					<input type="text" name="bgColorDefault" id="bgColorDefault" class="hex" value="{{vars.bgColorDefault}}" />
 					<select name="bgTextureDefault" class="texture">
-					{{textureOptions bgTextureDefault "false"}}
+					{{textureOptions vars.bgTextureDefault "false"}}
 					</select>
-					<input type="text" name="bgImgOpacityDefault" class="opacity" value="{{bgImgOpacityDefault}}" />
+					<input type="text" name="bgImgOpacityDefault" class="opacity" value="{{vars.bgImgOpacityDefault}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorDefault">Border</label>
-					<input type="text" name="borderColorDefault" id="borderColorDefault" class="hex" value="{{borderColorDefault}}" size="6" />
+					<input type="text" name="borderColorDefault" id="borderColorDefault" class="hex" value="{{vars.borderColorDefault}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcDefault">Text</label>
-					<input type="text" name="fcDefault" id="fcDefault" class="hex" value="{{fcDefault}}" size="6" />
+					<input type="text" name="fcDefault" id="fcDefault" class="hex" value="{{vars.fcDefault}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorDefault">Icon</label>
-					<input type="text" name="iconColorDefault" id="iconColorDefault" class="hex" value="{{iconColorDefault}}" size="6" />
+					<input type="text" name="iconColorDefault" id="iconColorDefault" class="hex" value="{{vars.iconColorDefault}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->	
@@ -145,24 +145,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorHover" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorHover" id="bgColorHover" class="hex" value="{{bgColorHover}}" />
+					<input type="text" name="bgColorHover" id="bgColorHover" class="hex" value="{{vars.bgColorHover}}" />
 					<select name="bgTextureHover" class="texture">
-					{{textureOptions bgTextureHover "false"}}
+					{{textureOptions vars.bgTextureHover "false"}}
 					</select>
-					<input type="text" name="bgImgOpacityHover" class="opacity" value="{{bgImgOpacityHover}}" />
+					<input type="text" name="bgImgOpacityHover" class="opacity" value="{{vars.bgImgOpacityHover}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorHover">Border</label>
-					<input type="text" name="borderColorHover" id="borderColorHover" class="hex" value="{{borderColorHover}}" size="6" />
+					<input type="text" name="borderColorHover" id="borderColorHover" class="hex" value="{{vars.borderColorHover}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcHover">Text</label>
-					<input type="text" name="fcHover" id="fcHover" class="hex" value="{{fcHover}}" size="6" />
+					<input type="text" name="fcHover" id="fcHover" class="hex" value="{{vars.fcHover}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorHover">Icon</label>
-					<input type="text" name="iconColorHover" id="iconColorHover" class="hex" value="{{iconColorHover}}" size="6" />
+					<input type="text" name="iconColorHover" id="iconColorHover" class="hex" value="{{vars.iconColorHover}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->	
@@ -176,24 +176,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorActive" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorActive" id="bgColorActive" class="hex" value="{{bgColorActive}}" />
+					<input type="text" name="bgColorActive" id="bgColorActive" class="hex" value="{{vars.bgColorActive}}" />
 					<select name="bgTextureActive" class="texture">
-					{{textureOptions bgTextureActive "false"}}
+					{{textureOptions vars.bgTextureActive "false"}}
 					</select>
-					<input type="text" name="bgImgOpacityActive" class="opacity" value="{{bgImgOpacityActive}}" />
+					<input type="text" name="bgImgOpacityActive" class="opacity" value="{{vars.bgImgOpacityActive}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorActive">Border</label>
-					<input type="text" name="borderColorActive" id="borderColorActive" class="hex" value="{{borderColorActive}}" size="6" />
+					<input type="text" name="borderColorActive" id="borderColorActive" class="hex" value="{{vars.borderColorActive}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcActive">Text</label>
-					<input type="text" name="fcActive" id="fcActive" class="hex" value="{{fcActive}}" size="6" />
+					<input type="text" name="fcActive" id="fcActive" class="hex" value="{{vars.fcActive}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorActive">Icon</label>
-					<input type="text" name="iconColorActive" id="iconColorActive" class="hex" value="{{iconColorActive}}" size="6" />
+					<input type="text" name="iconColorActive" id="iconColorActive" class="hex" value="{{vars.iconColorActive}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->	
@@ -207,24 +207,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorHighlight" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorHighlight" id="bgColorHighlight" class="hex" value="{{bgColorHighlight}}" />
+					<input type="text" name="bgColorHighlight" id="bgColorHighlight" class="hex" value="{{vars.bgColorHighlight}}" />
 					<select name="bgTextureHighlight" class="texture">
-					{{textureOptions bgTextureHighlight "false"}}
+					{{textureOptions vars.bgTextureHighlight "false"}}
 					</select>
-					<input type="text" name="bgImgOpacityHighlight" class="opacity" value="{{bgImgOpacityHighlight}}" />
+					<input type="text" name="bgImgOpacityHighlight" class="opacity" value="{{vars.bgImgOpacityHighlight}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorHighlight">Border</label>
-					<input type="text" name="borderColorHighlight" id="borderColorHighlight" class="hex" value="{{borderColorHighlight}}" size="6" />
+					<input type="text" name="borderColorHighlight" id="borderColorHighlight" class="hex" value="{{vars.borderColorHighlight}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcHighlight">Text</label>
-					<input type="text" name="fcHighlight" id="fcHighlight" class="hex" value="{{fcHighlight}}" size="6" />
+					<input type="text" name="fcHighlight" id="fcHighlight" class="hex" value="{{vars.fcHighlight}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorHighlight">Icon</label>
-					<input type="text" name="iconColorHighlight" id="iconColorHighlight" class="hex" value="{{iconColorHighlight}}" size="6" />
+					<input type="text" name="iconColorHighlight" id="iconColorHighlight" class="hex" value="{{vars.iconColorHighlight}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->			
@@ -238,24 +238,24 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorError" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorError" id="bgColorError" class="hex" value="{{bgColorError}}" />
+					<input type="text" name="bgColorError" id="bgColorError" class="hex" value="{{vars.bgColorError}}" />
 					<select name="bgTextureError" class="texture">
-					{{textureOptions bgTextureError "false"}}
+					{{textureOptions vars.bgTextureError "false"}}
 					</select>
-					<input type="text" name="bgImgOpacityError" class="opacity" value="{{bgImgOpacityError}}" />
+					<input type="text" name="bgImgOpacityError" class="opacity" value="{{vars.bgImgOpacityError}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-border clearfix">
 					<label for="borderColorError">Border</label>
-					<input type="text" name="borderColorError" id="borderColorError" class="hex" value="{{borderColorError}}" size="6" />
+					<input type="text" name="borderColorError" id="borderColorError" class="hex" value="{{vars.borderColorError}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="fcError">Text</label>
-					<input type="text" name="fcError" id="fcError" class="hex" value="{{fcError}}" size="6" />
+					<input type="text" name="fcError" id="fcError" class="hex" value="{{vars.fcError}}" size="6" />
 				</div>
 				<div class="field-group clearfix">
 					<label for="iconColorError">Icon</label>
-					<input type="text" name="iconColorError" id="iconColorError" class="hex" value="{{iconColorError}}" size="6" />
+					<input type="text" name="iconColorError" id="iconColorError" class="hex" value="{{vars.iconColorError}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->		
@@ -268,16 +268,16 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorOverlay" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorOverlay" id="bgColorOverlay" class="hex" value="{{bgColorOverlay}}" />
+					<input type="text" name="bgColorOverlay" id="bgColorOverlay" class="hex" value="{{vars.bgColorOverlay}}" />
 					<select name="bgTextureOverlay" class="texture">
-					{{textureOptions bgTextureOverlay "true"}}
+					{{textureOptions vars.bgTextureOverlay "true"}}
 					</select>
-					<input type="text" name="bgImgOpacityOverlay" class="opacity" value="{{bgImgOpacityOverlay}}" />
+					<input type="text" name="bgImgOpacityOverlay" class="opacity" value="{{vars.bgImgOpacityOverlay}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-opacity clearfix">
 					<label for="opacityOverlay">Overlay Opacity:</label>
-					<input type="text" name="opacityOverlay" id="opacityOverlay" class="opacity" value="{{opacityOverlayPerc}}" />
+					<input type="text" name="opacityOverlay" id="opacityOverlay" class="opacity" value="{{vars.opacityOverlayPerc}}" />
 					<span class="opacity-per">%</span>
 				</div>	
 			</div><!-- /theme group Overlay -->
@@ -291,33 +291,33 @@
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
 					<label for="bgColorShadow" class="background">Background color &amp; texture</label>
-					<input type="text" name="bgColorShadow" id="bgColorShadow" class="hex" value="{{bgColorShadow}}" />
+					<input type="text" name="bgColorShadow" id="bgColorShadow" class="hex" value="{{vars.bgColorShadow}}" />
 					<select name="bgTextureShadow" class="texture">
-					{{textureOptions bgTextureShadow "true"}}
+					{{textureOptions vars.bgTextureShadow "true"}}
 					</select>
-					<input type="text" name="bgImgOpacityShadow" id="bgImgOpacityShadow" class="opacity" value="{{bgImgOpacityShadow}}" />
+					<input type="text" name="bgImgOpacityShadow" id="bgImgOpacityShadow" class="opacity" value="{{vars.bgImgOpacityShadow}}" />
 					<span class="opacity-per">%</span>
 				</div>
 				<div class="field-group field-group-opacity clearfix">
 					<label for="opacityShadow">Shadow Opacity:</label>
-					<input type="text" name="opacityShadow" id="opacityShadow" class="opacity" value="{{opacityShadowPerc}}" />
+					<input type="text" name="opacityShadow" id="opacityShadow" class="opacity" value="{{vars.opacityShadowPerc}}" />
 					<span class="opacity-per">%</span>
 				</div>	
 				<div class="field-group clearfix">
 					<label for="thicknessShadow">Shadow Thickness:</label>
-					<input type="text" name="thicknessShadow" id="thicknessShadow" class="offset" value="{{thicknessShadow}}" />
+					<input type="text" name="thicknessShadow" id="thicknessShadow" class="offset" value="{{vars.thicknessShadow}}" />
 				</div>	
 				<div class="field-group clearfix">
 					<label for="offsetTopShadow">Top Offset:</label>
-					<input type="text" name="offsetTopShadow" id="offsetTopShadow" class="offset" value="{{offsetTopShadow}}" />
+					<input type="text" name="offsetTopShadow" id="offsetTopShadow" class="offset" value="{{vars.offsetTopShadow}}" />
 				</div>	
 				<div class="field-group clearfix">
 					<label for="offsetLeftShadow">Left Offset:</label>
-					<input type="text" name="offsetLeftShadow" id="offsetLeftShadow" class="offset" value="{{offsetLeftShadow}}" />
+					<input type="text" name="offsetLeftShadow" id="offsetLeftShadow" class="offset" value="{{vars.offsetLeftShadow}}" />
 				</div>						
 				<div class="field-group field-group-corners clearfix">
 					<label for="cornerRadiusShadow">Corners:</label>
-					<input type="text" value="{{cornerRadiusShadow}}" name="cornerRadiusShadow" id="cornerRadiusShadow" class="cornerRadius" />
+					<input type="text" value="{{vars.cornerRadiusShadow}}" name="cornerRadiusShadow" id="cornerRadiusShadow" class="cornerRadius" />
 				</div>
 			</div><!-- /theme group Shadow -->
 		</div><!-- /theme group -->						
