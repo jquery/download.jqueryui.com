@@ -17,20 +17,27 @@ var connect = require( "connect" ),
 	},
 	url = require( "url" );
 
+function urlQuery( requestUrl ) {
+		var urlParts = url.parse( requestUrl, true );
+		return urlParts.query;
+}
+
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
-		response.end( download.index() );
+		response.end( download.index( urlQuery( request.url ) ) );
 	});
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
-			var field, builder,
-				list = [];
+			var field, builder, themeVars,
+				components = [];
+			themeVars = fields.theme == "none" ? null : urlQuery( "?" + fields.theme );
+			delete fields.theme;
 			for ( field in fields ) {
-				list.push( field );
+				components.push( field );
 			}
-			var theme = new ThemeRoller();
-			builder = new Builder( list, theme );
+			var theme = new ThemeRoller( themeVars );
+			builder = new Builder( components, theme );
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 			builder.writeTo( response, function() {
@@ -39,16 +46,11 @@ function route(app) {
 		});
 	});
 	app.get( routes.themeroller, function( request, response, next ) {
-		var url_parts = url.parse(request.url, true);
-		var query = url_parts.query;
-		response.end( themeroller.index( query ) );
+		response.end( themeroller.index( urlQuery( request.url ) ) );
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
-		var url_parts = url.parse(request.url, true);
-		var query = url_parts.query;
-		console.log( query ); // FIXME remove me
 		response.setHeader( "Content-Type", "text/css" );
-		response.end( themeroller.css( query ) );
+		response.end( themeroller.css( urlQuery( request.url ) ) );
 	});
 }
 
