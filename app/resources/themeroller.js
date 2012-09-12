@@ -72,8 +72,10 @@
 			});
 
 			// reload tab
-			// FIXME need that? $('#rollerTabs').tabs('url', 0, '/themeroller/_rollyourown.php?'+ locStr);
-			$('#rollerTabs').tabs('load', 0);
+			// FIXME - do we need this?
+			console.log("reload tab");
+			//$('#rollerTabs').tabs('url', 0, '/themeroller/?'+ locStr);
+			//$('#rollerTabs').tabs('load', 0);
 			
 			// if the hash is passed
 			if(newHash){ hash.updateHash(locStr, true); }
@@ -115,7 +117,6 @@
 	//function to append a new theme stylesheet with the new style changes
 	function updateCSS(locStr){
 		$( "body" ).append( '<link href="/themeroller/parsetheme.css?' + locStr + '" type="text/css" rel="Stylesheet" />');
-		//$("link[href*=parsetheme\\.css]:last").after('<link href="/themeroller/parsetheme.css?'+ encodeURIComponent( locStr ) +'" type="text/css" rel="Stylesheet" />');
 		if($("link[href*=parsetheme\\.css]").size() > 1){
 			$("link[href*=parsetheme\\.css]:first").remove();
 		}
@@ -224,13 +225,13 @@
 			
 			// scrape options
 			$(this).find('option').each(function(){
-				ul.append('<li class="'+ $(this).attr('value') +'" data-texturewidth="'+$(this).attr('data-texturewidth')+'" data-textureheight="'+$(this).attr('data-texturewidth')+'" style="background: #555555 url(/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=100&fltr[]=over|textures/'+$(this).attr('value')+'|0|0|100) 50% 50% repeat"><a href="#" title="'+ $(this).text() +'">'+ $(this).text() +'</a></li>');
-				if($(this).get(0).index == sIndex){texturePicker.attr('title',$(this).text()).css('background', '#555555 url(/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=60&fltr[]=over|textures/'+$(this).attr('value')+'|0|0|100) 50% 50% repeat');}
+				ul.append('<li class="'+ $(this).attr('value') +'" data-texturewidth="'+$(this).attr('data-texturewidth')+'" data-textureheight="'+$(this).attr('data-texturewidth')+'" style="background: #555555 url(http://jqueryui.com/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=100&fltr[]=over|textures/'+$(this).attr('value')+'|0|0|100) 50% 50% repeat"><a href="#" title="'+ $(this).text() +'">'+ $(this).text() +'</a></li>');
+				if($(this).get(0).index == sIndex){texturePicker.attr('title',$(this).text()).css('background', '#555555 url(http://jqueryui.com/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=60&fltr[]=over|textures/'+$(this).attr('value')+'|0|0|100) 50% 50% repeat');}
 			});
 			
 			ul.find('li').click(function() {
 				texturePicker.prev().get(0).selectedIndex = texturePicker.prev().find('option[value='+ $(this).attr('class').replace(/\./g, '\\.') +']').get(0).index;
-				texturePicker.attr('title',$(this).text()).css('background', '#555555 url(/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=60&fltr[]=over|textures/'+$(this).attr('class')+'|0|0|100)  50% 50% repeat');
+				texturePicker.attr('title',$(this).text()).css('background', '#555555 url(http://jqueryui.com/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=60&fltr[]=over|textures/'+$(this).attr('class')+'|0|0|100)  50% 50% repeat');
 				//ul.fadeOut(100);
 				formChange();
 				return false;
@@ -272,12 +273,14 @@
 
 		//DL theme button
 		$('#downloadTheme').click(function(){
+			// FIXME shouldn't we refresh/update its href on form.change?
+			// Issue: if user right clicks to copy its url, he will copy a wrong/outdated link.
 			var href = $('link[href*=parsetheme\\.css]:last').attr('href');
 			href = href.replace('','');
-			var themeParams = escape('?' + href.split('?')[1]);
+			var themeParams = escape(href.split('?')[1]);
 			var themeParamName = (bookmarklet) ? 'theme' : 'themeParams';
 			var straightToDownload = (bookmarklet) ? '&ui-version=1.7&download=true' : '';
-			location.href = '/download/?' + themeParamName + '=' + themeParams + straightToDownload;					
+			location.href = '/?' + themeParamName + '=' + themeParams + straightToDownload;					
 			return false;
 		});
 		
@@ -363,6 +366,8 @@
 			$('#rollerTabs').tabs( "select", 1 );
 			return false;
 		});
+
+		updateCSS();
 		
 		//start hash tracking listening
 		hash.init();

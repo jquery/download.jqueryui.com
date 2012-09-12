@@ -39,14 +39,16 @@ function route(app) {
 		});
 	});
 	app.get( routes.themeroller, function( request, response, next ) {
-		response.end( themeroller.index() );
+		var url_parts = url.parse(request.url, true);
+		var query = url_parts.query;
+		response.end( themeroller.index( query ) );
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
 		var url_parts = url.parse(request.url, true);
 		var query = url_parts.query;
 		console.log( query ); // FIXME remove me
 		response.setHeader( "Content-Type", "text/css" );
-		response.end( themeroller.parseTheme( query ) );
+		response.end( themeroller.css( query ) );
 	});
 }
 

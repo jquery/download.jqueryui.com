@@ -34,6 +34,10 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 	return optSet;
 });
 
+Handlebars.registerHelper( "themeParams", function( url ) {
+	return url.length > 0 ? "?themeParams=" + escape( url ) : "";
+});
+
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
 	bodyTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/body.html", "utf8" ) ),
 	helpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/help.html", "utf8" ) ),
@@ -55,8 +59,8 @@ module.exports = {
 		});
 	},
 
-	parseTheme: function( vars ) {
-		var theme = new ThemeRoller( vars );
+	css: function( vars ) {
+		var theme = new ThemeRoller( _.extend( { dynamicImage: true }, vars ) );
 		console.log( "theme.vars", theme.vars );
 		return theme.css();
 	}
