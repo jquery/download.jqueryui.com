@@ -1,5 +1,4 @@
 /*jshint jquery: true, browser: true */
-// FIXME when a theme gallery is picked, rollyourown settings are not updated!
 // FIXME coding standards
 ;(function( $, undefined ) {
 
