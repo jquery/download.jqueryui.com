@@ -274,11 +274,19 @@ module.exports = {
 			test.done();
 		},
 
+		"custom folder name based on theme's name": function( test ) {
+			var theme = new ThemeRoller({
+				name: "My Name"
+			});
+			test.ok( theme.folderName() == "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
+			test.done();
+		},
+
 		"custom folder name": function( test ) {
 			var theme = new ThemeRoller({
-				folderName: "myname"
+				folderName: "my-name"
 			});
-			test.ok( theme.folderName() == "myname", "Folder name is not the one we set" );
+			test.ok( theme.folderName() == "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
 			test.done();
 		}
 	}
