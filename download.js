@@ -17,7 +17,8 @@ var bodyTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/d
 module.exports = function( action, params ) {
 	var customTheme;
 	var selectedTheme = themeGallery[0];
-	if ( params.themeParams ) {
+	// TODO these needs to be handled on the client side
+	if ( params && params.themeParams ) {
 		var customTheme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
 		var inThemeGallery = themeGallery.some(function( theme ) {
 				var isEqual = customTheme.isEqual( theme );
@@ -38,7 +39,7 @@ module.exports = function( action, params ) {
 		categories: release.categories(),
 		pkg: release.pkg,
 		selectedTheme: selectedTheme,
-		themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery 
+		themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
 	});
 };
 module.exports.index = function( params ) {
@@ -46,3 +47,9 @@ module.exports.index = function( params ) {
 		body: module.exports( "/download", params )
 	});
 };
+module.exports.themes = function() {
+	return themeGallery;
+}
+module.exports.themeroller = function() {
+	return require( "./themeroller" ).index( ThemeRoller.defaults );
+}
