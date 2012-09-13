@@ -13,7 +13,8 @@ var connect = require( "connect" ),
 		home: "/",
 		download: "/download",
 		themeroller: "/themeroller",
-		themerollerParseTheme: "/themeroller/parsetheme.css"
+		themerollerParseTheme: "/themeroller/parsetheme.css",
+		themerollerRollYourOwn: "/themeroller/rollertabs"
 	},
 	deserialize = require( "./lib/util" ).deserialize;
 
@@ -46,6 +47,9 @@ function route(app) {
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "text/css" );
 		response.end( themeroller.css( deserialize( request.url ) ) );
+	});
+	app.get( routes.themerollerRollYourOwn, function( request, response, next ) {
+		response.end( themeroller.rollYourOwn( deserialize( request.url ) ) );
 	});
 }
 

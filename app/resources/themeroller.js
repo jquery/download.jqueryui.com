@@ -73,10 +73,8 @@
 			});
 
 			// reload tab
-			// FIXME - do we need this?
-			console.log("reload tab");
-			//$('#rollerTabs').tabs('url', 0, '/themeroller/?'+ locStr);
-			//$('#rollerTabs').tabs('load', 0);
+			$('#rollerTabs').tabs('url', 0, '/themeroller/rollyourown?'+ locStr);
+			$('#rollerTabs').tabs('load', 0);
 			
 			// if the hash is passed
 			if(newHash){ hash.updateHash(locStr, true); }

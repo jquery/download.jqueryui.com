@@ -65,5 +65,10 @@ module.exports = {
 	css: function( vars ) {
 		var theme = new ThemeRoller( _.extend( { dynamicImage: true }, vars ) );
 		return theme.css();
+	},
+
+	rollYourOwn: function( vars ) {
+		var theme = new ThemeRoller( vars );
+		return rollyourownTemplate( theme );
 	}
 };
