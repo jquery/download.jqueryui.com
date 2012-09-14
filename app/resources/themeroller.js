@@ -300,7 +300,7 @@
 			.each(function(){
 				var straightToDownload = (bookmarklet) ? '&ui-version=1.7&download=true' : '';
 				$(this).after(
-				'<a href="/?themeParams=' + escape( $(this).attr('href').split('?')[1] ) + straightToDownload + '" class="download" title="Download this theme">Download</a>'+
+				'<a href="/download?themeParams=' + escape( $(this).attr('href').split('?')[1] ) + straightToDownload + '" class="download" title="Download this theme">Download</a>'+
 				'<a href="#" class="edit" title="Customize this theme">Edit</a>');
 			})
 			.parent()
