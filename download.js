@@ -11,7 +11,8 @@ Handlebars.registerHelper( "isSelectedTheme", function( theme, selectedTheme ) {
 });
 
 var bodyTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/body.html", "utf8" ) ),
-	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) );
+	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
+	rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
 
 // FIXME Is this module being used somewhere else? May I change the exports strucure?
 module.exports = function( action, params ) {
@@ -42,6 +43,9 @@ module.exports = function( action, params ) {
 		themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
 	});
 };
+module.exports.root = function() {
+	return rootTemplate();
+}
 module.exports.index = function( params ) {
 	return indexTemplate({
 		body: module.exports( "/download", params )

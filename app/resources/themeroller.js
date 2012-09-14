@@ -23,46 +23,46 @@
 		cache: '',
 		interval: null,
 		listen: true, // listen to hash changes?
-		
+
 		 // start listening again
 		startListening: function() {
 			setTimeout(function() {
 				hash.listen = true;
 			}, 600);
 		},
-		
+
 		 // stop listening to hash changes
 		stopListening: function() {
 			hash.listen = false;
 		},
-		
+
 		//check if hash has changed
 		checkHashChange: function() {
-			
+
 			var locStr = hash.currHash();
 			if(hash.storedHash != locStr) {
 				if(hash.listen == true) hash.refreshToHash(); ////update was made by back button
 				hash.storedHash = locStr;
 			}
-			
+
 			if(!hash.interval) hash.interval = setInterval(hash.checkHashChange, 500);
-			
+
 		},
-		
+
 		//refresh to a certain hash
 		refreshToHash: function(locStr) {
-			
+
 			if(locStr) var newHash = true;
 			locStr = locStr || hash.currHash();
-			
+
 			updateCSS(locStr);
-			
+
 			// remember which groups are open
 			openGroups = [];
 			$('div.theme-group-content').each(function(i){
 				if($(this).is(':visible')){openGroups.push(i);}
 			});
-			
+
 			// remember any focused element
 			focusedEl = null;
 			$('form input, form select, form .texturePicker').each(function(i){
@@ -74,42 +74,42 @@
 			// reload tab
 			$('#rollerTabs').tabs('url', 0, '/themeroller/rollyourown?'+ locStr);
 			$('#rollerTabs').tabs('load', 0);
-			
+
 			// if the hash is passed
 			if(newHash){ hash.updateHash(locStr, true); }
 
 		},
-		
+
 		updateHash: function(locStr, ignore) {
-			
+
 			if(ignore == true){ hash.stopListening(); }
 			window.location.hash = locStr;
 			if(bookmarklet){ window.parent.location.hash = locStr; }
-			if(ignore == true){ 
-				hash.storedHash = locStr; 
+			if(ignore == true){
+				hash.storedHash = locStr;
 				hash.startListening();
 			}
-			
+
 		},
-		
+
 		clean: function(locStr){
 			return locStr.replace(/%23/g, "").replace(/[\?#]+/g, "");
 		},
-		
+
 		currHash: function() {
 			return hash.clean(window.location.hash);
 			//return hash.clean(encodeURIComponent(window.location.hash));
 		},
-		
+
 		currSearch: function() {
 			return hash.clean(window.location.search);
 			//return hash.clean(encodeURIComponent(window.location.search));
 		},
-		
+
 		init: function(){
 			hash.storedHash = '';
 			hash.checkHashChange();
-		}	
+		}
 	};
 
 	//function to append a new theme stylesheet with the new style changes
@@ -118,8 +118,8 @@
 		if($("link[href*=parsetheme\\.css]").size() > 1){
 			$("link[href*=parsetheme\\.css]:first").remove();
 		}
-	};	
-		
+	};
+
 	//function called after a change event in the form
 	function formChange(){
 		var locStr = $('.themeroller .application form').serialize();
@@ -128,30 +128,30 @@
 		hash.updateHash(locStr, true);
 	};
 
-	//set up spindowns	
+	//set up spindowns
 	$.fn.spinDown = function() {
-		
+
 		return this.click(function() {
-			
+
 			var $this = $(this);
-			
+
 			$this.next().slideToggle(100);
 			$this.find('.icon').toggleClass('icon-triangle-1-s').end().toggleClass('state-active');
 
 			if($this.is('.corner-all')) { $this.removeClass('corner-all').addClass('corner-top'); }
 			else if($this.is('.corner-top')) { $this.removeClass('corner-top').addClass('corner-all'); }
-			
+
 			return false;
-			
+
 		});
-		
+
 	};
 
 	// validation for hex inputs
 	$.fn.validHex = function() {
-		
+
 		return this.each(function() {
-			
+
 			var value = $(this).val();
 			value = value.replace(/[^#a-fA-F0-9]/g, ''); // non [#a-f0-9]
 			value = value.toLowerCase();
@@ -159,9 +159,9 @@
 			if(value.indexOf('#') == -1) value = '#'+value; // no #
 			if(value.length > 7) value = value.substr(0,7); // too many chars
 
-			$(this).val(value);	
-		
-		});	
+			$(this).val(value);
+
+		});
 
 	};
 
@@ -176,11 +176,11 @@
 
 
 	// events within the 'roll your own' tab
-	function rollYourOwnBehaviors() {	
-		
+	function rollYourOwnBehaviors() {
+
 		// hover class toggles in app panel
 		$('li.state-default, div.state-default').hover(
-			function(){ $(this).addClass('state-hover'); }, 
+			function(){ $(this).addClass('state-hover'); },
 			function(){ $(this).removeClass('state-hover'); }
 		);
 
@@ -201,7 +201,7 @@
 			})
 			.wrap('<div class="hasPicker"></div>')
 			.applyFarbtastic();
-		
+
 		// focus and blur classes in form
 		$('input, select')
 		.focus(function() {
@@ -214,21 +214,21 @@
 
 		// texture pickers from select menus
 		$('select.texture').each(function() {
-			
+
 			$(this).after('<div class="texturePicker"><a href="#"></a><ul></ul></div>');
 			var texturePicker = $(this).next();
 			var a = texturePicker.find('a');
 			var ul = texturePicker.find('ul');
 			var sIndex = texturePicker.prev().get(0).selectedIndex;
-			
+
 			// scrape options
-			console.log("is someone listening?", $(this));
+			// console.log("is someone listening?", $(this));
 			$(this).find('option').each(function(){
-				console.log("each option", $(this).attr("value"));
+				// console.log("each option", $(this).attr("value"));
 				ul.append('<li class="'+ $(this).attr('value') +'" data-texturewidth="'+$(this).attr('data-texturewidth')+'" data-textureheight="'+$(this).attr('data-texturewidth')+'" style="background: #555555 url(http://jqueryui.com/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=100&fltr[]=over|textures/'+$(this).attr('value')+'|0|0|100) 50% 50% repeat"><a href="#" title="'+ $(this).text() +'">'+ $(this).text() +'</a></li>');
 				if($(this).get(0).index == sIndex){texturePicker.attr('title',$(this).text()).css('background', '#555555 url(http://jqueryui.com/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=60&fltr[]=over|textures/'+$(this).attr('value')+'|0|0|100) 50% 50% repeat');}
 			});
-			
+
 			ul.find('li').click(function() {
 				texturePicker.prev().get(0).selectedIndex = texturePicker.prev().find('option[value='+ $(this).attr('class').replace(/\./g, '\\.') +']').get(0).index;
 				texturePicker.attr('title',$(this).text()).css('background', '#555555 url(http://jqueryui.com/themeroller/images/?new=555555&w='+$(this).attr('data-texturewidth')+'&h='+$(this).attr('data-textureheight')+'&f=png&q=60&fltr[]=over|textures/'+$(this).attr('class')+'|0|0|100)  50% 50% repeat');
@@ -236,13 +236,13 @@
 				formChange();
 				return false;
 			});
-			
+
 			// hide the menu and select el
 			ul.hide();
-			
+
 			// show/hide of menus
 			texturePicker.click(function() {
-				
+
 				$(this).addClass('focus');
 				$('#picker').remove();
 				var showIt;
@@ -252,11 +252,11 @@
 					texturePicker.css('position', 'relative');
 					ul.show();
 				}
-				
+
 				return false;
-				
+
 			});
-			
+
 		});
 
 		// spindowns in TR panel
@@ -267,7 +267,7 @@
 			formChange();
 			return false;
 		});
-		
+
 		// return key triggers form change
 		$.hotkeys.add('return', function () { formChange(); });
 
@@ -280,10 +280,10 @@
 			var themeParams = escape(href.split('?')[1]);
 			var themeParamName = (bookmarklet) ? 'theme' : 'themeParams';
 			var straightToDownload = (bookmarklet) ? '&ui-version=1.7&download=true' : '';
-			location.href = '/?' + themeParamName + '=' + themeParams + straightToDownload;					
+			location.href = '/download?' + themeParamName + '=' + themeParams + straightToDownload;
 			return false;
 		});
-		
+
 	};
 
 
@@ -292,7 +292,7 @@
 
 		// loading and viewing gallery themes
 		$('#themeGallery a')
-			.bind('click', function() {		
+			.bind('click', function() {
 				updateCSS(hash.clean(this.href.split('?')[1]));
 				hash.updateHash(hash.clean(this.href.split('?')[1]), true);
 				return false;
@@ -320,7 +320,7 @@
 		//app tabs
 		$('#rollerTabs').tabs({
 			load: function(e, ui){
-				
+
 				rollYourOwnBehaviors();
 				if(openGroups.length > 0){
 					openGroups.join(','); $('.theme-group-content:eq('+openGroups+')').prev().trigger('click');
@@ -330,7 +330,7 @@
 				}
 				openGroups = [];
 				focusedEl = null;
-				
+
 			},
 			spinner: 'Loading...',
 			select: function(e,ui){
@@ -340,13 +340,13 @@
 				hash.currentTabHash = hash.currHash();
 			}
 		});
-		
+
 		//events and behaviors for rollyourown
 		rollYourOwnBehaviors();
-		
+
 		//events and behaviors for themeGallery
 		themeGalleryBehaviors();
-		
+
 		//general app click cleanup
 		$('body').click(function() {
 			$('div.picker-on').removeClass('picker-on');
@@ -354,13 +354,13 @@
 			$('input.focus, select.focus').removeClass('focus');
 			$('div.texturePicker ul:visible').hide().parent().css('position', 'static');
 		});
-		
+
 		//links to roll your own from help tab
 		$('#help a[href="#rollYourOwn"]').click(function(){
 			$('#rollerTabs').tabs( "select", 0 );
 			return false;
 		});
-		
+
 		//links to theme gallery from help tab
 		$('#help a[href="#themeGallery"]').click(function(){
 			$('#rollerTabs').tabs( "select", 1 );
@@ -368,10 +368,10 @@
 		});
 
 		updateCSS();
-		
+
 		//start hash tracking listening
 		hash.init();
-		
+
 	});
 
 
@@ -385,11 +385,11 @@
 
 	/******************************************************************************************************************************
 
-	* @ Original idea by by Binny V A, Original version: 2.00.A 
+	* @ Original idea by by Binny V A, Original version: 2.00.A
 	* @ http://www.openjs.com/scripts/events/keyboard_shortcuts/
 	* @ Original License : BSD
 
-	* @ jQuery Plugin by Tzury Bar Yochay 
+	* @ jQuery Plugin by Tzury Bar Yochay
 	mail: tzury.by@gmail.com
 	blog: evalinux.wordpress.com
 	face: facebook.com/profile.php?id=513676303
@@ -406,21 +406,21 @@
 	USAGE:
 	$.hotkeys.add('Ctrl+c', function(){ alert('copy anyone?');});
 	$.hotkeys.add('Ctrl+c', {target:'div#editor', type:'keyup', propagate: true},function(){ alert('copy anyone?');});>
-	$.hotkeys.remove('Ctrl+c'); 
-	$.hotkeys.remove('Ctrl+c', {target:'div#editor', type:'keypress'}); 
+	$.hotkeys.remove('Ctrl+c');
+	$.hotkeys.remove('Ctrl+c', {target:'div#editor', type:'keypress'});
 
 	******************************************************************************************************************************/
 	(function (jQuery){
 	this.version = '(beta)(0.0.3)';
 	this.all = {};
 	this.special_keys = {
-	27: 'esc', 9: 'tab', 32:'space', 13: 'return', 8:'backspace', 145: 'scroll', 20: 'capslock', 
-	144: 'numlock', 19:'pause', 45:'insert', 36:'home', 46:'del',35:'end', 33: 'pageup', 
-	34:'pagedown', 37:'left', 38:'up', 39:'right',40:'down', 112:'f1',113:'f2', 114:'f3', 
+	27: 'esc', 9: 'tab', 32:'space', 13: 'return', 8:'backspace', 145: 'scroll', 20: 'capslock',
+	144: 'numlock', 19:'pause', 45:'insert', 36:'home', 46:'del',35:'end', 33: 'pageup',
+	34:'pagedown', 37:'left', 38:'up', 39:'right',40:'down', 112:'f1',113:'f2', 114:'f3',
 	115:'f4', 116:'f5', 117:'f6', 118:'f7', 119:'f8', 120:'f9', 121:'f10', 122:'f11', 123:'f12'};
 
-	this.shift_nums = { "`":"~", "1":"!", "2":"@", "3":"#", "4":"$", "5":"%", "6":"^", "7":"&", 
-	"8":"*", "9":"(", "0":")", "-":"_", "=":"+", ";":":", "'":"\"", ",":"<", 
+	this.shift_nums = { "`":"~", "1":"!", "2":"@", "3":"#", "4":"$", "5":"%", "6":"^", "7":"&",
+	"8":"*", "9":"(", "0":")", "-":"_", "=":"+", ";":":", "'":"\"", ",":"<",
 	".":">",  "/":"?",  "\\":"|" };
 
 	this.add = function(combi, options, callback) {
@@ -432,7 +432,7 @@
 	defaults = {type: 'keydown', propagate: false, disableInInput: false, target: jQuery('html')[0], checkParent: true},
 	that = this;
 	opt = jQuery.extend( opt , defaults, options || {} );
-	combi = combi.toLowerCase();        
+	combi = combi.toLowerCase();
 
 	// inspect if keystroke matches
 	var inspector = function(event) {
@@ -458,7 +458,7 @@
 		mapPoint = null;
 
 	// in opera + safari, the event.target is unpredictable.
-	// for example: 'keydown' might be associated with HtmlBodyElement 
+	// for example: 'keydown' might be associated with HtmlBodyElement
 	// or the element where you last clicked with your mouse.
 	if (jQuery.browser.opera || jQuery.browser.safari || opt.checkParent){
 		while (!that.all[element] && element.parentNode){
@@ -487,7 +487,7 @@
 			return false;
 		}
 	}
-	};        
+	};
 	// first hook for this element
 	if (!this.all[opt.target]){
 	this.all[opt.target] = {events:{}};
@@ -495,21 +495,21 @@
 	if (!this.all[opt.target].events[opt.type]){
 	this.all[opt.target].events[opt.type] = {callbackMap: {}};
 	jQuery.event.add(opt.target, opt.type, inspector);
-	}        
-	this.all[opt.target].events[opt.type].callbackMap[combi] =  {cb: callback, propagate:opt.propagate};                
+	}
+	this.all[opt.target].events[opt.type].callbackMap[combi] =  {cb: callback, propagate:opt.propagate};
 	return jQuery;
-	};    
+	};
 	this.remove = function(exp, opt) {
 	opt = opt || {};
 	target = opt.target || jQuery('html')[0];
 	type = opt.type || 'keydown';
-	exp = exp.toLowerCase();        
-	delete this.all[target].events[type].callbackMap[exp];   
+	exp = exp.toLowerCase();
+	delete this.all[target].events[type].callbackMap[exp];
 	return jQuery;
 	};
 	jQuery.hotkeys = this;
-	return jQuery;    
-	})(jQuery);	
+	return jQuery;
+	})(jQuery);
 
 
 
@@ -868,17 +868,17 @@
 	// Tabs
 	$('#tabs').tabs();
 
-	// Dialog			
+	// Dialog
 	$('#dialog').dialog({
 		autoOpen: false,
 		width: 600,
 		buttons: {
-			"Ok": function() { 
-				$(this).dialog("close"); 
-			}, 
-			"Cancel": function() { 
-				$(this).dialog("close"); 
-			} 
+			"Ok": function() {
+				$(this).dialog("close");
+			},
+			"Cancel": function() {
+				$(this).dialog("close");
+			}
 		}
 	});
 
@@ -901,12 +901,12 @@
 
 	// Progressbar
 	$("#progressbar").progressbar({
-		value: 20 
+		value: 20
 	});
 
 	// hover states on the static widgets
 	$('#dialog_link, ul#icons li').hover(
-		function() { $(this).addClass('ui-state-hover'); }, 
+		function() { $(this).addClass('ui-state-hover'); },
 		function() { $(this).removeClass('ui-state-hover'); }
 	);
 

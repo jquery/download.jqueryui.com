@@ -1,5 +1,5 @@
 <!-- Download theme button -->
-<a href="/{{themeParams serializedVars}}" id="downloadTheme" class="corner-all"><span class="icon"></span><strong>Download</strong> theme</a>
+<a href="/download{{themeParams serializedVars}}" id="downloadTheme" class="corner-all"><span class="icon"></span><strong>Download</strong> theme</a>
 
 <form method="get" action="/" id="themeConfig">
 	<fieldset class="clearfix">
@@ -27,7 +27,7 @@
 				</div>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->
-	
+
 		<div class="theme-group clearfix" id="global-corners">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -41,7 +41,7 @@
 				<p id="cornerWarning"><em><strong>Note:</strong> ThemeRoller uses CSS3 border-radius for corner rounding, which is not currently supported by Internet Explorer.</em></p>
 			</div><!-- /theme group content -->
 		</div><!-- /theme group -->
-	
+
 		<div class="theme-group clearfix" id="Header">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -71,8 +71,8 @@
 					<input type="text" name="iconColorHeader" id="iconColorHeader" class="hex" value="{{vars.iconColorHeader}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->			
-		
+		</div><!-- /theme group -->
+
 		<div class="theme-group clearfix" id="ContentArea">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -102,14 +102,14 @@
 					<input type="text" name="iconColorContent" id="iconColorContent" class="hex" value="{{vars.iconColorContent}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->		
+		</div><!-- /theme group -->
 
 		<div class="theme-group clearfix" id="Default">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
 				<div class="state-preview corner-all ui-state-default">abc</div>
 				<a href="#">Clickable: default state</a>
-				
+
 			</div><!-- /theme group Default -->
 			<div class="theme-group-content corner-bottom clearfix">
 				<div class="field-group field-group-background clearfix">
@@ -134,8 +134,8 @@
 					<input type="text" name="iconColorDefault" id="iconColorDefault" class="hex" value="{{vars.iconColorDefault}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->	
-	
+		</div><!-- /theme group -->
+
 		<div class="theme-group clearfix" id="Hover">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -165,7 +165,7 @@
 					<input type="text" name="iconColorHover" id="iconColorHover" class="hex" value="{{vars.iconColorHover}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->	
+		</div><!-- /theme group -->
 
 		<div class="theme-group clearfix" id="Active">
 			<div class="theme-group-header state-default">
@@ -196,8 +196,8 @@
 					<input type="text" name="iconColorActive" id="iconColorActive" class="hex" value="{{vars.iconColorActive}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->	
-							
+		</div><!-- /theme group -->
+
 		<div class="theme-group clearfix" id="Highlight">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -227,8 +227,8 @@
 					<input type="text" name="iconColorHighlight" id="iconColorHighlight" class="hex" value="{{vars.iconColorHighlight}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->			
-	
+		</div><!-- /theme group -->
+
 		<div class="theme-group clearfix" id="Error">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -258,7 +258,7 @@
 					<input type="text" name="iconColorError" id="iconColorError" class="hex" value="{{vars.iconColorError}}" size="6" />
 				</div>
 			</div><!-- /theme group content -->
-		</div><!-- /theme group -->		
+		</div><!-- /theme group -->
 
 		<div class="theme-group clearfix" id="Overlay">
 			<div class="theme-group-header state-default">
@@ -279,10 +279,10 @@
 					<label for="opacityOverlay">Overlay Opacity:</label>
 					<input type="text" name="opacityOverlay" id="opacityOverlay" class="opacity" value="{{vars.opacityOverlayPerc}}" />
 					<span class="opacity-per">%</span>
-				</div>	
+				</div>
 			</div><!-- /theme group Overlay -->
-		</div><!-- /theme group -->		
-		
+		</div><!-- /theme group -->
+
 		<div class="theme-group clearfix" id="Shadow">
 			<div class="theme-group-header state-default">
 				<span class="icon icon-triangle-1-e">Collapse</span>
@@ -302,26 +302,26 @@
 					<label for="opacityShadow">Shadow Opacity:</label>
 					<input type="text" name="opacityShadow" id="opacityShadow" class="opacity" value="{{vars.opacityShadowPerc}}" />
 					<span class="opacity-per">%</span>
-				</div>	
+				</div>
 				<div class="field-group clearfix">
 					<label for="thicknessShadow">Shadow Thickness:</label>
 					<input type="text" name="thicknessShadow" id="thicknessShadow" class="offset" value="{{vars.thicknessShadow}}" />
-				</div>	
+				</div>
 				<div class="field-group clearfix">
 					<label for="offsetTopShadow">Top Offset:</label>
 					<input type="text" name="offsetTopShadow" id="offsetTopShadow" class="offset" value="{{vars.offsetTopShadow}}" />
-				</div>	
+				</div>
 				<div class="field-group clearfix">
 					<label for="offsetLeftShadow">Left Offset:</label>
 					<input type="text" name="offsetLeftShadow" id="offsetLeftShadow" class="offset" value="{{vars.offsetLeftShadow}}" />
-				</div>						
+				</div>
 				<div class="field-group field-group-corners clearfix">
 					<label for="cornerRadiusShadow">Corners:</label>
 					<input type="text" value="{{vars.cornerRadiusShadow}}" name="cornerRadiusShadow" id="cornerRadiusShadow" class="cornerRadius" />
 				</div>
 			</div><!-- /theme group Shadow -->
-		</div><!-- /theme group -->						
-		
-		<button type="submit" name="submit" id="submitBtn">Preview Changes</button>		
+		</div><!-- /theme group -->
+
+		<button type="submit" name="submit" id="submitBtn">Preview Changes</button>
 	</fieldset>
 </form>

@@ -5,7 +5,7 @@ var connect = require( "connect" ),
 	download = require( "./download" ),
 	themeroller = require( "./themeroller" ),
 	Builder = require( "./lib/builder" ),
-  ThemeRoller = require( "./lib/themeroller" ),
+	ThemeRoller = require( "./lib/themeroller" ),
 	httpPort = argv.port || 8088,
 	httpHost = argv.host || "localhost",
 	staticDir = "app",
@@ -20,6 +20,9 @@ var connect = require( "connect" ),
 
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
+		response.end( download.root() );
+	});
+	app.get( routes.download, function( request, response, next) {
 		response.end( download.index( deserialize( request.url ) ) );
 	});
 	app.post( routes.download, function( request, response, next) {
