@@ -40,7 +40,7 @@
 				<select data-filesize="152" id="theme" name="theme">
 					<option value="none">No Theme</option>
 					{{#each themeGallery}}
-						<option value="{{serializedVars}}"{{isSelectedTheme this ../selectedTheme}}>{{name}}</option>	
+						<option value="{{serializedVars}}"{{isSelectedTheme this ../selectedTheme}}>{{name}}</option>
 					{{/each}}
 				</select>
 			</div>
@@ -48,5 +48,5 @@
 		<input type="submit" class="ui-widget-content" value="Download">
 	</form>
 </div>
-<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+
 <script src="/resources/download.js"></script>
