@@ -38,6 +38,7 @@ module.exports = function( action, params ) {
 	return bodyTemplate( {
 		action: action || "/download",
 		categories: release.categories(),
+		folderName: selectedTheme.folderName(),
 		pkg: release.pkg,
 		selectedTheme: selectedTheme,
 		themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery

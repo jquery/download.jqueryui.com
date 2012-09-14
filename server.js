@@ -31,7 +31,15 @@ function route(app) {
 			var field, builder, themeVars,
 				components = [];
 			themeVars = fields.theme == "none" ? null : deserialize( "?" + fields.theme );
+			if ( themeVars !== null && fields.themeFolderName.length > 0 ) {
+				themeVars.folderName = fields.themeFolderName;
+			}
+			if ( fields.scope.length > 0 ) {
+				themeVars.scope = fields.scope;
+			}
 			delete fields.theme;
+			delete fields.themeFolderName;
+			delete fields.scope;
 			for ( field in fields ) {
 				components.push( field );
 			}
