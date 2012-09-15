@@ -73,7 +73,7 @@
 			});
 
 			// reload tab
-			$('#rollerTabs').tabs('url', 0, '/themeroller/rollyourown?'+ locStr);
+			$('#rollerTabs').tabs('url', 0, downloadJqueryuiHost + '/themeroller/rollyourown?'+ locStr);
 			$('#rollerTabs').tabs('load', 0);
 
 			// if the hash is passed
@@ -115,7 +115,7 @@
 
 	//function to append a new theme stylesheet with the new style changes
 	function updateCSS(locStr){
-		$( "body" ).append( '<link href="/themeroller/parsetheme.css?' + locStr + '" type="text/css" rel="Stylesheet" />');
+		$( "body" ).append( '<link href="' + downloadJqueryuiHost + '/themeroller/parsetheme.css?' + locStr + '" type="text/css" rel="Stylesheet" />');
 		if($("link[href*=parsetheme\\.css]").size() > 1){
 			$("link[href*=parsetheme\\.css]:first").remove();
 		}

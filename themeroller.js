@@ -61,7 +61,8 @@ Frontend.prototype = {
 					themegallery: themegalleryTemplate({
 						themeGallery: themeGallery
 					})
-				})
+				}),
+				host: this.host
 			})
 		});
 	},
