@@ -46,7 +46,11 @@ var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/te
 	rollyourownTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/rollyourown.html", "utf8" ) ),
 	themegalleryTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/themegallery.html", "utf8" ) );
 
-module.exports = {
+var Frontend = function( host ) {
+  this.host = host;
+};
+
+Frontend.prototype = {
 	index: function( vars ) {
 		var theme = new ThemeRoller( vars );
 		return indexTemplate({
@@ -67,8 +71,14 @@ module.exports = {
 		return theme.css();
 	},
 
+	gallery: function() {
+    return themeGallery;
+	},
+
 	rollYourOwn: function( vars ) {
 		var theme = new ThemeRoller( vars );
 		return rollyourownTemplate( theme );
 	}
 };
+
+module.exports = Frontend;

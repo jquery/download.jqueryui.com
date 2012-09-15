@@ -1,14 +1,12 @@
 #!/usr/bin/env node
-var connect = require( "connect" ),
-	formidable = require( "formidable" ),
-	argv = require( "optimist" ).argv,
-	download = require( "./download" ),
-	themeroller = require( "./themeroller" ),
+var argv = require( "optimist" ).argv,
 	Builder = require( "./lib/builder" ),
-	ThemeRoller = require( "./lib/themeroller" ),
-	httpPort = argv.port || 8088,
+	connect = require( "connect" ),
+	deserialize = require( "./lib/util" ).deserialize,
+	formidable = require( "formidable" ),
+	Frontend = require( "./frontend" ),
 	httpHost = argv.host || "localhost",
-	staticDir = "app",
+	httpPort = argv.port || 8088,
 	routes = {
 		home: "/",
 		download: "/download",
@@ -16,14 +14,17 @@ var connect = require( "connect" ),
 		themerollerParseTheme: "/themeroller/parsetheme.css",
 		themerollerRollYourOwn: "/themeroller/rollertabs"
 	},
-	deserialize = require( "./lib/util" ).deserialize;
+	staticDir = "app",
+	ThemeRoller = require( "./lib/themeroller" );
+
+var frontend = new Frontend();
 
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
-		response.end( download.root() );
+		response.end( frontend.root() );
 	});
 	app.get( routes.download, function( request, response, next) {
-		response.end( download.index( deserialize( request.url ) ) );
+		response.end( frontend.download.index( deserialize( request.url ) ) );
 	});
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
@@ -53,14 +54,14 @@ function route(app) {
 		});
 	});
 	app.get( routes.themeroller, function( request, response, next ) {
-		response.end( themeroller.index( deserialize( request.url ) ) );
+		response.end( frontend.themeroller.index( deserialize( request.url ) ) );
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "text/css" );
-		response.end( themeroller.css( deserialize( request.url ) ) );
+		response.end( frontend.themeroller.css( deserialize( request.url ) ) );
 	});
 	app.get( routes.themerollerRollYourOwn, function( request, response, next ) {
-		response.end( themeroller.rollYourOwn( deserialize( request.url ) ) );
+		response.end( frontend.themeroller.rollYourOwn( deserialize( request.url ) ) );
 	});
 }
 
