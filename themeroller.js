@@ -26,7 +26,7 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 		// tall panel element (content, overlay, shadow, etc), don't allow glass texture
 		if ( panel === "true" ) {
 			if( texture.file != "02_glass.png" ) {
-				 optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";
+				optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";
 			}
 		} else {
 			optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";
@@ -40,21 +40,27 @@ Handlebars.registerHelper( "themeParams", function( serializedVars ) {
 });
 
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
-	bodyTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/body.html", "utf8" ) ),
 	helpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/help.html", "utf8" ) ),
 	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/index.html", "utf8" ) ),
 	rollyourownTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/rollyourown.html", "utf8" ) ),
-	themegalleryTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/themegallery.html", "utf8" ) );
+	themegalleryTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/themegallery.html", "utf8" ) ),
+	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/wrap.html", "utf8" ) );
 
 var Frontend = function( host ) {
   this.host = host;
 };
 
 Frontend.prototype = {
-	index: function( vars ) {
+	index: function( vars, options ) {
 		var theme = new ThemeRoller( vars );
+		options = options || {};
+		if ( options.wrap ) {
+			options = _.defaults( { wrap: false }, options );
+			return wrapTemplate({
+				body: this.index( vars, options )
+			});
+		}
 		return indexTemplate({
-			body: bodyTemplate({
 				appinterface: appinterfaceTemplate({
 					help: helpTemplate(),
 					rollyourown: rollyourownTemplate( theme ),
@@ -63,8 +69,7 @@ Frontend.prototype = {
 					})
 				}),
 				host: this.host
-			})
-		});
+			});
 	},
 
 	css: function( vars ) {

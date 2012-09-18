@@ -24,7 +24,9 @@ function route(app) {
 		response.end( frontend.root() );
 	});
 	app.get( routes.download, function( request, response, next) {
-		response.end( frontend.download.index( deserialize( request.url ) ) );
+		response.end( frontend.download.index( deserialize( request.url ), {
+			wrap: true
+		}));
 	});
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
@@ -54,7 +56,9 @@ function route(app) {
 		});
 	});
 	app.get( routes.themeroller, function( request, response, next ) {
-		response.end( frontend.themeroller.index( deserialize( request.url ) ) );
+		response.end( frontend.themeroller.index( deserialize( request.url ), {
+			wrap: true
+		}));
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "text/css" );

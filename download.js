@@ -1,4 +1,5 @@
-var deserialize = require( "./lib/util" ).deserialize,
+var _ = require( "underscore" ),
+	deserialize = require( "./lib/util" ).deserialize,
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	release = require( "./lib/release" ).all()[ 0 ],
@@ -10,17 +11,24 @@ Handlebars.registerHelper( "isSelectedTheme", function( theme, selectedTheme ) {
 	return theme.isEqual( selectedTheme ) ? "selected=\"selected\"" : "";
 });
 
-var bodyTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
-	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) );
+var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
+	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/wrap.html", "utf8" ) );
 
 var Frontend = function( host ) {
 	this.host = host;
 };
 
 Frontend.prototype = {
-	index: function( params ) {
-		var customTheme;
-		var selectedTheme = themeGallery[ 0 ];
+	index: function( params, options ) {
+		var customTheme,
+			selectedTheme = themeGallery[ 0 ];
+		options = options || {};
+		if ( options.wrap ) {
+			options = _.defaults( { wrap: false }, options );
+			return wrapTemplate({
+				body: this.index( params, options )
+			});
+		}
 		// TODO these needs to be handled on the client side
 		if ( params && params.themeParams ) {
 			customTheme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
@@ -38,20 +46,14 @@ Frontend.prototype = {
 				customTheme = false;
 			}
 		}
-		return bodyTemplate( {
-			host: this.host,
-			categories: release.categories(),
-			folderName: selectedTheme.folderName(),
-			pkg: release.pkg,
-			selectedTheme: selectedTheme,
-			themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
-		});
-	},
-
-	download: function( params ) {
 		return indexTemplate({
-			body: module.exports( "/download", params )
-		});
+				host: this.host,
+				categories: release.categories(),
+				folderName: selectedTheme.folderName(),
+				pkg: release.pkg,
+				selectedTheme: selectedTheme,
+				themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
+			});
 	}
 };
 

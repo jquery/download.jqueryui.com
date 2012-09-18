@@ -1,12 +1,63 @@
-<!doctype html>
-<html lang="us">
-<head>
-	<title>jQuery UI Download Builder</title>
-	<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
-</head>
-<body>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0-beta.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/download.css">
+<div class="download-builder">
+	<form action="{{host}}/download" method="POST">
+		<div class="download-builder-header">
+			<h2>Version</h2>
+			<p class="component-title">{{pkg.version}}</p>
+		</div>
+		<div class="components">
+			<div class="download-builder-header">
+				<h2>Components</h2>
+			</div>
+			{{#each categories}}
+				<fieldset class="ui-widget ui-widget-content">
+					<div>
+						<div class="component-group-desc">
+							<h3>{{name}}</h3>
+							<p>{{description}}</p>
+						</div>
+						<div class="component-group-list">
+						{{#each components}}
+							<label title="{{description}}">
+								<div>
+									<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+									<span class="component-title">{{title}}</span>
+									<span class="component-desc">{{description}}</span>
+								</div>
+							</label>
+						{{/each}}
+						</div>
+					</div>
+				</fieldset>
+			{{/each}}
+		</div>
+		<div class="download-builder-header">
+			<h2>Theme</h2>
+			<!-- FIXME: TODO? Link ThemeRoller using theme params -->
+			<p class="component-title">Select the theme you want to include or <a href="/themeroller">design a custom theme</a></p>
+			<div class="field-pair">
+				<select data-filesize="152" id="theme" name="theme">
+					<option value="none">No Theme</option>
+					{{#each themeGallery}}
+						<option value="{{serializedVars}}"{{isSelectedTheme this ../selectedTheme}}>{{name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="field-pair advanced-settings">
+				<h3 class="advanced-settings-heading">Advanced Theme Settings</h3>
+				<div class="advanced-settings-content">
+					<label for="scope">CSS Scope:<a title="What's This?" class="field-help-link ui-state-default ui-corner-all" href="#scope-help"><span class="ui-icon ui-icon-help">What's This?</span></a></label>
+					<input type="text" id="scope" value="" name="scope">
+					
+					<label for="themeFolderName">Theme Folder Name: <a title="What's This?" class="field-help-link ui-state-default ui-corner-all" href="#themeFolderName-help"><span class="ui-icon ui-icon-help">What's This?</span></a></label>
+					<input type="text" id="themeFolderName" value="{{folderName}}" name="themeFolderName">
+					
+				</div>
+			</div>
+		</div>
+		<input type="submit" class="ui-widget-content" value="Download">
+	</form>
+</div>
 
-{{{body}}}
-
-</body>
-</html>
+<script src="/resources/download.js"></script>
