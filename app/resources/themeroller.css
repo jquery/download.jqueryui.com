@@ -1,6 +1,14 @@
 .themeroller {
+	display: table;
 	font-size: 10px;
-	width: 934px;
+}
+.themeroller > div {
+	display: table-row;
+}
+.themeroller > div > div {
+	display: table-cell;
+	vertical-align: top;
+	padding: 15px;
 }
 
 /* ui site overrides for TR */
@@ -36,9 +44,6 @@
 	color: #fff;
 	border: 1px solid #222;
 	position: relative;
-}
-.content .themeroller .application  {/* tr within ui site (not bookmarklet) */
-	float: left;
 }
 .themeroller .application a:focus, div.content * {
 	outline: 0 !important;
@@ -512,13 +517,6 @@ font-weight: normal;
 }
 
 /* Components Column */
-#components {
-	background: #fff;
-	padding: 15px;
-	float: right;
-	width: 680px;
-}
-
 #versionNotice {
 	margin: 20px 0;
 	border: 1px solid #333;
@@ -527,13 +525,10 @@ font-weight: normal;
 	background: #eee;
 }
 #compGroupA {
-	float: left;
-	width: 58%;
 }
 
 #compGroupB {
-	float: right;
-	width: 38%;
+	width: 250px;
 }
 .demoHeaders {
 	font-size: 1.3em;
@@ -546,12 +541,12 @@ font-weight: normal;
 }
 
 
-#components #dialog_link {
+#dialog_link {
 	padding: .4em 1em .4em 20px;
 	text-decoration: none;
 	position: relative;
 }
-#components #dialog_link span.ui-icon {
+#dialog_link span.ui-icon {
 	margin: 0 5px 0 0;
 	position: absolute;
 	left: .2em;
