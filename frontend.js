@@ -1,18 +1,22 @@
-var fs = require( "fs" ),
-	handlebars = require( "handlebars" ),
-	homeTemplate = handlebars.compile( fs.readFileSync( __dirname + "/template/frontend_body.html", "utf8" ) ),
-	wrapperTemplate = handlebars.compile( fs.readFileSync( __dirname + "/template/frontend.html", "utf8" ) ),
-	release = require( "./lib/release" ).all()[ 0 ];
+var Download = require( "./download" ),
+	fs = require( "fs" ),
+	Handlebars = require( "handlebars" ),
+	ThemeRoller = require( "./themeroller" );
 
-module.exports = function( action ) {
-	return homeTemplate( {
-		action: action || "/download",
-		categories: release.categories(),
-		pkg: release.pkg
-	});
+var rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
+
+var Frontend = function( host ) {
+	this.host = host || "";
+	this.download = new Download( this.host );
+	this.themeroller = new ThemeRoller( this.host );
 };
-module.exports.wrapped = function() {
-	return wrapperTemplate({
-		body: module.exports()
-	});
+
+Frontend.prototype = {
+	download: function() {}, // stub
+	themeroller: function() {}, // stub
+  root: function() {
+    return rootTemplate();
+  }
 };
+
+module.exports = Frontend;

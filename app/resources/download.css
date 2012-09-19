@@ -157,8 +157,45 @@
 .download-builder label span.component-desc {
 	font-size: 1.1em;
 }
+.download-builder div.field-pair {
+    margin: 0.9em 0 1.4em;
+}
+.download-builder div.field-pair input {
+    margin-right: 6px;
+}
+.download-builder .advanced-settings h3 {
+    cursor: pointer;
+    display: block;
+    font-size: 1.1em;
+    margin-left: -3px;
+}
+.download-builder .advanced-settings-content {
+    padding-left: 15px;
+    width: 155px;
+}
+.download-builder .advanced-settings h3 span {
+    float: left;
+}
+.download-builder .advanced-settings label, .download-builder .advanced-settings input {
+    display: block;
+    float: none;
+    height: 1.4em;
+    margin: 5px 0 2px;
+    position: relative;
+}
+.download-builder .advanced-settings input {
+    width: 125px;
+}
+.download-builder .advanced-settings label {
+    margin-top: 10px;
+}
+.download-builder .advanced-settings label a {
+    position: absolute;
+    right: 0;
+    top: 1.9em;
+}
 .download-builder input[type=submit] {
-	background: url("download_button_on.png") repeat-x scroll 0 50% #222222;
+	background: url("images/download_button_on.png") repeat-x scroll 0 50% #222222;
 	border: 2px solid #AAAAAA;
 	color: #EEEEEE;
 	cursor: pointer;

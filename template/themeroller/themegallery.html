@@ -1,0 +1,10 @@
+<div id="themeGallery">
+	<ul>
+		{{#each themeGallery}}
+			<li><a href="themeroller?{{serializedVars}}">
+				<img src="../resources/images/themeGallery/{{thumb}}" alt="{{name}}" title="{{name}}" />
+				<span class="themeName">{{name}}</span>
+			</a></li>		
+		{{/each}}
+	</ul>
+</div>
