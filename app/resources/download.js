@@ -44,6 +44,25 @@
 			);
 	}
 
+	// FIXME: duplicate from themeroller.js
+	function hashClean(locStr){
+		return locStr.replace(/%23/g, "").replace(/[\?#]+/g, "");
+	}
+
+	function currSearch() {
+		return hashClean(window.location.search);
+	}
+	
+	function themeFetch( success, error ) {
+		$.ajax( downloadJqueryuiHost + '/download/theme?themeParams=' + escape( currSearch() ), {
+			dataType: "jsonp",
+			success: function( response ) {
+				success( response );
+			},
+			error: error
+		});
+	}
+
 
 	// Initializes dependencies and dependents auxiliary variables.
 	$( ".download-builder input[type=checkbox]" ).each(function() {
@@ -81,6 +100,13 @@
 		} else {
 			check( $( this ), $( this ).prop( "checked" ) );
 		}
+	});
+
+	// Loads theme section.
+	themeFetch(function( themeSection ) {
+		$( ".download-builder .components" ).after( themeSection );
+	}, function( jqXHR, textStatus, errorThrown ) {
+		console.log( "Failed loading theme section", textStatus, errorThrown );
 	});
 
 }( jQuery ));

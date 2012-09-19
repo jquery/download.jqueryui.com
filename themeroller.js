@@ -1,6 +1,7 @@
 // FIXME add cornerRadiusUnit into cornerRadius
 // FIXME add fsDefaultUnit into fsDefault
 var _ = require( "underscore" ),
+	deserialize = require( "./lib/util" ).deserialize,
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	textures = require( "./lib/themeroller.textures" ),
@@ -42,6 +43,7 @@ Handlebars.registerHelper( "themeParams", function( serializedVars ) {
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
 	helpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/help.html", "utf8" ) ),
 	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/index.html", "utf8" ) ),
+	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
 	rollyourownTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/rollyourown.html", "utf8" ) ),
 	themegalleryTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/themegallery.html", "utf8" ) ),
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/wrap.html", "utf8" ) );
@@ -81,9 +83,12 @@ Frontend.prototype = {
     return themeGallery;
 	},
 
-	rollYourOwn: function( vars ) {
-		var theme = new ThemeRoller( vars );
-		return rollyourownTemplate( theme );
+	rollYourOwn: function( params ) {
+		var theme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
+		return jsonpTemplate({
+				callback: params.callback,
+				data: JSON.stringify( rollyourownTemplate( theme ) )
+			});
 	}
 };
 

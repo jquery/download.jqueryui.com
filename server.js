@@ -10,6 +10,7 @@ var argv = require( "optimist" ).argv,
 	routes = {
 		home: "/",
 		download: "/download",
+		downloadTheme: "/download/theme",
 		themeroller: "/themeroller",
 		themerollerParseTheme: "/themeroller/parsetheme.css",
 		themerollerRollYourOwn: "/themeroller/rollyourown"
@@ -55,6 +56,10 @@ function route(app) {
 			});
 		});
 	});
+	app.get( routes.downloadTheme, function( request, response, next ) {
+		response.setHeader( "Content-Type", "application/json" );
+		response.end( frontend.download.theme( deserialize( request.url ) ) );
+	});
 	app.get( routes.themeroller, function( request, response, next ) {
 		response.end( frontend.themeroller.index( deserialize( request.url ), {
 			wrap: true
@@ -65,6 +70,7 @@ function route(app) {
 		response.end( frontend.themeroller.css( deserialize( request.url ) ) );
 	});
 	app.get( routes.themerollerRollYourOwn, function( request, response, next ) {
+		response.setHeader( "Content-Type", "application/json" );
 		response.end( frontend.themeroller.rollYourOwn( deserialize( request.url ) ) );
 	});
 }

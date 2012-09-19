@@ -32,32 +32,12 @@
 				</fieldset>
 			{{/each}}
 		</div>
-		<div class="download-builder-header">
-			<h2>Theme</h2>
-			<!-- FIXME: TODO? Link ThemeRoller using theme params -->
-			<p class="component-title">Select the theme you want to include or <a href="/themeroller">design a custom theme</a></p>
-			<div class="field-pair">
-				<select data-filesize="152" id="theme" name="theme">
-					<option value="none">No Theme</option>
-					{{#each themeGallery}}
-						<option value="{{serializedVars}}"{{isSelectedTheme this ../selectedTheme}}>{{name}}</option>
-					{{/each}}
-				</select>
-			</div>
-			<div class="field-pair advanced-settings">
-				<h3 class="advanced-settings-heading">Advanced Theme Settings</h3>
-				<div class="advanced-settings-content">
-					<label for="scope">CSS Scope:<a title="What's This?" class="field-help-link ui-state-default ui-corner-all" href="#scope-help"><span class="ui-icon ui-icon-help">What's This?</span></a></label>
-					<input type="text" id="scope" value="" name="scope">
-					
-					<label for="themeFolderName">Theme Folder Name: <a title="What's This?" class="field-help-link ui-state-default ui-corner-all" href="#themeFolderName-help"><span class="ui-icon ui-icon-help">What's This?</span></a></label>
-					<input type="text" id="themeFolderName" value="{{folderName}}" name="themeFolderName">
-					
-				</div>
-			</div>
-		</div>
 		<input type="submit" class="ui-widget-content" value="Download">
 	</form>
 </div>
 
+<script>
+// FIXME Shall we pass this variable thru another method (like an element instead)?
+var downloadJqueryuiHost = "{{host}}";
+</script>
 <script src="/resources/download.js"></script>

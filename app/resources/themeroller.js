@@ -73,8 +73,16 @@
 			});
 
 			// reload tab
-			$('#rollerTabs').tabs('url', 0, downloadJqueryuiHost + '/themeroller/rollyourown?'+ locStr);
-			$('#rollerTabs').tabs('load', 0);
+			$.ajax( downloadJqueryuiHost + '/themeroller/rollyourown?themeParams=' + escape( locStr ), {
+				dataType: "jsonp",
+				success: function( response ) {
+					$( "#rollYourOwn" ).html( response );
+					initRollOver();
+				},
+				error: function() {
+					console.log( "Failed to reload rollYourOwn tab", arguments );
+				}
+			});
 
 			// if the hash is passed
 			if(newHash){ hash.updateHash(locStr, true); }
@@ -313,23 +321,26 @@
 
 	};
 
+	function initRollOver() {
+		rollYourOwnBehaviors();
+		if(openGroups.length > 0){
+			openGroups.join(','); $('.theme-group-content:eq('+openGroups+')').prev().trigger('click');
+		}
+		if(focusedEl){
+			$('form input, form select, form .texturePicker').eq(focusedEl).click();
+		}
+		openGroups = [];
+		focusedEl = null;
+	}
+
+
 	// dom ready event
 	$(function() {
 
 		//app tabs
 		$('#rollerTabs').tabs({
 			load: function(e, ui){
-
-				rollYourOwnBehaviors();
-				if(openGroups.length > 0){
-					openGroups.join(','); $('.theme-group-content:eq('+openGroups+')').prev().trigger('click');
-				}
-				if(focusedEl){
-					$('form input, form select, form .texturePicker').eq(focusedEl).click();
-				}
-				openGroups = [];
-				focusedEl = null;
-
+				initRollOver();
 			},
 			spinner: 'Loading...',
 			select: function(e,ui){

@@ -12,6 +12,8 @@ Handlebars.registerHelper( "isSelectedTheme", function( theme, selectedTheme ) {
 });
 
 var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
+	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
+	themeTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/theme.html", "utf8" ) );
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/wrap.html", "utf8" ) );
 
 var Frontend = function( host ) {
@@ -20,8 +22,6 @@ var Frontend = function( host ) {
 
 Frontend.prototype = {
 	index: function( params, options ) {
-		var customTheme,
-			selectedTheme = themeGallery[ 0 ];
 		options = options || {};
 		if ( options.wrap ) {
 			options = _.defaults( { wrap: false }, options );
@@ -29,8 +29,17 @@ Frontend.prototype = {
 				body: this.index( params, options )
 			});
 		}
-		// TODO these needs to be handled on the client side
-		if ( params && params.themeParams ) {
+		return indexTemplate({
+				host: this.host,
+				categories: release.categories(),
+				pkg: release.pkg
+			});
+	},
+
+	theme: function( params ) {
+		var customTheme,
+			selectedTheme = themeGallery[ 0 ];
+		if ( params.themeParams ) {
 			customTheme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
 			var inThemeGallery = themeGallery.some(function( theme ) {
 					var isEqual = customTheme.isEqual( theme );
@@ -46,13 +55,13 @@ Frontend.prototype = {
 				customTheme = false;
 			}
 		}
-		return indexTemplate({
-				host: this.host,
-				categories: release.categories(),
-				folderName: selectedTheme.folderName(),
-				pkg: release.pkg,
-				selectedTheme: selectedTheme,
-				themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
+		return jsonpTemplate({
+				callback: params.callback,
+				data: JSON.stringify( themeTemplate({
+					folderName: selectedTheme.folderName(),
+					selectedTheme: selectedTheme,
+					themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
+				}))
 			});
 	}
 };
