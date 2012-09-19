@@ -12,7 +12,7 @@ var argv = require( "optimist" ).argv,
 		download: "/download",
 		themeroller: "/themeroller",
 		themerollerParseTheme: "/themeroller/parsetheme.css",
-		themerollerRollYourOwn: "/themeroller/rollertabs"
+		themerollerRollYourOwn: "/themeroller/rollyourown"
 	},
 	staticDir = "app",
 	ThemeRoller = require( "./lib/themeroller" );
