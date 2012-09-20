@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+
+process.on( "uncaughtException", function ( err ) {
+	console.error( "Caught exception: ", err.stack || err );
+	require( "logger" ).init( "download.jqueryui.com" ).log( "Caught exception: " + ( err.stack || err ) );
+	process.exit( 1 );
+});
+
 var argv = require( "optimist" ).argv,
 	Builder = require( "./lib/builder" ),
 	connect = require( "connect" ),
