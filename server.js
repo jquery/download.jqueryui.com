@@ -35,7 +35,7 @@ function route(app) {
 			var field, builder, themeVars,
 				components = [];
 			themeVars = fields.theme == "none" ? null : deserialize( "?" + fields.theme );
-			if ( themeVars !== null && fields.themeFolderName.length > 0 ) {
+			if ( themeVars !== null && fields.themeFolderName ) {
 				themeVars.folderName = fields.themeFolderName;
 			}
 			if ( fields.scope.length > 0 ) {
