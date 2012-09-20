@@ -12,9 +12,6 @@
 	 * App
 	 */
 
-	//add js to html element for css selectors
-	document.documentElement.className = 'js';
-
 	//global - TR app or bookmarklet
 	var bookmarklet = window.location.href.indexOf('developertool') > -1;
 
@@ -150,7 +147,7 @@
 			var $this = $(this);
 
 			$this.next().slideToggle(100);
-			$this.find('.icon').toggleClass('icon-triangle-1-s').end().toggleClass('state-active');
+			$this.find('.arrow-icon').toggleClass('icon-triangle-1-s').end().toggleClass('state-active');
 
 			if($this.is('.corner-all')) { $this.removeClass('corner-all').addClass('corner-top'); }
 			else if($this.is('.corner-top')) { $this.removeClass('corner-top').addClass('corner-all'); }
