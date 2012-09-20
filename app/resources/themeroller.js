@@ -3,6 +3,11 @@
 // FIXME themeParams=?undefined
 ;(function( $, undefined ) {
 
+	// rewrite host for testing on staging
+	if ( /^stage\./.test( location.host ) ) {
+		downloadJqueryuiHost = downloadJqueryuiHost.replace(/(download\.)/, "stage.$1");
+	}
+
 	/**
 	 * App
 	 */
