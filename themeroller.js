@@ -1,5 +1,3 @@
-// FIXME add cornerRadiusUnit into cornerRadius
-// FIXME add fsDefaultUnit into fsDefault
 var _ = require( "underscore" ),
 	deserialize = require( "./lib/util" ).deserialize,
 	fs = require( "fs" ),
