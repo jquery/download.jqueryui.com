@@ -124,12 +124,16 @@
 	};
 
 	//function to append a new theme stylesheet with the new style changes
-	function updateCSS(locStr){
+	function updateCSS( locStr ){
 		$( "body" ).append( '<link href="' + downloadJqueryuiHost + '/themeroller/parsetheme.css?' + locStr + '" type="text/css" rel="Stylesheet" />');
-		if($("link[href*=parsetheme\\.css]").size() > 1){
-			$("link[href*=parsetheme\\.css]:first").remove();
+		var links = $( "link[href*=parsetheme\\.css]" );
+		if (links.length > 1) {
+			// wait a few seconds before removing previous theme(s) to avoid FOUW
+			setTimeout(function() {
+				links.not( ":last" ).remove();
+			}, 5000);
 		}
-	};
+	}
 
 	//function called after a change event in the form
 	function formChange(){
