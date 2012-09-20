@@ -186,7 +186,8 @@ function build( callback ) {
 }
 
 function copy( callback ) {
-	var dir = require( "path" ).basename( grunt.file.expandDirs( "tmp/jquery-ui/dist/jquery-ui-*" )[ 0 ] );
+	var dir = require( "path" ).basename( grunt.file.expandDirs( "tmp/jquery-ui/dist/jquery-ui-*" )[ 0 ] ),
+		docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post";
 	grunt.file.mkdir( "release" );
 	async.series([
 		function( callback ) {
@@ -198,10 +199,10 @@ function copy( callback ) {
 		},
 		function() {
 			grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + dir + "docs/" );
-			grunt.utils.spawn({
-				cmd: "cp",
-				args: [ "-r", "tmp/api.jqueryui.com/dist/wordpress/posts/post/", "release/" + dir + "docs/" ]
-			}, log( callback, "Done copying", "Error copying" ) );
+			grunt.file.expandFiles( docs + "/**" ).forEach(function( file ) {
+				grunt.file.copy( file, file.replace( docs, "release/" + dir + "docs/" ));
+			});
+			callback();
 		}
 	]);
 }
