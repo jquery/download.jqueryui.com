@@ -252,6 +252,7 @@
 	color: #fff;
 	font-size: 1em;
 	padding: 2px;
+	vertical-align: top;
 }
 .themeroller .application select {
 	padding: 1px;
