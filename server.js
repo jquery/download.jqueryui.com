@@ -45,7 +45,7 @@ function route(app) {
 			if ( themeVars !== null && fields.themeFolderName ) {
 				themeVars.folderName = fields.themeFolderName;
 			}
-			if ( fields.scope.length > 0 ) {
+			if ( fields.scope ) {
 				themeVars.scope = fields.scope;
 			}
 			delete fields.theme;
