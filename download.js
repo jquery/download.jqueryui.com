@@ -56,13 +56,13 @@ Frontend.prototype = {
 			}
 		}
 		return jsonpTemplate({
-				callback: params.callback,
-				data: JSON.stringify( themeTemplate({
-					folderName: selectedTheme.folderName(),
-					selectedTheme: selectedTheme,
-					themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
-				}))
-			});
+			callback: params.callback,
+			data: JSON.stringify( themeTemplate({
+				folderName: selectedTheme.folderName(),
+				selectedTheme: selectedTheme,
+				themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
+			}))
+		});
 	}
 };
 

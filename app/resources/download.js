@@ -106,6 +106,10 @@
 	// Loads theme section.
 	themeFetch(function( themeSection ) {
 		$( ".download-builder .components" ).after( themeSection );
+		$( "#theme" ).on( "click change", function() {
+			var folderName = $( this ).find( "option:selected" ).text().toLowerCase().replace(" ", "-");
+			$( "#themeFolderName" ).val( folderName );
+		});
 	}, function( jqXHR, textStatus, errorThrown ) {
 		console.log( "Failed loading theme section", textStatus, errorThrown );
 	});
