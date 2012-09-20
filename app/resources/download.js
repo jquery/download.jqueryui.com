@@ -6,6 +6,7 @@
 		$( ".download-builder form" ).attr( "action", function(index, href) {
 			return href.replace(/(download\.)/, "stage.$1");
 		});
+		downloadJqueryuiHost = downloadJqueryuiHost.replace(/(download\.)/, "stage.$1");
 	}
 
 	var dependencies = {},
@@ -52,7 +53,7 @@
 	function currSearch() {
 		return hashClean(window.location.search);
 	}
-	
+
 	function themeFetch( success, error ) {
 		$.ajax( downloadJqueryuiHost + '/download/theme?themeParams=' + escape( currSearch() ), {
 			dataType: "jsonp",
