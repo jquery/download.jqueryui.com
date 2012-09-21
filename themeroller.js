@@ -68,7 +68,8 @@ Frontend.prototype = {
 						themeGallery: themeGallery
 					})
 				}),
-				host: this.host
+				host: this.host,
+				resourceVersion: "1.9.0-rc.1"
 			});
 	},
 
