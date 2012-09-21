@@ -376,7 +376,11 @@
 			return false;
 		});
 
-		updateCSS();
+		if ( hash.currSearch() ) {
+			location.href = "/themeroller#" + hash.currSearch();
+		} else {
+			updateCSS();
+		}
 
 		//start hash tracking listening
 		hash.init();
