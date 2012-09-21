@@ -12,9 +12,6 @@
 	 * App
 	 */
 
-	//global - TR app or bookmarklet
-	var bookmarklet = window.location.href.indexOf( "developertool" ) > -1;
-
 	//global for tracking open and focused toolbar panels on refresh
 	var openGroups = [];
 	var focusedEl = null;
@@ -103,9 +100,6 @@
 				hash.stopListening();
 			}
 			window.location.hash = locStr;
-			if ( bookmarklet ) {
-				window.parent.location.hash = locStr;
-			}
 			if ( ignore === true ) {
 				hash.storedHash = locStr;
 				hash.startListening();
@@ -246,7 +240,7 @@
 			$( this ).find( "option" ).each(function(){
 				ul.append( "<li class=\""+ $( this ).attr( "value" ) +"\" data-texturewidth=\""+$( this ).attr( "data-texturewidth" )+"\" data-textureheight=\""+$( this ).attr( "data-texturewidth" )+"\" style=\"background: #555555 url( http://jqueryui.com/themeroller/images/?new=555555&w="+$( this ).attr( "data-texturewidth" )+"&h="+$( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/"+$( this ).attr( "value" )+"|0|0|100 ) 50% 50% repeat\"><a href=\"#\" title=\""+ $( this ).text() +"\">"+ $( this ).text() +"</a></li>" );
 				if( $( this ).get( 0 ).index == sIndex ){texturePicker.attr( "title",$( this ).text() ).css( "background", "#555555 url( http://jqueryui.com/themeroller/images/?new=555555&w="+$( this ).attr( "data-texturewidth" )+"&h="+$( this ).attr( "data-textureheight" )+"&f=png&q=60&fltr[]=over|textures/"+$( this ).attr( "value" )+"|0|0|100 ) 50% 50% repeat" );}
-			} );
+			});
 
 			ul.find( "li" ).click(function() {
 				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
@@ -284,7 +278,7 @@
 		$( ".themeroller .application form" ).bind( "change", function() {
 			formChange();
 			return false;
-		} );
+		});
 
 		// return key triggers form change
 		$.hotkeys.add( "return", function () { formChange(); } );
@@ -298,8 +292,7 @@
 			var themeParams = /\?/.test( href ) ? escape( href.split( "?" )[ 1 ] ) : null;
 			location.href = "/download" + ( themeParams ? "?themeParams=" + themeParams : "" );
 			return false;
-		} );
-
+		});
 	}
 
 
@@ -312,12 +305,11 @@
 				updateCSS( hash.clean( this.href.split( "?" )[ 1 ] ));
 				hash.updateHash( hash.clean( this.href.split( "?" )[ 1 ] ), true );
 				return false;
-			} )
+			})
 			.attr( "title", "Click to preview this theme" )
 			.each(function(){
-				var straightToDownload = ( bookmarklet ) ? "&ui-version=1.7&download=true" : "";
 				$( this ).after(
-				"<a href=\"/download?themeParams=" + escape( $( this ).attr( "href" ).split( "?" )[ 1 ] ) + straightToDownload + "\" class=\"download\" title=\"Download this theme\">Download</a>"+
+				"<a href=\"/download?themeParams=" + escape( $( this ).attr( "href" ).split( "?" )[ 1 ] ) + "\" class=\"download\" title=\"Download this theme\">Download</a>"+
 				"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
 			})
 			.parent()
