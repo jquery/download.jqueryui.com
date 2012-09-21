@@ -285,12 +285,10 @@
 
 		//DL theme button
 		$( "#downloadTheme" ).click(function(){
-			// FIXME shouldn"t we refresh/update the href on form.change?
-			// Issue: if user right clicks to copy its url, he will copy a wrong/outdated link.
 			var href = $( "link[href*=parsetheme\\.css]:last" ).attr( "href" );
 			href = href.replace( "","" );
-			var themeParams = /\?/.test( href ) ? escape( href.split( "?" )[ 1 ] ) : null;
-			location.href = "/download" + ( themeParams ? "?themeParams=" + themeParams : "" );
+			var themeParams = href.split( "?" )[ 1 ];
+			location.href = "/download" + ( themeParams ? "?themeParams=" + escape( themeParams ) : "" );
 			return false;
 		});
 	}
