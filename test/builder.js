@@ -122,7 +122,7 @@ var componentFiles = {
 	],
 	"widget": [
 		"development-bundle/demos/widget/*",
-		"development-bundle/docs/widget.html"
+		"development-bundle/docs/jQuery.widget.html"
 	],
 	"core": [],
 	"mouse": [],
