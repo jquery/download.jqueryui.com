@@ -1,6 +1,5 @@
 /*jshint jquery: true, browser: true */
 // FIXME coding standards
-// FIXME themeParams=?undefined
 ;(function( $, undefined ) {
 
 	// rewrite host for testing on staging
@@ -290,10 +289,10 @@
 			// Issue: if user right clicks to copy its url, he will copy a wrong/outdated link.
 			var href = $('link[href*=parsetheme\\.css]:last').attr('href');
 			href = href.replace('','');
-			var themeParams = escape(href.split('?')[1]);
+			var themeParams = /\?/.test(href) ? escape(href.split('?')[1]) : null;
 			var themeParamName = (bookmarklet) ? 'theme' : 'themeParams';
 			var straightToDownload = (bookmarklet) ? '&ui-version=1.7&download=true' : '';
-			location.href = '/download?' + themeParamName + '=' + themeParams + straightToDownload;
+			location.href = '/download' + ( themeParams ? '?' + themeParamName + '=' + themeParams + straightToDownload : '' );
 			return false;
 		});
 
