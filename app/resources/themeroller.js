@@ -25,14 +25,14 @@
 		interval: null,
 		listen: true, // listen to hash changes?
 
-		 // start listening again
+		// start listening again
 		startListening: function() {
 			setTimeout(function() {
 				hash.listen = true;
 			}, 600 );
 		},
 
-		 // stop listening to hash changes
+		// stop listening to hash changes
 		stopListening: function() {
 			hash.listen = false;
 		},
@@ -41,7 +41,7 @@
 		checkHashChange: function() {
 			var locStr = hash.currHash();
 			if ( hash.storedHash != locStr ) {
-				if ( hash.listen == true ) {
+				if ( hash.listen === true ) {
 					hash.refreshToHash(); //update was made by back button
 				}
 				hash.storedHash = locStr;
@@ -54,8 +54,9 @@
 
 		//refresh to a certain hash
 		refreshToHash: function( locStr ) {
+			var newHash;
 			if ( locStr ) {
-				var newHash = true;
+				newHash = true;
 			}
 			locStr = locStr || hash.currHash();
 
@@ -96,14 +97,14 @@
 		},
 
 		updateHash: function( locStr, ignore ) {
-			if ( ignore == true ) {
+			if ( ignore === true ) {
 				hash.stopListening();
 			}
 			window.location.hash = locStr;
 			if ( bookmarklet ) {
 				window.parent.location.hash = locStr;
 			}
-			if ( ignore == true ) {
+			if ( ignore === true ) {
 				hash.storedHash = locStr;
 				hash.startListening();
 			}
@@ -145,7 +146,7 @@
 		locStr = hash.clean( locStr );
 		updateCSS( locStr );
 		hash.updateHash( locStr, true );
-	};
+	}
 
 	//set up spindowns
 	$.fn.spinDown = function() {
@@ -265,7 +266,7 @@
 					showIt = true;
 				}
 				$( 'div.texturePicker ul:visible' ).hide().parent().css( 'position', 'static' );
-				if ( showIt == true ) {
+				if ( showIt === true ) {
 					texturePicker.css( 'position', 'relative' );
 					ul.show();
 				}
@@ -299,7 +300,7 @@
 			return false;
 		} );
 
-	};
+	}
 
 
 	// events within the theme gallery
@@ -327,7 +328,7 @@
 				return false;
 			});
 
-	};
+	}
 
 	function initRollOver() {
 		rollYourOwnBehaviors();
