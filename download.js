@@ -1,7 +1,7 @@
 var _ = require( "underscore" ),
-	deserialize = require( "./lib/util" ).deserialize,
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
+	querystring = require( "querystring" ),
 	release = require( "./lib/release" ).all()[ 0 ],
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
@@ -39,7 +39,7 @@ Frontend.prototype = {
 	theme: function( params ) {
 		var selectedTheme = themeGallery[ 0 ];
 		if ( params.themeParams ) {
-			selectedTheme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
+			selectedTheme = new ThemeRoller( querystring.parse( unescape( params.themeParams ) ) );
 		}
 		return jsonpTemplate({
 			callback: params.callback,

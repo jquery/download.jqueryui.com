@@ -9,7 +9,7 @@ process.on( "uncaughtException", function ( err ) {
 var argv = require( "optimist" ).argv,
 	Builder = require( "./lib/builder" ),
 	connect = require( "connect" ),
-	deserialize = require( "./lib/util" ).deserialize,
+	querystring = require( "querystring" ),
 	formidable = require( "formidable" ),
 	Frontend = require( "./frontend" ),
 	httpHost = argv.host || "localhost",
@@ -27,12 +27,16 @@ var argv = require( "optimist" ).argv,
 
 var frontend = new Frontend();
 
+function params( request ) {
+	return querystring.parse( request.url.split( "?" )[ 1 ] );
+}
+
 function route(app) {
 	app.get( routes.home, function( request, response, next ) {
 		response.end( frontend.root() );
 	});
 	app.get( routes.download, function( request, response, next) {
-		response.end( frontend.download.index( deserialize( request.url ), {
+		response.end( frontend.download.index( params( request ), {
 			wrap: true
 		}));
 	});
@@ -41,7 +45,7 @@ function route(app) {
 		form.parse( request, function( err, fields, files ) {
 			var field, builder, themeVars,
 				components = [];
-			themeVars = fields.theme == "none" ? null : deserialize( "?" + fields.theme );
+			themeVars = fields.theme == "none" ? null : querystring.parse( fields.theme );
 			if ( themeVars !== null && fields.themeFolderName ) {
 				themeVars.folderName = fields.themeFolderName;
 			}
@@ -65,20 +69,20 @@ function route(app) {
 	});
 	app.get( routes.downloadTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "application/json" );
-		response.end( frontend.download.theme( deserialize( request.url ) ) );
+		response.end( frontend.download.theme( params( request ) ) );
 	});
 	app.get( routes.themeroller, function( request, response, next ) {
-		response.end( frontend.themeroller.index( deserialize( request.url ), {
+		response.end( frontend.themeroller.index( params( request ), {
 			wrap: true
 		}));
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "text/css" );
-		response.end( frontend.themeroller.css( deserialize( request.url ) ) );
+		response.end( frontend.themeroller.css( params( request ) ) );
 	});
 	app.get( routes.themerollerRollYourOwn, function( request, response, next ) {
 		response.setHeader( "Content-Type", "application/json" );
-		response.end( frontend.themeroller.rollYourOwn( deserialize( request.url ) ) );
+		response.end( frontend.themeroller.rollYourOwn( params( request ) ) );
 	});
 }
 

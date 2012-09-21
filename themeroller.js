@@ -1,7 +1,7 @@
 var _ = require( "underscore" ),
-	deserialize = require( "./lib/util" ).deserialize,
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
+	querystring = require( "querystring" ),
 	textures = require( "./lib/themeroller.textures" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
@@ -82,7 +82,7 @@ Frontend.prototype = {
 	},
 
 	rollYourOwn: function( params ) {
-		var theme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
+		var theme = new ThemeRoller( querystring.parse( unescape( params.themeParams ) ) );
 		return jsonpTemplate({
 				callback: params.callback,
 				data: JSON.stringify( rollyourownTemplate( theme ) )
