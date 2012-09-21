@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0-beta.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/download.css">
-<div class="download-builder">
+<div data-download-jqueryui-host="{{host}}" class="download-builder">
 	<form action="{{host}}/download" method="POST">
 		<div class="download-builder-header">
 			<h2>Version</h2>
@@ -36,8 +36,4 @@
 	</form>
 </div>
 
-<script>
-// FIXME Shall we pass this variable thru another method (like an element instead)?
-var downloadJqueryuiHost = "{{host}}";
-</script>
 <script src="/resources/download.js"></script>

@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0-beta.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0-rc.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/themeroller.css">
-<div class="content themeroller">
+<div data-download-jqueryui-host="{{host}}" class="content themeroller">
 	<div id="application-content" class="clearfix">
 
 		<div>{{{appinterface}}}</div>
@@ -323,9 +323,5 @@
 	</div>
 </div>
 
-<script>
-// FIXME Shall we pass this variable thru another method (like an element instead)?
-var downloadJqueryuiHost = "{{host}}";
-</script>
 <script src="http://code.jquery.com/ui/1.9.0-rc.1/jquery-ui.min.js"></script>
 <script src="/resources/themeroller.js"></script>

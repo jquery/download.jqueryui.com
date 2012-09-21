@@ -1,6 +1,8 @@
 /*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
+	var downloadJqueryuiHost = $( ".download-builder" ).first().data( "download-jqueryui-host" );
+
 	// rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		$( ".download-builder form" ).attr( "action", function(index, href) {

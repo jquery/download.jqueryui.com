@@ -1,6 +1,8 @@
 /*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
+	var downloadJqueryuiHost = $( ".themeroller" ).first().data( "download-jqueryui-host" );
+
 	// rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
