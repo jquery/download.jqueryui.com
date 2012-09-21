@@ -254,17 +254,19 @@ var fixtures = {
 		".ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .3;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -khtml-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }"
 };
 
-var defaultTheme = new ThemeRoller();
-
 module.exports = {
 	"test: base theme": function( test ) {
+		var defaultTheme = new ThemeRoller();
 		test.ok( fixtures.base == defaultTheme.css(), "Base theme is wrong" );
 		test.done();
 	},
 
 	"test: folder name": {
 		"default \"custom-theme\"": function( test ) {
-			test.ok( defaultTheme.folderName() == "custom-theme", "Default folder name \"" + defaultTheme.folderName() + "\" is different from \"custom-theme\"" );
+			var customTheme = new ThemeRoller({
+				ffDefault: "MyCustomFont"
+			});
+			test.ok( customTheme.folderName() == "custom-theme", "Default folder name \"" + customTheme.folderName() + "\" is different from \"custom-theme\"" );
 			test.done();
 		},
 
