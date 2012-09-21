@@ -1,18 +1,17 @@
 /*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
-	var downloadJqueryuiHost = $( ".download-builder" ).first().data( "download-jqueryui-host" );
+	var dependencies = {},
+		dependents = {},
+		downloadJqueryuiHost = $( ".download-builder" ).first().data( "download-jqueryui-host" );
 
 	// rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
-		$( ".download-builder form" ).attr( "action", function(index, href) {
-			return href.replace(/(download\.)/, "stage.$1");
+		$( ".download-builder form" ).attr( "action", function( index, href ) {
+			return href.replace( /(download\.)/, "stage.$1" );
 		});
-		downloadJqueryuiHost = downloadJqueryuiHost.replace(/(download\.)/, "stage.$1");
+		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
-
-	var dependencies = {},
-		dependents = {};
 
 	function check( elem, value ) {
 		elem.each(function() {
