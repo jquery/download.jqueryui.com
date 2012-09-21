@@ -296,9 +296,7 @@
 			var href = $( "link[href*=parsetheme\\.css]:last" ).attr( "href" );
 			href = href.replace( "","" );
 			var themeParams = /\?/.test( href ) ? escape( href.split( "?" )[ 1 ] ) : null;
-			var themeParamName = ( bookmarklet ) ? "theme" : "themeParams";
-			var straightToDownload = ( bookmarklet ) ? "&ui-version=1.7&download=true" : "";
-			location.href = "/download" + ( themeParams ? "?" + themeParamName + "=" + themeParams + straightToDownload : "" );
+			location.href = "/download" + ( themeParams ? "?themeParams=" + themeParams : "" );
 			return false;
 		} );
 
