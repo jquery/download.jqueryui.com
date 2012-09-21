@@ -37,30 +37,16 @@ Frontend.prototype = {
 	},
 
 	theme: function( params ) {
-		var customTheme,
-			selectedTheme = themeGallery[ 0 ];
+		var selectedTheme = themeGallery[ 0 ];
 		if ( params.themeParams ) {
-			customTheme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
-			var inThemeGallery = themeGallery.some(function( theme ) {
-					var isEqual = customTheme.isEqual( theme );
-					if ( isEqual ) {
-						selectedTheme = theme;
-					}
-					return isEqual;
-				});
-			if ( !inThemeGallery ) {
-				customTheme.name = "Custom Theme";
-				selectedTheme = customTheme;
-			} else {
-				customTheme = false;
-			}
+			selectedTheme = new ThemeRoller( deserialize( "?" + unescape( params.themeParams ) ) );
 		}
 		return jsonpTemplate({
 			callback: params.callback,
 			data: JSON.stringify( themeTemplate({
 				folderName: selectedTheme.folderName(),
 				selectedTheme: selectedTheme,
-				themeGallery: customTheme ?  [ customTheme ].concat( themeGallery ) : themeGallery
+				themeGallery: selectedTheme.name == "Custom Theme" ?  [ selectedTheme ].concat( themeGallery ) : themeGallery
 			}))
 		});
 	}
