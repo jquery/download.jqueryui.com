@@ -30,10 +30,10 @@ Frontend.prototype = {
 			});
 		}
 		return indexTemplate({
-				host: this.host,
-				categories: release.categories(),
-				pkg: release.pkg
-			});
+			categories: release.categories(),
+			host: this.host,
+			pkg: release.pkg
+		});
 	},
 
 	theme: function( params ) {
