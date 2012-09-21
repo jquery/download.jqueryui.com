@@ -55,7 +55,7 @@
 	}
 
 	function themeFetch( success, error ) {
-		$.ajax( downloadJqueryuiHost + '/download/theme?themeParams=' + escape( currSearch() ), {
+		$.ajax( downloadJqueryuiHost + "/download/theme" + ( currSearch() ? "?" + currSearch() : "" ), {
 			dataType: "jsonp",
 			success: function( response ) {
 				success( response );
