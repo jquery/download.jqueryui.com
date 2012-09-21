@@ -11,6 +11,10 @@ Handlebars.registerHelper( "isSelectedTheme", function( theme, selectedTheme ) {
 	return theme.isEqual( selectedTheme ) ? "selected=\"selected\"" : "";
 });
 
+Handlebars.registerHelper( "themerollerParams", function( serializedVars ) {
+	return serializedVars.length > 0 ? "#" + serializedVars : "";
+});
+
 var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
 	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
 	themeTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/theme.html", "utf8" ) );
