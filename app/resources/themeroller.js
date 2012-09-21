@@ -130,7 +130,7 @@
 
 	//function to append a new theme stylesheet with the new style changes
 	function updateCSS( locStr ){
-		$( "body" ).append( '<link href="' + downloadJqueryuiHost + '/themeroller/parsetheme.css?' + locStr + '" type="text/css" rel="Stylesheet" />');
+		$( "body" ).append( '<link href="' + downloadJqueryuiHost + '/themeroller/parsetheme.css' + ( locStr ? "?" + locStr : "" ) + '" type="text/css" rel="Stylesheet" />');
 		var links = $( "link[href*=parsetheme\\.css]" );
 		if ( links.length > 1 ) {
 			// wait a few seconds before removing previous theme(s) to avoid FOUW
