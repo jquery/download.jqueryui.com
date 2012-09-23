@@ -62,7 +62,10 @@ function route(app) {
 			builder = new Builder( components, theme );
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
-			builder.writeTo( response, function() {
+			builder.writeTo( response, function( err, result ) {
+				if ( err ) {
+					response.writeHead( 500, err.message );
+				}
 				response.end();
 			});
 		});
