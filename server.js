@@ -92,6 +92,6 @@ function route(app) {
 connect.createServer(
 	connect.router( route ),
 	connect[ "static" ]( staticDir )
-).listen(httpPort, httpHost, function() {
+).listen( httpPort, httpHost, function() {
 	console.log( "HTTP Server running at http://%s:%d", httpHost, httpPort );
 });
