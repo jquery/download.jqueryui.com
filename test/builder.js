@@ -16,10 +16,14 @@ function filePresent( build, filepath ) {
 
 function build( components, theme, callback ) {
 	var builder = new Builder( components, theme );
-	builder.build(function( build ) {
-		callback( build.map(function( build_item ) {
-			return build_item.path.split( "/" ).slice( 1 ).join( "/" );
-		} ) );
+	builder.build(function( err, build ) {
+		if ( err ) {
+			callback( err, null );
+		} else {
+			callback( null, build.map(function( build_item ) {
+				return build_item.path.split( "/" ).slice( 1 ).join( "/" );
+			}));
+		}
 	});
 }
 
@@ -351,92 +355,137 @@ module.exports = {
 		"with a theme": function( test ) {
 			var components = allComponents;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, theme, function( build ) {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
-				themeFilesCheck( test, build, components, theme );
-				test.done();
+			build( components, theme, function( err, build ) {
+				if ( err ) {
+					test.ok( false, err.message );
+					test.done();
+				} else {
+					commonFilesCheck( test, build );
+					componentFilesCheck( test, build, components );
+					themeFilesCheck( test, build, components, theme );
+					test.done();
+				}
 			});
 		},
 		"with a named theme": function( test ) {
 			var components = allComponents;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, namedTheme, function( build ) {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
-				themeFilesCheck( test, build, components, namedTheme );
-				test.done();
+			build( components, namedTheme, function( err, build ) {
+				if ( err ) {
+					test.ok( false, err.message );
+					test.done();
+				} else {
+					commonFilesCheck( test, build );
+					componentFilesCheck( test, build, components );
+					themeFilesCheck( test, build, components, namedTheme );
+					test.done();
+				}
 			});
 		},
 		"no theme": function( test ) {
 			var components = allComponents;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, noTheme, function( build ) {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
-				themeFilesCheck( test, build, components, noTheme );
-				test.done();
+			build( components, noTheme, function( err, build ) {
+				if ( err ) {
+					test.ok( false, err.message );
+					test.done();
+				} else {
+					commonFilesCheck( test, build );
+					componentFilesCheck( test, build, components );
+					themeFilesCheck( test, build, components, noTheme );
+					test.done();
+				}
 			});
 		},
 	},
 	"test: select all widgets": function( test ) {
 		var components = allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( build ) {
-			commonFilesCheck( test, build );
-			componentFilesCheck( test, build, components );
-			test.done();
+		build( components, theme, function( err, build ) {
+			if ( err ) {
+				test.ok( false, err.message );
+				test.done();
+			} else {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				test.done();
+			}
 		});
 	},
 	"test: select all effects": function( test ) {
 		var components = allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( build ) {
-			commonFilesCheck( test, build );
-			componentFilesCheck( test, build, components );
-			test.done();
+		build( components, theme, function( err, build ) {
+			if ( err ) {
+				test.ok( false, err.message );
+				test.done();
+			} else {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				test.done();
+			}
 		});
 	},
 	"test: select some widgets (1)": {
 		"with a theme": function( test ) {
 			var components = someWidgets1;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, theme, function( build ) {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
-				themeFilesCheck( test, build, components, theme );
-				test.done();
+			build( components, theme, function( err, build ) {
+				if ( err ) {
+					test.ok( false, err.message );
+					test.done();
+				} else {
+					commonFilesCheck( test, build );
+					componentFilesCheck( test, build, components );
+					themeFilesCheck( test, build, components, theme );
+					test.done();
+				}
 			});
 		},
 		"with a named theme": function( test ) {
 			var components = someWidgets1;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, namedTheme, function( build ) {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
-				themeFilesCheck( test, build, components, namedTheme );
-				test.done();
+			build( components, namedTheme, function( err, build ) {
+				if ( err ) {
+					test.ok( false, err.message );
+					test.done();
+				} else {
+					commonFilesCheck( test, build );
+					componentFilesCheck( test, build, components );
+					themeFilesCheck( test, build, components, namedTheme );
+					test.done();
+				}
 			});
 		},
 		"no theme": 
 		 function( test ) {
 			var components = someWidgets1;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, noTheme, function( build ) {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
-				themeFilesCheck( test, build, components, noTheme );
-				test.done();
+			build( components, noTheme, function( err, build ) {
+				if ( err ) {
+					test.ok( false, err.message );
+					test.done();
+				} else {
+					commonFilesCheck( test, build );
+					componentFilesCheck( test, build, components );
+					themeFilesCheck( test, build, components, noTheme );
+					test.done();
+				}
 			});
 		},
 	},
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( build ) {
-			commonFilesCheck( test, build );
-			componentFilesCheck( test, build, components );
-			test.done();
+		build( components, theme, function( err, build ) {
+			if ( err ) {
+				test.ok( false, err.message );
+				test.done();
+			} else {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				test.done();
+			}
 		});
 	}
 };
