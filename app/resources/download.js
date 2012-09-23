@@ -119,13 +119,12 @@
 		return count == 1 ? singular : plural;
 	}
 
-	// FIXME: duplicated from themeroller.js
 	function hashClean(locStr){
 		return locStr.replace(/%23/g, "").replace(/[\?#]+/g, "");
 	}
 
 	function currSearch() {
-		return hashClean(window.location.search);
+		return hashClean( window.location.search );
 	}
 
 	function themeFetch( success, error ) {
@@ -180,7 +179,10 @@
 	themeFetch(function( themeSection ) {
 		$( ".download-builder .components" ).after( themeSection );
 		$( "#theme" ).on( "click change", function() {
-			var folderName = $( this ).find( "option:selected" ).text().toLowerCase().replace(" ", "-");
+			var selected = $( this ).find( "option:selected" ),
+				folderName = selected.text().toLowerCase().replace( " ", "-" ),
+				val = selected.val();
+			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val ? "#" + val : "" ) );
 			$( "#themeFolderName" ).val( folderName );
 		});
 	}, function( jqXHR, textStatus, errorThrown ) {
