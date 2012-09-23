@@ -46,8 +46,8 @@ var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/te
 	themegalleryTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/themegallery.html", "utf8" ) ),
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/wrap.html", "utf8" ) );
 
-var Frontend = function( host ) {
-  this.host = host;
+var Frontend = function( args ) {
+	_.extend( this, args );
 };
 
 Frontend.prototype = {
@@ -57,20 +57,21 @@ Frontend.prototype = {
 		if ( options.wrap ) {
 			options = _.defaults( { wrap: false }, options );
 			return wrapTemplate({
-				body: this.index( vars, options )
+				body: this.index( vars, options ),
+				resources: this.resources
 			});
 		}
 		return indexTemplate({
-				appinterface: appinterfaceTemplate({
-					help: helpTemplate(),
-					rollyourown: rollyourownTemplate( theme ),
-					themegallery: themegalleryTemplate({
-						themeGallery: themeGallery
-					})
-				}),
-				host: this.host,
-				resourceVersion: "1.9.0-rc.1"
-			});
+			appinterface: appinterfaceTemplate({
+				help: helpTemplate(),
+				rollyourown: rollyourownTemplate( theme ),
+				themegallery: themegalleryTemplate({
+					themeGallery: themeGallery
+				})
+			}),
+			host: this.host,
+			resources: this.resources
+		});
 	},
 
 	css: function( vars ) {

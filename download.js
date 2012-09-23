@@ -20,8 +20,8 @@ var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/
 	themeTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/theme.html", "utf8" ) );
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/wrap.html", "utf8" ) );
 
-var Frontend = function( host ) {
-	this.host = host;
+var Frontend = function( args ) {
+	_.extend( this, args );
 };
 
 Frontend.prototype = {
@@ -30,7 +30,8 @@ Frontend.prototype = {
 		if ( options.wrap ) {
 			options = _.defaults( { wrap: false }, options );
 			return wrapTemplate({
-				body: this.index( params, options )
+				body: this.index( params, options ),
+				resources: this.resources
 			});
 		}
 		return indexTemplate({
