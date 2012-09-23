@@ -85,9 +85,6 @@
 							}).toArray().join( ", " ) + "."
 						)
 					)
-					.bind( "dialogopen", function( event ) {
-						$( event.target ).closest( ".ui-dialog" ).addClass( "download-builder-dialog" );
-					})
 					.dialog({
 						modal: true,
 						buttons: {
@@ -99,7 +96,8 @@
 								$( this ).remove();
 							}
 						}
-					});
+					})
+					.dialog( "widget" ).addClass( "download-builder-dialog" );
 			} else {
 				_check( elem, value );
 			}
