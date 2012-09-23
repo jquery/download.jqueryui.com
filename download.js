@@ -37,7 +37,8 @@ Frontend.prototype = {
 		return indexTemplate({
 			categories: release.categories(),
 			host: this.host,
-			pkg: release.pkg
+			pkg: release.pkg,
+			resources: this.resources
 		});
 	},
 

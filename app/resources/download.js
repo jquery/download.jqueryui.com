@@ -21,21 +21,21 @@
 		return $( referenceElement ).closest( "fieldset" ).find( ".component-group-list input[type=checkbox]" );
 	}
 
-	function check( elem, value ) {
+	function _check( elem, value ) {
 		elem.each(function() {
 			var elem = $( this ),
 				name = elem.attr( "name" );
 
 			// Handle dependencies
 			if ( name ) {
-				// Whenever a checkbox is activated, also activate all parent dependencies
 				if ( value ) {
 					if ( dependencies[ name ] ) {
-						check( dependencies[ name ], value );
+						// Whenever a checkbox is activated, also activate all dependencies
+						_check( dependencies[ name ], value );
 					}
 				} else if ( dependents[ name ] ) {
-					// Whenever a checkbox is deactivated, also deactivate all child dependencies
-					check( dependents[ name ], value );
+					// Whenever a checkbox is deactivated, also deactivate all dependents
+					_check( dependents[ name ], value );
 				}
 			}
 
@@ -67,6 +67,45 @@
 		});
 	}
 
+	function check( elem, value ) {
+		elem.each(function() {
+			var dependentsCount,
+				elem = $( this ),
+				name = elem.attr( "name" );
+
+			// Validate if uncheck is allowed when it has dependents
+			if ( name && !value && dependents[ name ] && ( dependentsCount = dependents[ name ].filter( ":checked" ).length ) > 0 ) {
+				elem.prop( "checked", !value );
+				$( "<div>" )
+					.attr( "title", "Remove " + name + "?" )
+					.append(
+						$( "<p>" ).html(
+							"Are you sure you want to remove <b>" + name + "</b>? The following " + pluralize( dependentsCount, "component", "components" ) + " " + pluralize( dependentsCount, "depends", "depend" ) + " on it and will be removed: " + dependents[ name ].map(function() {
+								return "<b>" + this.name + "</b>";
+							}).toArray().join( ", " ) + "."
+						)
+					)
+					.bind( "dialogopen", function( event ) {
+						$( event.target ).closest( ".ui-dialog" ).addClass( "download-builder-dialog" );
+					})
+					.dialog({
+						modal: true,
+						buttons: {
+							"Remove": function() {
+								_check( elem, value );
+								$( this ).remove();
+							},
+							"Cancel": function() {
+								$( this ).remove();
+							}
+						}
+					});
+			} else {
+				_check( elem, value );
+			}
+		});
+	}
+
 	function drawToggleAll( className ) {
 		return $( "<label>" )
 			.addClass( className )
@@ -76,6 +115,10 @@
 					.prop( "checked", true )
 					.addClass( "ui-widget-content" )
 			);
+	}
+
+	function pluralize( count, singular, plural ) {
+		return count == 1 ? singular : plural;
 	}
 
 	// FIXME: duplicated from themeroller.js
