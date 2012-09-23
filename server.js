@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
+var logger = require( "logger" ).init( "download.jqueryui.com" );
+
 process.on( "uncaughtException", function ( err ) {
-	console.error( "Caught exception: ", err.stack || err );
-	require( "logger" ).init( "download.jqueryui.com" ).log( "Caught exception: " + ( err.stack || err ) );
+	logger.error( "Caught exception: " + ( err.stack || err ) );
 	process.exit( 1 );
 });
 
