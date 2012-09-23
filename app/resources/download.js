@@ -46,28 +46,20 @@
 				// When checking a component up
 				if ( value ) {
 					// Set group toggle all if all components of its group are checked
-					if ( allGroup( elem ).toArray().reduce(function( r, component ) {
-						return r && $( component ).prop( "checked" );
-					}, true ) ) {
+					if ( allGroup( elem ).filter( ":not(:checked)" ).length == 0 ) {
 						$( elem ).closest( "fieldset" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
 					}
 					// Set toggle all if all components are checked
-					if ( allComponents( elem ).toArray().reduce(function( r, component ) {
-						return r && $( component ).prop( "checked" );
-					}, true ) ) {
+					if ( allComponents( elem ).filter( ":not(:checked)" ).length == 0 ) {
 						$( elem ).closest( "form" ).find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
 					}
 				} else {
 					// Unset group toggle all if no components of its group are checked
-					if ( !allGroup( elem ).toArray().reduce(function( r, component ) {
-						return ( r || $( component ).prop( "checked" ) );
-					}, false ) ) {
+					if ( allGroup( elem ).filter( ":checked" ).length == 0 ) {
 						$( elem ).closest( "fieldset" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
 					}
 					// Unset toggle all if no components are checked
-					if ( !allComponents( elem ).toArray().reduce(function( r, component ) {
-						return ( r || $( component ).prop( "checked" ) );
-					}, false ) ) {
+					if ( allComponents( elem ).filter( ":checked" ).length == 0 ) {
 						$( elem ).closest( "form" ).find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
 					}
 				}
@@ -155,51 +147,3 @@
 	});
 
 }( jQuery ));
-
-
-
-// Fix old browsers
-
-// ES5 15.4.4.21
-// http://es5.github.com/#x15.4.4.21
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduce
-if (!Array.prototype.reduce) {
-	Array.prototype.reduce = function reduce(fun /*, initial*/) {
-		var self = toObject(this),
-			length = self.length >>> 0;
-
-		// If no callback function or if callback is not a callable function
-		if (toString(fun) != "[object Function]") {
-			throw new TypeError(); // TODO message
-		}
-
-		// no value to return if no initial value and an empty array
-		if (!length && arguments.length == 1)
-			throw new TypeError(); // TODO message
-
-		var i = 0;
-		var result;
-		if (arguments.length >= 2) {
-			result = arguments[1];
-		} else {
-			do {
-				if (i in self) {
-					result = self[i++];
-					break;
-				}
-
-				// if array contains no values, no initial value to return
-				if (++i >= length)
-					throw new TypeError(); // TODO message
-			} while (true);
-		}
-
-		for (; i < length; i++) {
-			if (i in self)
-				result = fun.call(void 0, result, self[i], i, self);
-		}
-
-		return result;
-	};
-}
-
