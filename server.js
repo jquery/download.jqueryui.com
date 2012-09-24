@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var logger = require( "logger" ).init( "download.jqueryui.com" );
+var logger = require( "simple-log" ).init( "download.jqueryui.com" );
 
 process.on( "uncaughtException", function ( err ) {
 	logger.error( "Caught exception: " + ( err.stack || err ) );
