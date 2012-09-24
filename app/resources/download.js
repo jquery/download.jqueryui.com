@@ -80,7 +80,7 @@
 					.attr( "title", "Remove " + name + "?" )
 					.append(
 						$( "<p>" ).html(
-							"Are you sure you want to remove <b>" + name + "</b>? The following " + pluralize( dependentsCount, "component", "components" ) + " " + pluralize( dependentsCount, "depends", "depend" ) + " on it and will be removed: " + dependents[ name ].map(function() {
+							"Are you sure you want to remove <b>" + name + "</b>? The following " + pluralize( dependentsCount, "component", "components" ) + " " + pluralize( dependentsCount, "depends", "depend" ) + " on it and will be removed: " + dependents[ name ].filter( ":checked" ).map(function() {
 								return "<b>" + this.name + "</b>";
 							}).toArray().join( ", " ) + "."
 						)
