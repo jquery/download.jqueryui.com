@@ -46,20 +46,20 @@
 				// When checking a component up
 				if ( value ) {
 					// Set group toggle all if all components of its group are checked
-					if ( allGroup( elem ).filter( ":not(:checked)" ).length == 0 ) {
+					if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
 						$( elem ).closest( "fieldset" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
 					}
 					// Set toggle all if all components are checked
-					if ( allComponents( elem ).filter( ":not(:checked)" ).length == 0 ) {
+					if ( !allComponents( elem ).filter( ":not(:checked)" ).length ) {
 						$( elem ).closest( "form" ).find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
 					}
 				} else {
 					// Unset group toggle all if no components of its group are checked
-					if ( allGroup( elem ).filter( ":checked" ).length == 0 ) {
+					if ( !allGroup( elem ).filter( ":checked" ).length ) {
 						$( elem ).closest( "fieldset" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
 					}
 					// Unset toggle all if no components are checked
-					if ( allComponents( elem ).filter( ":checked" ).length == 0 ) {
+					if ( !allComponents( elem ).filter( ":checked" ).length ) {
 						$( elem ).closest( "form" ).find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
 					}
 				}
