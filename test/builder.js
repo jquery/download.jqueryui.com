@@ -4,7 +4,8 @@ var Builder = require( "../lib/builder" ),
 	allWidgets = "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),
 	allEffects = "effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
-	someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " );
+	someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " ),
+	noComponents = [];
 
 
 function filePresent( build, filepath ) {
@@ -476,6 +477,20 @@ module.exports = {
 	},
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
+		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
+		build( components, theme, function( err, build ) {
+			if ( err ) {
+				test.ok( false, err.message );
+				test.done();
+			} else {
+				commonFilesCheck( test, build );
+				componentFilesCheck( test, build, components );
+				test.done();
+			}
+		});
+	},
+	"test: select no components": function( test ) {
+		var components = noComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
 		build( components, theme, function( err, build ) {
 			if ( err ) {
