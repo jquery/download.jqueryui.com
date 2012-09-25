@@ -200,6 +200,25 @@
 				return false;
 			});
 		});
+
+		$( "#scope" ).keyup(function() {
+			if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
+				$( "#theme-folder-name" ).data( "suggestedEdit", true );
+				$( "#theme-folder-name" ).val( escape( $( this ).val().split( " " ).join( "-" ).toLowerCase().replace( ".", "" ).replace( "#", "" ) ) );
+			}
+		});	
+		
+		$( "#theme-folder-name" ).keyup(function() {
+			$( this ).data( "edited", true );
+			$( "#theme-folder-name" ).removeData( "suggestedEdit" );
+			$( this ).val( escape( $( this ).val().replace( " ", "-" ).split( " ").join( "-" ).toLowerCase().replace( ".", "" ).replace( "#", "" ) ) );
+		});
+
+		$( "#theme-folder-name" ).blur(function() {
+			if ( $( this ).val() == "" ) {
+				$( "#theme-folder-name" ).removeData( "edited" );
+			}
+		});
 	}, function( jqXHR, textStatus, errorThrown ) {
 		console.log( "Failed loading theme section", textStatus, errorThrown );
 	});
