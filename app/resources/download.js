@@ -68,19 +68,29 @@
 	}
 
 	function check( elem, value ) {
-		elem.each(function() {
-			var dependentsCount,
-				elem = $( this ),
-				name = elem.attr( "name" );
+		var consolidatedDependents, consolidatedNames;
+
+		// Uncheck validations
+		if ( !value ) {
+ 			consolidatedDependents = $();
+			consolidatedNames = [];
+			elem.each(function() {
+				var elem = $( this ),
+					name = elem.attr( "name" );
+				if ( name && dependents[ name ] && dependents[ name ].filter( ":checked" ).length > 0 ) {
+					consolidatedNames.push( name );
+					consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ) );
+				}
+			});
 
 			// Validate if uncheck is allowed when it has dependents
-			if ( name && !value && dependents[ name ] && ( dependentsCount = dependents[ name ].filter( ":checked" ).length ) > 0 ) {
+			if ( consolidatedDependents.length > 0 ) {
 				elem.prop( "checked", !value );
 				$( "<div>" )
-					.attr( "title", "Remove " + name + "?" )
+					.attr( "title", "Remove " + consolidatedNames.join( ", " ) + "?" )
 					.append(
 						$( "<p>" ).html(
-							"Are you sure you want to remove <b>" + name + "</b>? The following " + pluralize( dependentsCount, "component", "components" ) + " " + pluralize( dependentsCount, "depends", "depend" ) + " on it and will be removed: " + dependents[ name ].filter( ":checked" ).map(function() {
+							"Are you sure you want to remove <b>" + consolidatedNames.join( ", " ) + "</b>? The following " + pluralize( consolidatedDependents.length, "component", "components" ) + " " + pluralize( consolidatedDependents.length, "depends", "depend" ) + " on it and will be removed: " + consolidatedDependents.map(function() {
 								return "<b>" + this.name + "</b>";
 							}).toArray().join( ", " ) + "."
 						)
@@ -101,7 +111,11 @@
 			} else {
 				_check( elem, value );
 			}
-		});
+
+		// Check validations (none)
+		} else {
+			_check( elem, value );
+		}
 	}
 
 	function drawToggleAll( className ) {
