@@ -137,14 +137,14 @@
 	margin: 0.8em 0;
 	width: 70%;
 }
-.download-builder .component-group-list label {
+.download-builder .component-group-list > div {
 	display: table;
 	border-spacing: 4px 6px;
 }
-.download-builder .component-group-list label > div {
+.download-builder .component-group-list > div > label {
 	display: table-row;
 }
-.download-builder .component-group-list label > div > * {
+.download-builder .component-group-list > div > label > * {
 	display: table-cell;
 	border-spacing: 0.9em 0 1.4em;
 }
