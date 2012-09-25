@@ -6,30 +6,28 @@
 			<h2>Version</h2>
 			<p class="component-title">{{pkg.version}}</p>
 		</div>
+		<div class="download-builder-header">
+			<h2>Components</h2>
+		</div>
 		<div class="components">
-			<div class="download-builder-header">
-				<h2>Components</h2>
-			</div>
 			{{#each categories}}
-				<fieldset class="ui-widget ui-widget-content">
-					<div>
-						<div class="component-group-desc">
-							<h3>{{name}}</h3>
-							<p>{{description}}</p>
-						</div>
-						<div class="component-group-list">
-							<div>
-							{{#each components}}
-								<label title="{{description}}">
-									<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
-									<span class="component-title">{{title}}</span>
-									<span class="component-desc">{{description}}</span>
-								</label>
-							{{/each}}
-							</div>
+				<div class="ui-widget ui-widget-content">
+					<div class="component-group-desc">
+						<h3>{{name}}</h3>
+						<p>{{description}}</p>
+					</div>
+					<div class="component-group-list">
+						<div>
+						{{#each components}}
+							<label title="{{description}}">
+								<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+								<span class="component-title">{{title}}</span>
+								<span class="component-desc">{{description}}</span>
+							</label>
+						{{/each}}
 						</div>
 					</div>
-				</fieldset>
+				</div>
 			{{/each}}
 		</div>
 		<input type="submit" class="ui-widget-content" value="Download">

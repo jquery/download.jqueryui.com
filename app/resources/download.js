@@ -18,7 +18,7 @@
 	}
 
 	function allGroup( referenceElement ) {
-		return $( referenceElement ).closest( "fieldset" ).find( ".component-group-list input[type=checkbox]" );
+		return $( referenceElement ).closest( ".components" ).find( ".component-group-list input[type=checkbox]" );
 	}
 
 	function _check( elem, value ) {
@@ -47,7 +47,7 @@
 				if ( value ) {
 					// Set group toggle all if all components of its group are checked
 					if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
-						$( elem ).closest( "fieldset" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
+						$( elem ).closest( ".components" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
 					}
 					// Set toggle all if all components are checked
 					if ( !allComponents( elem ).filter( ":not(:checked)" ).length ) {
@@ -56,7 +56,7 @@
 				} else {
 					// Unset group toggle all if no components of its group are checked
 					if ( !allGroup( elem ).filter( ":checked" ).length ) {
-						$( elem ).closest( "fieldset" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
+						$( elem ).closest( ".components" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
 					}
 					// Unset toggle all if no components are checked
 					if ( !allComponents( elem ).filter( ":checked" ).length ) {
@@ -174,7 +174,7 @@
 	});
 
 	// Generating toggle all checkboxes
-	$( ".download-builder .components h2" ).after( drawToggleAll( "toggleAll" ) );
+	$( ".download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
 	$( ".download-builder .components h3" ).after( drawToggleAll( "toggle" ) );
 
 	// binds click handlers on checkboxes

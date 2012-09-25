@@ -103,30 +103,31 @@
 	right: 15px;
 	top: 12px;
 }
-.download-builder fieldset {
+.download-builder .components {
 	display: table;
-	border: 0 none;
-	border-bottom: 1px dotted #666666;
-	outline: 0 none;
-	padding: 25px 15px 15px;
+	width: 100%;
 	position: relative;
 }
-.download-builder fieldset > div {
+.download-builder .components > div {
 	display: table-row;
+	border: 0 none;
 }
-.download-builder fieldset > div > div {
+.download-builder .components > div > div {
 	display: table-cell;
+	border-bottom: 1px dotted #666666;
+	padding: 25px 15px 15px;
 }
 .download-builder .component-group {
+	position: relative;
 	border-bottom: 1px dotted #666666;
 	padding: 25px 15px 15px;
-	position: relative;
 }
 .download-builder .component-group-desc {
-	width: 230px;
+	max-width: 230px;
+	width: 30%;
 }
 .download-builder .component-group-list {
-	min-width: 400px;
+	width: 70%;
 }
 .download-builder .component-group-desc h3 {
 	font-size: 1.5em;

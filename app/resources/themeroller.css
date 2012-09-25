@@ -1,14 +1,5 @@
 .themeroller {
-	display: table;
 	font-size: 10px;
-}
-.themeroller > div {
-	display: table-row;
-}
-.themeroller > div > div {
-	display: table-cell;
-	vertical-align: top;
-	padding: 15px;
 }
 
 /* ui site overrides for TR */
@@ -44,6 +35,7 @@
 	color: #fff;
 	border: 1px solid #222;
 	position: relative;
+	float: left;
 }
 .themeroller .application a:focus, div.content * {
 	outline: 0 !important;
@@ -52,7 +44,7 @@
 	font-size: 1.5em;
 	color: #fff;
 	font-weight: normal;
-	width: 213;
+	width: 213px;
 	height: 46px;
 	margin: 0 0 -1px 0;
 	padding: 0;
@@ -493,6 +485,17 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 }
 
 /* Components Column */
+.themeroller .components {
+	display: table;
+}
+.themeroller .components > div {
+	display: table-row;
+}
+.themeroller .components > div > div {
+	display: table-cell;
+	vertical-align: top;
+	padding-left: 15px;
+}
 #versionNotice {
 	margin: 20px 0;
 	border: 1px solid #333;
@@ -501,10 +504,11 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 	background: #eee;
 }
 #compGroupA {
+	min-width: 216px;
 }
 
 #compGroupB {
-	width: 250px;
+	max-width: 250px;
 }
 .demoHeaders {
 	font-size: 1.3em;
