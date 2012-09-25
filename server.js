@@ -47,14 +47,14 @@ function route(app) {
 			var field, builder, themeVars,
 				components = [];
 			themeVars = fields.theme == "none" ? null : querystring.parse( fields.theme );
-			if ( themeVars !== null && fields.themeFolderName ) {
-				themeVars.folderName = fields.themeFolderName;
+			if ( themeVars !== null && fields[ "theme-folder-name" ] ) {
+				themeVars.folderName = fields[ "theme-folder-name" ];
 			}
 			if ( fields.scope ) {
 				themeVars.scope = fields.scope;
 			}
 			delete fields.theme;
-			delete fields.themeFolderName;
+			delete fields[ "theme-folder-name" ];
 			delete fields.scope;
 			for ( field in fields ) {
 				components.push( field );

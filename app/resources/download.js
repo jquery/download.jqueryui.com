@@ -178,12 +178,27 @@
 	// Loads theme section.
 	themeFetch(function( themeSection ) {
 		$( ".download-builder .components" ).after( themeSection );
+
 		$( "#theme" ).on( "click change", function() {
 			var selected = $( this ).find( "option:selected" ),
 				folderName = selected.text().toLowerCase().replace( " ", "-" ),
 				val = selected.val();
 			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val ? "#" + val : "" ) );
-			$( "#themeFolderName" ).val( folderName );
+			$( "#theme-folder-name" ).val( folderName );
+		});
+
+		$( ".field-help-content" ).hide();
+		$( ".field-help-link" ).each(function() {
+			var thisDialog = $( $( this ).attr( "href" ) ).dialog({
+				autoOpen: false,
+				title: $( this ).parent().text(),
+				modal: true
+			});
+			thisDialog.dialog( "widget" ).addClass( "download-builder-dialog" );
+			$( this ).click(function() {
+				thisDialog.dialog( "open" );
+				return false;
+			});
 		});
 	}, function( jqXHR, textStatus, errorThrown ) {
 		console.log( "Failed loading theme section", textStatus, errorThrown );
