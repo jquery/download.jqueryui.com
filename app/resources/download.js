@@ -72,7 +72,7 @@
 
 		// Uncheck validations
 		if ( !value ) {
- 			consolidatedDependents = $();
+			consolidatedDependents = $();
 			consolidatedNames = [];
 			elem.each(function() {
 				var elem = $( this ),
