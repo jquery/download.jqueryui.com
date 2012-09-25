@@ -215,7 +215,7 @@
 		});
 
 		$( "#theme-folder-name" ).blur(function() {
-			if ( $( this ).val() == "" ) {
+			if ( $( this ).val() === "" ) {
 				$( "#theme-folder-name" ).removeData( "edited" );
 			}
 		});
