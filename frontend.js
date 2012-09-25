@@ -12,7 +12,7 @@ var Frontend = function( host ) {
 			jqueryVersion: "1.7.2",
 			jqueryuiVersion: "1.9.0-rc.1"
 		}
-	}
+	};
 	this.download = new Download( args );
 	this.themeroller = new ThemeRoller( args );
 };
