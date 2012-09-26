@@ -9,7 +9,7 @@ var fixtures = {
 		" * http://jqueryui.com\n" +
 		" *\n" +
 		" * Copyright 2012 jQuery Foundation and other contributors\n" +
-		" * Released under the MIT license.\n" +
+		" * Dual licensed under the MIT or GPL Version 2 licenses.\n" +
 		" * http://jquery.org/license\n" +
 		" *\n" +
 		" * http://docs.jquery.com/UI/Theming/API\n" +
@@ -255,6 +255,7 @@ var fixtures = {
 };
 
 module.exports = {
+	fixtures: fixtures,
 	"test: base theme": function( test ) {
 		var defaultTheme = new ThemeRoller();
 		test.ok( fixtures.base == defaultTheme.css(), "Base theme is wrong" );
