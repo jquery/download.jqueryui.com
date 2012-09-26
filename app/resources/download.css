@@ -211,3 +211,7 @@
 	font-size: 10px;
 	min-width: 370px;
 }
+.field-help-content {
+	font-size: 10px;
+	max-width: 400px;
+}

@@ -137,7 +137,7 @@
 	}
 
 	function hashClean(locStr){
-		return locStr.replace(/%23/g, "").replace(/[\?#]+/g, "");
+		return locStr.replace( /%23/g, "" ).replace( /[\?#]+/g, "" );
 	}
 
 	function currSearch() {
@@ -205,18 +205,16 @@
 			downloadOnOff();
 		});
 
-		$( ".field-help-content" ).hide();
 		$( ".field-help-link" ).each(function() {
-			var thisDialog = $( $( this ).attr( "href" ) ).dialog({
-				autoOpen: false,
-				title: $( this ).parent().text(),
-				modal: true
-			});
-			thisDialog.dialog( "widget" ).addClass( "download-builder-dialog" );
-			$( this ).click(function() {
-				thisDialog.dialog( "open" );
-				return false;
-			});
+			var content = $( $( this ).attr( "href" ) ).detach();
+			$( this ).tooltip({
+				content: function() {
+					return content;
+				}
+			})
+		})
+		.click(function() {
+			return false;
 		});
 
 		$( "#scope" ).keyup(function() {
