@@ -205,16 +205,14 @@
 			downloadOnOff();
 		});
 
-		$( ".field-help-link" ).each(function() {
-			var content = $( $( this ).attr( "href" ) ).detach();
+		$( "#download-builder .advanced-settings-content input" ).each(function() {
+			var content = $( this ).next().detach();
 			$( this ).tooltip({
+				items: "*",
 				content: function() {
 					return content;
 				}
 			})
-		})
-		.click(function() {
-			return false;
 		});
 
 		$( "#scope" ).keyup(function() {
