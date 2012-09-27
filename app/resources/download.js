@@ -205,7 +205,7 @@
 			downloadOnOff();
 		});
 
-		$( "#download-builder .advanced-settings-content input" ).each(function() {
+		$( "#download-builder .advanced-settings input" ).each(function() {
 			var content = $( this ).next().detach();
 			$( this ).tooltip({
 				items: "*",
@@ -233,13 +233,6 @@
 				$( "#theme-folder-name" ).removeData( "edited" );
 			}
 		});
-
-		$( ".advanced-settings-heading" ).click(function() {
-				$( this ).next().slideToggle();	
-				$( this ).find( "span" ).toggleClass( "ui-icon-triangle-1-s" );
-		})
-		.prepend( "<span class=\"ui-icon ui-icon-triangle-1-e\"></span>" )
-		.next().hide();
 	}, function( jqXHR, textStatus, errorThrown ) {
 		console.log( "Failed loading theme section", textStatus, errorThrown );
 	});
