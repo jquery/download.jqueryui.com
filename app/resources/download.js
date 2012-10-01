@@ -18,7 +18,7 @@
 	}
 
 	function allGroup( referenceElement ) {
-		return $( referenceElement ).closest( ".components" ).find( ".component-group-list input[type=checkbox]" );
+		return $( referenceElement ).closest( ".component-group" ).find( ".component-group-list input[type=checkbox]" );
 	}
 
 	function _check( elem, value ) {
@@ -47,20 +47,20 @@
 				if ( value ) {
 					// Set group toggle all if all components of its group are checked
 					if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
-						$( elem ).closest( ".components" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
+						$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
 					}
 					// Set toggle all if all components are checked
 					if ( !allComponents( elem ).filter( ":not(:checked)" ).length ) {
-						$( elem ).closest( "form" ).find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
+						$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
 					}
 				} else {
 					// Unset group toggle all if no components of its group are checked
 					if ( !allGroup( elem ).filter( ":checked" ).length ) {
-						$( elem ).closest( ".components" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
+						$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
 					}
 					// Unset toggle all if no components are checked
 					if ( !allComponents( elem ).filter( ":checked" ).length ) {
-						$( elem ).closest( "form" ).find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
+						$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
 					}
 				}
 			}
@@ -77,9 +77,11 @@
 			elem.each(function() {
 				var elem = $( this ),
 					name = elem.attr( "name" );
-				if ( name && dependents[ name ] && dependents[ name ].filter( ":checked" ).length > 0 ) {
+				if ( name ) {
 					consolidatedNames.push( name );
-					consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ) );
+					if ( dependents[ name ] ) {
+						consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ) );
+					}
 				}
 			});
 
@@ -175,7 +177,7 @@
 
 	// Generating toggle all checkboxes
 	$( ".download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
-	$( ".download-builder .components h3" ).after( drawToggleAll( "toggle" ) );
+	$( ".download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
 	// binds click handlers on checkboxes
 	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
@@ -183,7 +185,7 @@
 		if ( target.parent().is( ".toggle" ) ) {
 			check( allGroup( this ), $( this ).prop( "checked" ) );
 		} else if ( target.parent().is( ".toggleAll" ) ) {
-			check( allComponents( this ).not( this ), $( this ).prop( "checked" ) );
+			check( allComponents( this ), $( this ).prop( "checked" ) );
 		} else {
 			check( $( this ), $( this ).prop( "checked" ) );
 		}

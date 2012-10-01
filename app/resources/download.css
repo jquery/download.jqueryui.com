@@ -113,12 +113,8 @@
 	border: 0 none;
 }
 .download-builder .components > div > div {
-	display: table-cell;
-	border-bottom: 1px dotted #666666;
-	padding: 25px 15px 15px;
-}
-.download-builder .component-group {
 	position: relative;
+	display: table-cell;
 	border-bottom: 1px dotted #666666;
 	padding: 25px 15px 15px;
 }
