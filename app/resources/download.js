@@ -67,7 +67,7 @@
 		});
 	}
 
-	function check( elem, value ) {
+	function check( event, elem, value ) {
 		var consolidatedDependents, consolidatedNames;
 
 		// Uncheck validations
@@ -87,7 +87,7 @@
 
 			// Validate if uncheck is allowed when it has dependents
 			if ( consolidatedDependents.length > 0 ) {
-				elem.prop( "checked", !value );
+				event.preventDefault();
 				$( "<div>" )
 					.attr( "title", "Remove " + consolidatedNames.join( ", " ) + "?" )
 					.append(
@@ -183,11 +183,11 @@
 	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
 		var target = $( event.target );
 		if ( target.parent().is( ".toggle" ) ) {
-			check( allGroup( this ), $( this ).prop( "checked" ) );
+			check( event, allGroup( this ), $( this ).prop( "checked" ) );
 		} else if ( target.parent().is( ".toggleAll" ) ) {
-			check( allComponents( this ), $( this ).prop( "checked" ) );
+			check( event, allComponents( this ), $( this ).prop( "checked" ) );
 		} else {
-			check( $( this ), $( this ).prop( "checked" ) );
+			check( event, $( this ), $( this ).prop( "checked" ) );
 		}
 	});
 
