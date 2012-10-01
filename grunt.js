@@ -95,19 +95,22 @@ function cloneOrFetch( callback ) {
 	]);
 }
 
-function checkout( branchOrTag ) {
+function checkout( ref ) {
 	return function( callback ) {
 		async.series([
 			function( callback ) {
-				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + branchOrTag );
+				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
 				grunt.utils.spawn({
 					cmd: "git",
-					args: [ "checkout", "-f", "origin/" + branchOrTag ],
+					args: [ "checkout", "-f", ref ],
 					opts: {
 						cwd: "tmp/jquery-ui"
 					}
 				}, log( callback, "Done with checkout", "Error checking out" ) );
 			},
+			// TODO: Figure out how to get correct docs for version. We will
+			// eventually support multiple version and will need to pull in the
+			// docs from the appropriate branch.
 			function() {
 				grunt.log.writeln( "Checking out api.jqueryui.com/master" );
 				grunt.utils.spawn({
@@ -122,6 +125,7 @@ function checkout( branchOrTag ) {
 	};
 }
 
+// TODO: Is there a way to clean up the install/update duplication?
 function install( callback ) {
 	async.series([
 		function( callback ) {
@@ -133,6 +137,13 @@ function install( callback ) {
 					cwd: "tmp/jquery-ui"
 				}
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
+			grunt.utils.spawn({
+				cmd: "npm",
+				args: [ "update" ],
+				opts: {
+					cwd: "tmp/jquery-ui"
+				}
+			}, log( callback, "Updated npm modules", "Error updating npm modules" ) );
 		},
 		function() {
 			grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
@@ -143,6 +154,13 @@ function install( callback ) {
 					cwd: "tmp/api.jqueryui.com"
 				}
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
+			grunt.utils.spawn({
+				cmd: "npm",
+				args: [ "update" ],
+				opts: {
+					cwd: "tmp/api.jqueryui.com"
+				}
+			}, log( callback, "Updated npm modules", "Error updating npm modules" ) );
 		}
 	]);
 }
@@ -207,12 +225,14 @@ function copy( callback ) {
 	]);
 }
 
-grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( branchOrTag ) {
+// The ref parameter exists purely for local testing.
+// Production should always use the config values.
+grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( ref ) {
 	var done = this.async();
 	async.series([
 		setup,
 		cloneOrFetch,
-		checkout( branchOrTag || "master" ),
+		checkout( ref || grunt.file.readJSON( "config.json" ).jqueryUi ),
 		install,
 		build,
 		copy
