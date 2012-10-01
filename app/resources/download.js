@@ -75,13 +75,10 @@
 			consolidatedDependents = $();
 			consolidatedNames = [];
 			elem.each(function() {
-				var elem = $( this ),
-					name = elem.attr( "name" );
-				if ( name ) {
+				var name = $( this ).attr( "name" );
+				if ( name && dependents[ name ] && dependents[ name ].filter( ":checked" ).not( elem ).length > 0 ) {
 					consolidatedNames.push( name );
-					if ( dependents[ name ] ) {
-						consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ) );
-					}
+					consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ).not( elem ) );
 				}
 			});
 
