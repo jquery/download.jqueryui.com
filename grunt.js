@@ -137,6 +137,8 @@ function install( callback ) {
 					cwd: "tmp/jquery-ui"
 				}
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
+		},
+		function( callback ) {
 			grunt.utils.spawn({
 				cmd: "npm",
 				args: [ "update" ],
@@ -145,7 +147,7 @@ function install( callback ) {
 				}
 			}, log( callback, "Updated npm modules", "Error updating npm modules" ) );
 		},
-		function() {
+		function( callback ) {
 			grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
 			grunt.utils.spawn({
 				cmd: "npm",
@@ -154,6 +156,8 @@ function install( callback ) {
 					cwd: "tmp/api.jqueryui.com"
 				}
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
+		},
+		function() {
 			grunt.utils.spawn({
 				cmd: "npm",
 				args: [ "update" ],
