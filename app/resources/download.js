@@ -196,7 +196,7 @@
 			var selected = $( this ).find( "option:selected" ),
 				folderName = selected.text().toLowerCase().replace( " ", "-" ),
 				val = selected.val();
-			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val ? "#" + val : "" ) );
+			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val && val != "none" ? "#" + val : "" ) );
 			$( "#theme-folder-name" ).val( folderName );
 		});
 

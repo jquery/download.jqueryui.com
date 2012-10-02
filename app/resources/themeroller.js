@@ -1,7 +1,8 @@
 /*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
-	var downloadJqueryuiHost = $( ".themeroller" ).first().data( "download-jqueryui-host" );
+	var baseVars = $( ".themeroller" ).first().data( "base-vars" ),
+		downloadJqueryuiHost = $( ".themeroller" ).first().data( "download-jqueryui-host" );
 
 	// rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -288,7 +289,7 @@
 			var href = $( "link[href*=parsetheme\\.css]:last" ).attr( "href" );
 			href = href.replace( "","" );
 			var themeParams = href.split( "?" )[ 1 ];
-			location.href = "/download" + ( themeParams ? "?themeParams=" + escape( themeParams ) : "" );
+			location.href = "/download?themeParams=" + ( themeParams ? escape( themeParams ) : escape( baseVars ) );
 			return false;
 		});
 	}

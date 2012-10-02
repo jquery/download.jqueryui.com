@@ -69,6 +69,7 @@ Frontend.prototype = {
 					themeGallery: themeGallery
 				})
 			}),
+			baseVars: themeGallery[ 2 ].serializedVars,
 			host: this.host,
 			resources: this.resources
 		});
