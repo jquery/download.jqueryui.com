@@ -508,7 +508,7 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 }
 
 #compGroupB {
-	max-width: 250px;
+	min-width: 220px;
 }
 .demoHeaders {
 	font-size: 1.3em;
