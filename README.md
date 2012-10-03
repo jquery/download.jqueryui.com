@@ -6,6 +6,6 @@
 
 `npm test` to run the unit tests.
 
-`node build-server.js` to run the server, go to the URL it outputs.
+`node server.js` to run the server, go to the URL it outputs.
 
-Add `--port 3000` or `--host ...` to specify custom host and port, e.g. `node build-server.js --port 3000`
+Add `--port 3000` or `--host ...` to specify custom host and port, e.g. `node server.js --port 3000`. Add `--console` to log messages in the console instead of syslog, e.g. `node server.js --console`.
