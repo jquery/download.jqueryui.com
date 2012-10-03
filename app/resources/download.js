@@ -27,41 +27,36 @@
 				name = elem.attr( "name" );
 
 			// Handle dependencies
-			if ( name ) {
-				if ( value ) {
-					if ( dependencies[ name ] ) {
-						// Whenever a checkbox is activated, also activate all dependencies
-						_check( dependencies[ name ], value );
-					}
-				} else if ( dependents[ name ] ) {
-					// Whenever a checkbox is deactivated, also deactivate all dependents
-					_check( dependents[ name ], value );
+			if ( value ) {
+				if ( dependencies[ name ] ) {
+					// Whenever a checkbox is activated, also activate all dependencies
+					_check( dependencies[ name ], value );
 				}
+			} else if ( dependents[ name ] ) {
+				// Whenever a checkbox is deactivated, also deactivate all dependents
+				_check( dependents[ name ], value );
 			}
 
 			elem.prop( "checked", value );
 
 			// Update toggle all
-			if ( name ) {
-				// When checking a component up
-				if ( value ) {
-					// Set group toggle all if all components of its group are checked
-					if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
-						$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
-					}
-					// Set toggle all if all components are checked
-					if ( !allComponents( elem ).filter( ":not(:checked)" ).length ) {
-						$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
-					}
-				} else {
-					// Unset group toggle all if no components of its group are checked
-					if ( !allGroup( elem ).filter( ":checked" ).length ) {
-						$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
-					}
-					// Unset toggle all if no components are checked
-					if ( !allComponents( elem ).filter( ":checked" ).length ) {
-						$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
-					}
+			if ( value ) {
+				// Set group toggle all if all components of its group are checked
+				if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
+					$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
+				}
+				// Set toggle all if all components are checked
+				if ( !allComponents( elem ).filter( ":not(:checked)" ).length ) {
+					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
+				}
+			} else {
+				// Unset group toggle all if no components of its group are checked
+				if ( !allGroup( elem ).filter( ":checked" ).length ) {
+					$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
+				}
+				// Unset toggle all if no components are checked
+				if ( !allComponents( elem ).filter( ":checked" ).length ) {
+					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
 				}
 			}
 		});
@@ -76,7 +71,7 @@
 			consolidatedNames = [];
 			elem.each(function() {
 				var name = $( this ).attr( "name" );
-				if ( name && dependents[ name ] && dependents[ name ].filter( ":checked" ).not( elem ).length > 0 ) {
+				if ( dependents[ name ] && dependents[ name ].filter( ":checked" ).not( elem ).length > 0 ) {
 					consolidatedNames.push( name );
 					consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ).not( elem ) );
 				}
