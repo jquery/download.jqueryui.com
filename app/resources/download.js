@@ -3,18 +3,18 @@
 
 	var dependencies = {},
 		dependents = {},
-		downloadJqueryuiHost = $( ".download-builder" ).first().data( "download-jqueryui-host" );
+		downloadJqueryuiHost = $( "#download-builder" ).first().data( "download-jqueryui-host" );
 
 	// rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
-		$( ".download-builder form" ).attr( "action", function( index, href ) {
+		$( "#download-builder form" ).attr( "action", function( index, href ) {
 			return href.replace( /(download\.)/, "stage.$1" );
 		});
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
-	function allComponents( referenceElement ) {
-		return $( referenceElement ).closest( "form" ).find( ".component-group-list input[type=checkbox]" );
+	function allComponents() {
+		return $( "#download-builder .component-group-list input[type=checkbox]" );
 	}
 
 	function allGroup( referenceElement ) {
@@ -46,7 +46,7 @@
 					$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
 				}
 				// Set toggle all if all components are checked
-				if ( !allComponents( elem ).filter( ":not(:checked)" ).length ) {
+				if ( !allComponents().filter( ":not(:checked)" ).length ) {
 					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
 				}
 			} else {
@@ -55,7 +55,7 @@
 					$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
 				}
 				// Unset toggle all if no components are checked
-				if ( !allComponents( elem ).filter( ":checked" ).length ) {
+				if ( !allComponents().filter( ":checked" ).length ) {
 					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
 				}
 			}
@@ -146,7 +146,7 @@
 	}
 
 	// Initializes dependencies and dependents auxiliary variables.
-	$( ".download-builder input[type=checkbox]" ).each(function() {
+	$( "#download-builder input[type=checkbox]" ).each(function() {
 		var checkbox = $( this ),
 			thisDependencies = checkbox.data( "dependencies" ),
 			thisName = checkbox.attr( "name" );
@@ -168,16 +168,16 @@
 	});
 
 	// Generating toggle all checkboxes
-	$( ".download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
-	$( ".download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
+	$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
+	$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
 	// binds click handlers on checkboxes
-	$( ".download-builder input[type=checkbox]" ).click(function( event ) {
+	$( "#download-builder input[type=checkbox]" ).click(function( event ) {
 		var target = $( event.target );
 		if ( target.parent().is( ".toggle" ) ) {
 			check( event, allGroup( this ), $( this ).prop( "checked" ) );
 		} else if ( target.parent().is( ".toggleAll" ) ) {
-			check( event, allComponents( this ), $( this ).prop( "checked" ) );
+			check( event, allComponents(), $( this ).prop( "checked" ) );
 		} else {
 			check( event, $( this ), $( this ).prop( "checked" ) );
 		}
@@ -185,7 +185,7 @@
 
 	// Loads theme section.
 	themeFetch(function( themeSection ) {
-		$( ".download-builder .components" ).after( themeSection );
+		$( "#download-builder .components" ).after( themeSection );
 
 		$( "#theme" ).on( "click change", function() {
 			var selected = $( this ).find( "option:selected" ),

@@ -1,8 +1,8 @@
 /*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
-	var baseVars = $( ".themeroller" ).first().data( "base-vars" ),
-		downloadJqueryuiHost = $( ".themeroller" ).first().data( "download-jqueryui-host" );
+	var baseVars = $( "#themeroller" ).first().data( "base-vars" ),
+		downloadJqueryuiHost = $( "#themeroller" ).first().data( "download-jqueryui-host" );
 
 	// rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -139,7 +139,7 @@
 
 	//function called after a change event in the form
 	function formChange(){
-		var locStr = $( ".themeroller .application form" ).serialize();
+		var locStr = $( "#themeroller .application form" ).serialize();
 		locStr = hash.clean( locStr );
 		updateCSS( locStr );
 		hash.updateHash( locStr, true );
@@ -276,7 +276,7 @@
 		$( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
 		// change event in form
-		$( ".themeroller .application form" ).bind( "change", function() {
+		$( "#themeroller .application form" ).bind( "change", function() {
 			formChange();
 			return false;
 		}).bind( "submit", function( event ) {
