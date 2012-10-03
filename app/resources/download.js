@@ -60,6 +60,7 @@
 				}
 			}
 		});
+		downloadOnOff();
 	}
 
 	function check( event, elem, value ) {
@@ -109,6 +110,14 @@
 		// Check validations (none)
 		} else {
 			_check( elem, value );
+		}
+	}
+
+	function downloadOnOff() {
+		if ( !allComponents().filter( ":checked" ).length && $( "#theme" ).val() == "none" ) {
+			$( "#download-builder input[type=submit]" ).prop( "disabled", true ).addClass( "ui-state-disabled" );
+		} else {
+			$( "#download-builder input[type=submit]" ).prop( "disabled", false ).removeClass( "ui-state-disabled" );
 		}
 	}
 
@@ -193,6 +202,7 @@
 				val = selected.val();
 			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val && val != "none" ? "#" + val : "" ) );
 			$( "#theme-folder-name" ).val( folderName );
+			downloadOnOff();
 		});
 
 		$( ".field-help-content" ).hide();
