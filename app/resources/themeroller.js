@@ -1,8 +1,8 @@
 /*jshint jquery: true, browser: true */
 ;(function( $, undefined ) {
 
-	var baseVars = $( "#themeroller" ).first().data( "base-vars" ),
-		downloadJqueryuiHost = $( "#themeroller" ).first().data( "download-jqueryui-host" );
+	var baseVars = $( "#themeroller" ).data( "base-vars" ),
+		downloadJqueryuiHost = $( "#themeroller" ).data( "download-jqueryui-host" );
 
 	// rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {

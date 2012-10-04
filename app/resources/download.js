@@ -3,7 +3,7 @@
 
 	var dependencies = {},
 		dependents = {},
-		downloadJqueryuiHost = $( "#download-builder" ).first().data( "download-jqueryui-host" );
+		downloadJqueryuiHost = $( "#download-builder" ).data( "download-jqueryui-host" );
 
 	// rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
