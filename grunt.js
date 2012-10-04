@@ -268,11 +268,13 @@ grunt.registerTask( "build", "Builds zip package with all components selected an
 			done( false );
 			return;
 		}
-		stream.end();
-		// Need to delay done() otherwise we occasionally have buggy packages.
-		setTimeout(function() {
+		stream.on( "close", function() {
 			done();
-		}, 500 );
+		});
+		stream.on( "error", function() {
+			done( false );
+		});
+		stream.end();
 	});
 });
 
