@@ -245,4 +245,35 @@ grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branc
 	});
 });
 
+grunt.registerTask( "build", "Builds zip package with all components selected and base theme", function( ref ) {
+	var done = this.async(),
+		Builder = require( "./lib/builder" ),
+		fs = require( "fs" ),
+		ThemeRoller = require( "./lib/themeroller" ),
+		allComponents = "widget core mouse position draggable droppable resizable selectable sortable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
+		theme = new ThemeRoller(),
+		builder = new Builder( allComponents, theme ),
+		stream;
+
+	grunt.log.ok( "Building \"" + builder.filename() + "\" with all components selected and base theme" );
+	if ( fs.existsSync( builder.filename() ) ) {
+		grunt.log.error( "Build: \"" + builder.filename() + "\" already exists" );
+		done( false );
+		return;
+	}
+	stream = fs.createWriteStream( builder.filename() );
+	builder.writeTo( stream, function( err, result ) {
+		if ( err ) {
+			grunt.log.error( "Build: " + err.message );
+			done( false );
+			return;
+		}
+		stream.end();
+		// Need to delay done() otherwise we occasionally have buggy packages.
+		setTimeout(function() {
+			done();
+		}, 500 );
+	});
+});
+
 };
