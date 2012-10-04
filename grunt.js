@@ -240,7 +240,9 @@ grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branc
 		install,
 		build,
 		copy
-	], done );
+	], function( err ) {
+		done( err ? false : true );
+	});
 });
 
 };
