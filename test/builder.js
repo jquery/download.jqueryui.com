@@ -1,8 +1,14 @@
 var Builder = require( "../lib/builder" ),
 	ThemeRoller = require( "../lib/themeroller" ),
-	allComponents = "widget core mouse position draggable droppable resizable selectable sortable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
-	allWidgets = "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),
-	allEffects = "effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
+	allComponents = release.components().map(function( component ) {
+		return component.name;
+	}),
+	allWidgets = "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),// TODO deduce this via release manifest
+	allEffects = release.components().filter(function( component ) {
+		return (/effect/).test( component.name );
+	}).map(function( component ) {
+		return component.name;
+	}),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
 	someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " ),
 	noComponents = [];

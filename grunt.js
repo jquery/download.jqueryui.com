@@ -249,19 +249,24 @@ grunt.registerTask( "build", "Builds zip package with all components selected an
 	var done = this.async(),
 		Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
+		path = require( "path" ),
+		release = require( "./lib/release" ).all()[ 0 ],
 		ThemeRoller = require( "./lib/themeroller" ),
-		allComponents = "widget core mouse position draggable droppable resizable selectable sortable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip effect effect-blind effect-bounce effect-clip effect-drop effect-explode effect-fade effect-fold effect-highlight effect-pulsate effect-scale effect-shake effect-slide effect-transfer".split( " " ),
+		allComponents = release.components().map(function( component ) {
+			return component.name;
+		}),
 		theme = new ThemeRoller(),
 		builder = new Builder( allComponents, theme ),
+		filename = path.join( "release", builder.filename() ),
 		stream;
 
-	grunt.log.ok( "Building \"" + builder.filename() + "\" with all components selected and base theme" );
-	if ( fs.existsSync( builder.filename() ) ) {
-		grunt.log.error( "Build: \"" + builder.filename() + "\" already exists" );
+	grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
+	if ( fs.existsSync( filename ) ) {
+		grunt.log.error( "Build: \"" + filename + "\" already exists" );
 		done( false );
 		return;
 	}
-	stream = fs.createWriteStream( builder.filename() );
+	stream = fs.createWriteStream( filename );
 	builder.writeTo( stream, function( err, result ) {
 		if ( err ) {
 			grunt.log.error( "Build: " + err.message );
