@@ -1,4 +1,5 @@
 var _ = require( "underscore" ),
+	config = require( "./config" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	querystring = require( "querystring" ),
@@ -71,6 +72,7 @@ Frontend.prototype = {
 			}),
 			baseVars: themeGallery[ 2 ].serializedVars,
 			host: this.host,
+			imageGeneratorUrl: "http://" + config.imageGeneratorHost + config.imageGeneratorPath + "/",
 			resources: this.resources
 		});
 	},

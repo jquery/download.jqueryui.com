@@ -1,4 +1,6 @@
 {
+	"imageGeneratorHost": "old.jqueryui.com",
+	"imageGeneratorPath": "/themeroller/images",
 	"jqueryUi": "1.9.0-rc.1",
 	"jquery": "1.8.2"
 }

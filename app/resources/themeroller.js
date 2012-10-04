@@ -2,7 +2,8 @@
 ;(function( $, undefined ) {
 
 	var baseVars = $( "#themeroller" ).data( "base-vars" ),
-		downloadJqueryuiHost = $( "#themeroller" ).data( "download-jqueryui-host" );
+		downloadJqueryuiHost = $( "#themeroller" ).data( "download-jqueryui-host" ),
+		imageGeneratorUrl = $( "#themeroller" ).data( "image-generator-url" );
 
 	// rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -239,8 +240,10 @@
 
 			// scrape options
 			$( this ).find( "option" ).each(function(){
-				ul.append( "<li class=\""+ $( this ).attr( "value" ) +"\" data-texturewidth=\""+$( this ).attr( "data-texturewidth" )+"\" data-textureheight=\""+$( this ).attr( "data-textureheight" )+"\" style=\"background: #555555 url( http://jqueryui.com/themeroller/images/?new=555555&w="+$( this ).attr( "data-texturewidth" )+"&h="+$( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/"+$( this ).attr( "value" )+"|0|0|100 ) 50% 50% repeat\"><a href=\"#\" title=\""+ $( this ).text() +"\">"+ $( this ).text() +"</a></li>" );
-				if( $( this ).get( 0 ).index == sIndex ){texturePicker.attr( "title",$( this ).text() ).css( "background", "#555555 url( http://jqueryui.com/themeroller/images/?new=555555&w="+$( this ).attr( "data-texturewidth" )+"&h="+$( this ).attr( "data-textureheight" )+"&f=png&q=60&fltr[]=over|textures/"+$( this ).attr( "value" )+"|0|0|100 ) 50% 50% repeat" );}
+				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" ) + "&h=" + $( this ).attr( "data-textureheight" ) + "&f=png&q=100&fltr[]=over|textures/" + $( this ).attr( "value" ) + "|0|0|100 ) 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
+				if( $( this ).get( 0 ).index == sIndex ) {
+					texturePicker.attr( "title",$( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" ) + "&h=" + $( this ).attr( "data-textureheight" ) + "&f=png&q=60&fltr[]=over|textures/" + $( this ).attr( "value" ) + "|0|0|100 ) 50% 50% repeat" );
+				}
 			});
 
 			ul.find( "li" ).click(function() {
