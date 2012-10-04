@@ -83,7 +83,7 @@ Frontend.prototype = {
 	},
 
 	gallery: function() {
-    return themeGallery;
+		return themeGallery;
 	},
 
 	rollYourOwn: function( params ) {
