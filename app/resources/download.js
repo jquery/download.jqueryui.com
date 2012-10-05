@@ -212,7 +212,7 @@
 				content: function() {
 					return content;
 				}
-			})
+			});
 		});
 
 		$( "#scope" ).keyup(function() {
