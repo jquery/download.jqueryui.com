@@ -9,7 +9,7 @@ var _ = require( "underscore" ),
 
 // Returns 'selected="selected"' if param == value
 Handlebars.registerHelper( "selected", function( param, value ) {
-	return param == value ? "selected=\"selected\"" : "";
+	return new Handlebars.SafeString( param == value ? "selected=\"selected\"" : "" );
 });
 
 // Returns select options with textures - configured to each theme group
