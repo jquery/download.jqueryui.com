@@ -194,10 +194,6 @@
 
 	// Loads theme section.
 	themeFetch(function( themeSection ) {
-		var escapeFolderName = function( val ) {
-			return val.replace( /[ \.\#\/\\]/g, "-" );
-		};
-
 		$( "#download-builder .components" ).after( themeSection );
 
 		$( "#theme" ).on( "click change", function() {
@@ -221,17 +217,14 @@
 
 		$( "#scope" ).keyup(function() {
 			if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
-				var escapedVal = escapeFolderName( $( this ).val() );
 				$( "#theme-folder-name" ).data( "suggestedEdit", true );
-				if ( escapedVal !== $( "#theme-folder-name" ).val() ) {
-					$( "#theme-folder-name" ).val( escapedVal );
-				}
+				$( "#theme-folder-name" ).val( $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) );
 			}
 		});	
 		
 		$( "#theme-folder-name" ).keyup(function() {
 			var val = $( this ).val(),
-				escapedVal = escapeFolderName( val );
+				escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
 			$( this ).data( "edited", true );
 			$( "#theme-folder-name" ).removeData( "suggestedEdit" );
 			if ( escapedVal !== val ) {
