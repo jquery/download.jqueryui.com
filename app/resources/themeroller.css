@@ -2,6 +2,63 @@
 	font-size: 10px;
 }
 
+#themeroller .mask-area {
+	clear: both;
+	float: left;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+.mid-area {
+	float: left;
+	left: 224px;/* 214px + 4px*2 + 1px*2 */
+	position: relative;
+	width: 200%;
+}
+.right-area {
+	float: left;
+	left: 50%;
+	margin-left: -460px;/* 230px*2 */
+	position: relative;
+	width: 100%;
+	z-index: 0;
+}
+.app-area {
+	float: left;
+	left: 239px;/* 224px + 15px */
+	margin-left: -50%;
+	overflow: hidden;
+	position: relative;
+	width: 224px;
+	z-index: 2;
+}
+.components-b-area {
+	float: left;
+	left: 0px;
+	overflow: hidden;
+	position: relative;
+	width: 230px;
+}
+.components-a-wrap {
+	float: right;
+	position: relative;
+	right: 100%;
+	width: 50%;
+	z-index: 1;
+}
+.components-a-pad {
+	margin: 0 15px 0 478px;
+	overflow: hidden;
+}
+@media all and (max-width: 1100px) {
+	.components-b-area {
+		clear: both;
+	}
+	.components-a-pad {
+		margin: 0 15px 0 239px;
+	}
+}
+
 /* ui site overrides for TR */
 .content {
 	overflow: visible;
@@ -14,8 +71,6 @@
 }
 #application-content {
 	background: #fff;
-	padding: 5px;
-	margin: 0 -1px;
 }
 
 /* TR application styles */
@@ -24,7 +79,6 @@
 .js .theme-group-content, .js #submitBtn, .js select.texture, .js #themeGallery, .js #help {
 	display: none;
 }
-
 
 #themeroller .application  {
 	font-family: Verdana, Arial, sans-serif;
@@ -484,32 +538,6 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 	font-size: 1.1em;
 }
 
-/* Components Column */
-#themeroller .components {
-	display: table;
-}
-#themeroller .components > div {
-	display: table-row;
-}
-#themeroller .components > div > div {
-	display: table-cell;
-	vertical-align: top;
-	padding-left: 15px;
-}
-#versionNotice {
-	margin: 20px 0;
-	border: 1px solid #333;
-	padding: 20px;
-	font-size: 1.2em;
-	background: #eee;
-}
-#compGroupA {
-	min-width: 216px;
-}
-
-#compGroupB {
-	min-width: 220px;
-}
 .demoHeaders {
 	font-size: 1.3em;
 	font-weight: normal;
