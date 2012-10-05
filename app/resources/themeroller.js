@@ -737,7 +737,7 @@
 	/**
 	 * UI Demos
 	 */
-
+$(function() {
 	// Accordion
 	$("#accordion").accordion({ header: "h3" });
 
@@ -794,6 +794,7 @@
 		function() { $(this).addClass('ui-state-hover'); },
 		function() { $(this).removeClass('ui-state-hover'); }
 	);
+});
 
 }( jQuery ));
 
