@@ -55,7 +55,7 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Fetch updates for jquery-ui repo" );
 				grunt.utils.spawn({
 					cmd: "git",
-					args: [ "fetch" ],
+					args: [ "fetch", "-t" ],
 					opts: {
 						cwd: "tmp/jquery-ui"
 					}
@@ -76,7 +76,7 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
 				grunt.utils.spawn({
 					cmd: "git",
-					args: [ "fetch" ],
+					args: [ "fetch", "-t" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
 					}
