@@ -104,26 +104,24 @@
 	top: 12px;
 }
 #download-builder .components {
-	display: table;
 	width: 100%;
 	position: relative;
 }
-#download-builder .components > div {
-	display: table-row;
-	border: 0 none;
-}
-#download-builder .components > div > div {
-	position: relative;
-	display: table-cell;
+#download-builder .component-group {
+	clear: both;
+	border: none;
 	border-bottom: 1px dotted #666666;
-	padding: 25px 15px 15px;
+}
+#download-builder .component-group > div {
+	float: left;
+	position: relative;
+	padding: 3% 2% 2%;
 }
 #download-builder .component-group-desc {
-	max-width: 230px;
-	width: 30%;
+	width: 25.25%;
 }
 #download-builder .component-group-list {
-	width: 70%;
+	width: 65.25%;
 }
 #download-builder .component-group-desc h3 {
 	font-size: 1.5em;
@@ -131,34 +129,39 @@
 #download-builder .component-group-desc p {
 	color: #666666;
 	font-size: 1.2em;
-	margin: 0.8em 0;
+	margin: 1.8% 0;
 	width: 70%;
 }
-#download-builder .component-group-list > div {
-	display: table;
-	border-spacing: 4px 6px;
+#download-builder .component-group-list > label {
+	clear: both;
+	width: 100%;
 }
-#download-builder .component-group-list > div > label {
-	display: table-row;
+#download-builder .component-group-list > label > * {
+	float: left;
 }
-#download-builder .component-group-list > div > label > * {
-	display: table-cell;
-	border-spacing: 0.9em 0 1.4em;
+#download-builder .component-group-list > label input {
+	margin: 1% 1% 1% 0;
 }
-#download-builder label span.component-title {
+#download-builder span.component-title {
 	font-size: 1.2em;
+	line-height: 1.2em;
 	font-weight: bold;
-	margin-right: 10px;
-	min-width: 100px;
+	margin: 1% 1.8% 1% 0;
+	width: 22%;
 }
-#download-builder label span.component-desc {
+#download-builder span.component-desc {
 	font-size: 1.1em;
+	line-height: 1.2em;
+	margin: 1% 0;
+	width: 66%
 }
-#download-builder div.field-pair {
-    margin: 0.9em 0 1.4em;
-}
-#download-builder div.field-pair input {
-    margin-right: 6px;
+@media all and (max-width: 400px) {
+	#download-builder .component-group-desc {
+		width: 96%;
+	}
+	#download-builder .component-group-list {
+		width: 96%;
+	}
 }
 #download-builder .advanced-settings h3 {
     cursor: pointer;
@@ -215,3 +218,19 @@
 	font-size: 10px;
 	max-width: 400px;
 }
+
+/* Clearfix */
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.clearfix {display: inline-block;}
+
+/* Hides from IE-mac \ */
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
