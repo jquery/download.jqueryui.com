@@ -17,7 +17,7 @@ Handlebars.registerHelper( "themerollerParams", function( serializedVars ) {
 
 var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
 	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
-	themeTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/theme.html", "utf8" ) );
+	themeTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/theme.html", "utf8" ) ),
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/wrap.html", "utf8" ) );
 
 var Frontend = function( args ) {
@@ -52,7 +52,7 @@ Frontend.prototype = {
 			data: JSON.stringify( themeTemplate({
 				folderName: selectedTheme.folderName(),
 				selectedTheme: selectedTheme,
-				themeGallery: selectedTheme.name == "Custom Theme" ?  [ selectedTheme ].concat( themeGallery ) : themeGallery
+				themeGallery: selectedTheme.name === "Custom Theme" ?  [ selectedTheme ].concat( themeGallery ) : themeGallery
 			}))
 		});
 	}

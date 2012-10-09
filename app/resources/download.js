@@ -114,7 +114,7 @@
 	}
 
 	function downloadOnOff() {
-		if ( !allComponents().filter( ":checked" ).length && $( "#theme" ).val() == "none" ) {
+		if ( !allComponents().filter( ":checked" ).length && $( "#theme" ).val() === "none" ) {
 			$( "#download-builder input[type=submit]" ).prop( "disabled", true ).addClass( "ui-state-disabled" );
 		} else {
 			$( "#download-builder input[type=submit]" ).prop( "disabled", false ).removeClass( "ui-state-disabled" );
@@ -133,7 +133,7 @@
 	}
 
 	function pluralize( count, singular, plural ) {
-		return count == 1 ? singular : plural;
+		return count === 1 ? singular : plural;
 	}
 
 	function hashClean(locStr){
@@ -200,7 +200,7 @@
 			var selected = $( this ).find( "option:selected" ),
 				folderName = selected.text().toLowerCase().replace( " ", "-" ),
 				val = selected.val();
-			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val && val != "none" ? "#" + val : "" ) );
+			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val && val !== "none" ? "#" + val : "" ) );
 			$( "#theme-folder-name" ).val( folderName );
 			downloadOnOff();
 		});
@@ -220,8 +220,8 @@
 				$( "#theme-folder-name" ).data( "suggestedEdit", true );
 				$( "#theme-folder-name" ).val( $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) );
 			}
-		});	
-		
+		});
+
 		$( "#theme-folder-name" ).keyup(function() {
 			var val = $( this ).val(),
 				escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
