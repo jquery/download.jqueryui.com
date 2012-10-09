@@ -9,7 +9,7 @@ var _ = require( "underscore" ),
 
 // Returns 'selected="selected"' if param == value
 Handlebars.registerHelper( "selected", function( param, value ) {
-	return new Handlebars.SafeString( param == value ? "selected=\"selected\"" : "" );
+	return new Handlebars.SafeString( param === value ? "selected=\"selected\"" : "" );
 });
 
 // Returns select options with textures - configured to each theme group
@@ -17,7 +17,7 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 	var optSet = "";
 	textures.forEach(function( texture ) {
 		var name = texture.file.split( "." )[ 0 ].split( "_" ).slice( 1 ).join( " " ),
-			selected = texture.file == select ? " selected=\"selected\"" : "",
+			selected = texture.file === select ? " selected=\"selected\"" : "",
 			texturedims = [ texture.width, texture.height ];
 		// large images need hard coded icon sizes to be useful
 		if ( texture.width * texture.height >= 360000 ) {
