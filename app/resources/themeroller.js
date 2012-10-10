@@ -380,7 +380,7 @@
 		});
 
 		if ( hash.currSearch() ) {
-			location.href = "/themeroller#" + hash.currSearch();
+			location.href = "/themeroller/#" + hash.currSearch();
 		} else {
 			updateCSS();
 		}
