@@ -11,7 +11,8 @@ var Builder = require( "../lib/builder" ),
 	}),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
 	someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " ),
-	noComponents = [];
+	noComponents = [],
+	invalidComponent = "invalid_widget";
 
 
 function filePresent( build, filepath ) {
@@ -508,5 +509,14 @@ module.exports = {
 				test.done();
 			}
 		});
+	},
+	"test: throw error when selecting invalid component": function( test ) {
+		test.expect( 1 );
+		try {
+			new Builder( [ invalidComponent ], new ThemeRoller() );
+		} catch( err ) {
+			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
+		}
+		test.done();
 	}
 };
