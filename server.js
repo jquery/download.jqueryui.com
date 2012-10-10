@@ -45,33 +45,38 @@ function route(app) {
 	app.post( routes.download, function( request, response, next) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
-			var field, builder, theme,
-				themeVars = null,
-				components = [];
-			if ( fields.theme !== "none" ) {
-				themeVars = querystring.parse( fields.theme );
-			}
-			// override with fields if they exist
-			if ( themeVars !== null ) {
-				themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
-				themeVars.scope = fields.scope || themeVars.scope;
-			}
-			delete fields.theme;
-			delete fields[ "theme-folder-name" ];
-			delete fields.scope;
-			for ( field in fields ) {
-				components.push( field );
-			}
-			theme = new ThemeRoller( themeVars );
-			builder = new Builder( components, theme );
-			response.setHeader( "Content-Type", "application/zip" );
-			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
-			builder.writeTo( response, function( err, result ) {
-				if ( err ) {
-					response.writeHead( 500, err.message );
+			try {
+				var field, builder, theme,
+					themeVars = null,
+					components = [];
+				if ( fields.theme !== "none" ) {
+					themeVars = querystring.parse( fields.theme );
 				}
+				// override with fields if they exist
+				if ( themeVars !== null ) {
+					themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
+					themeVars.scope = fields.scope || themeVars.scope;
+				}
+				delete fields.theme;
+				delete fields[ "theme-folder-name" ];
+				delete fields.scope;
+				for ( field in fields ) {
+					components.push( field );
+				}
+				theme = new ThemeRoller( themeVars );
+				builder = new Builder( components, theme );
+				response.setHeader( "Content-Type", "application/zip" );
+				response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
+				builder.writeTo( response, function( err, result ) {
+					if ( err ) {
+						response.writeHead( 500, err.message );
+					}
+					response.end();
+				});
+			} catch( err ) {
+				response.writeHead( 500, err.message );
 				response.end();
-			});
+			}
 		});
 	});
 	app.get( routes.downloadTheme, function( request, response, next ) {
