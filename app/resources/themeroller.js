@@ -248,7 +248,7 @@
 
 			ul.find( "li" ).click(function() {
 				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
-				texturePicker.attr( "title",$( this ).text() ).css( "background", "#555555 url( http://jqueryui.com/themeroller/images/?new=555555&w="+$( this ).attr( "data-texturewidth" )+"&h="+$( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/"+$( this ).attr( "class" )+"|0|0|100 ) 50% 50% repeat" );
+				texturePicker.attr( "title",$( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w="+$( this ).attr( "data-texturewidth" )+"&h="+$( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/"+$( this ).attr( "class" )+"|0|0|100 ) 50% 50% repeat" );
 				ul.fadeOut( 100 );
 				formChange();
 				return false;
