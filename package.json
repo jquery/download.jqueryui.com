@@ -1,6 +1,6 @@
 {
 	"name": "download.jqueryui.com",
-	"version": "1.9.0-5",
+	"version": "1.9.0-6",
 	"dependencies": {
 		"async": "0.1.22",
 		"connect": "1.8.5",
