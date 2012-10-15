@@ -18,6 +18,17 @@
 	 * App
 	 */
 
+	$( "#reverse-background" ).click(function() {
+		var maskArea = $( ".mask-area" );
+		if ( $(this).is( ":checked" ) ) {
+			maskArea.css( { background: "#333" } );
+			$( ".demoHeaders" ).css( { color: "#CCC" } );	
+		} else {
+			maskArea.css( { background: "#FFF" } );
+			$( ".demoHeaders" ).css( { color: "#000" } );	
+		}	
+	});
+
 	//global for tracking open and focused toolbar panels on refresh
 
 	//backbutton and hash bookmarks support
