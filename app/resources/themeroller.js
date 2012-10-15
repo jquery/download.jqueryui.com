@@ -14,15 +14,14 @@
 	 * App
 	 */
 
-	$( "#reverseBackground" ).click(function() {
+	$( "#reverse-background" ).click(function() {
 		var maskArea = $( ".mask-area" );
-		console.log('Here: '+this.checked);
-		if(this.checked) {
-			maskArea.css({background:"#333"});
-			$( ".demoHeaders" ).css({color:'#CCC'});	
+		if ( $(this).is( ":checked" ) ) {
+			maskArea.css( { background: "#333" } );
+			$( ".demoHeaders" ).css( { color: "#CCC" } );	
 		} else {
-			maskArea.css({background:"#FFF"});
-			$( ".demoHeaders" ).css({color:'#000'});	
+			maskArea.css( { background: "#FFF" } );
+			$( ".demoHeaders" ).css( { color: "#000" } );	
 		}	
 	});
 
