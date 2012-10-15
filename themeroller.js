@@ -72,6 +72,7 @@ Frontend.prototype = {
 					themeGallery: themeGallery
 				})
 			}),
+			demoOptions: '<div id="demoOptions" class="demoHeaders"><input type="checkbox" name="reverseBackground" id="reverseBackground"><label for="reverseBackground"> Reverse page background</label></div>',
 			baseVars: themeGallery[ 2 ].serializedVars,
 			compGroupA: compGroupATemplate(),
 			compGroupB: compGroupBTemplate(),
