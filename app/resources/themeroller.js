@@ -805,7 +805,7 @@ $(function() {
 	$( "p" ).tooltip({
 		items: "img[alt]",
 		content: function() {
-				return $( this ).attr( "alt" );
+			return $( this ).attr( "alt" );
 		}
 	});
 
