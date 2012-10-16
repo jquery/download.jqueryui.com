@@ -356,6 +356,15 @@ input.cornerRadius {
 	width: 20px;
 }
 
+/*demoOptions*/
+#demo-options {
+	padding-top: 12px;
+	padding-left: 12px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 10px;
+}
+
+
 
 /* Custom form elements */
 #themeroller .application div.hasPicker {
