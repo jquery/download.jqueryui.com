@@ -795,19 +795,19 @@ $(function() {
 		function() { $(this).removeClass('ui-state-hover'); }
 	);
 
-  // Spinner
-  $( "#spinner" ).spinner();
+	// Spinner
+	$( "#spinner" ).spinner();
 
-  // Menu
-  $( "#menu" ).menu();
+	// Menu
+	$( "#menu" ).menu();
 
-  // Tooltip
-  $( "p" ).tooltip({
-    items: "img[alt]",
-    content: function() {
-        return $( this ).attr( "alt" );
-    }
-  });
+	// Tooltip
+	$( "p" ).tooltip({
+		items: "img[alt]",
+		content: function() {
+				return $( this ).attr( "alt" );
+		}
+	});
 
 });
 
