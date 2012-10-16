@@ -825,6 +825,21 @@ $(function() {
 		function() { $(this).addClass('ui-state-hover'); },
 		function() { $(this).removeClass('ui-state-hover'); }
 	);
+
+  // Spinner
+  $( "#spinner" ).spinner();
+
+  // Menu
+  $( "#menu" ).menu();
+
+  // Tooltip
+  $( "p" ).tooltip({
+    items: "img[alt]",
+    content: function() {
+        return $( this ).attr( "alt" );
+    }
+  });
+
 });
 
 }( jQuery ));
