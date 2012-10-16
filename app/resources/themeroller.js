@@ -22,11 +22,11 @@
 		var maskArea = $( ".mask-area" );
 		if ( $(this).is( ":checked" ) ) {
 			maskArea.css( { background: "#333" } );
-			$( ".demoHeaders" ).css( { color: "#CCC" } );	
+			$( ".demoHeaders" ).css( { color: "#CCC" } );
 		} else {
 			maskArea.css( { background: "#FFF" } );
-			$( ".demoHeaders" ).css( { color: "#000" } );	
-		}	
+			$( ".demoHeaders" ).css( { color: "#000" } );
+		}
 	});
 
 	//global for tracking open and focused toolbar panels on refresh
@@ -288,6 +288,16 @@
 			});
 		});
 
+		// ensures numbers only are entered for opacity inputs
+		$( "input.opacity" ).on( "keyup", function() {
+			var number = parseInt( this.value, 10 );
+			if( isNaN( number ) ) {
+				this.value = "";
+				return;
+			}
+			this.value = Math.max( 0, Math.min( 100, number ) );
+		});
+
 		// spindowns in TR panel
 		$( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
@@ -402,7 +412,6 @@
 		hash.init();
 
 	});
-
 
 
 	/*
