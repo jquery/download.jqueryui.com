@@ -1,5 +1,7 @@
 ## jQuery UI Download Builder
 
+Be sure that node >= 0.8.x is installed.
+
 `npm install` to install node modules.
 
 `grunt prepare:[tag/branch]` to create distribution files, e.g. `grunt prepare:1.9.0` or `grunt prepare:master`
