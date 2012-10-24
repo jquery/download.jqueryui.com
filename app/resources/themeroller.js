@@ -413,6 +413,22 @@
 
 	});
 
+	// ensures numbers only are entered for opacity inputs
+	$("input.opacity").keyup( function(event) {
+		var number = parseInt(this.value, 10);
+		if(isNaN(number)) {
+			this.value = "";
+		}
+		else if( number < 0 ) {
+			this.value = number;
+		}
+		else if ( number > 100 ) {
+			this.value = 100;
+		}
+		else {
+			this.value = number;
+		}
+	});
 
 	/*
 	 plugin resources from here down
