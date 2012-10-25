@@ -249,7 +249,7 @@ grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branc
 	});
 });
 
-grunt.registerTask( "build", "Builds zip package with all components selected and base theme", function( ref ) {
+grunt.registerTask( "build", "Builds zip package with all components selected and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
 		Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
@@ -261,7 +261,7 @@ grunt.registerTask( "build", "Builds zip package with all components selected an
 		}),
 		theme = new ThemeRoller(),
 		builder = new Builder( allComponents, theme ),
-		filename = path.join( "release", builder.filename() ),
+		filename = path.join( folder, builder.filename() ),
 		stream;
 
 	grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
