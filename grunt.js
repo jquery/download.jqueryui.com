@@ -78,7 +78,8 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
 				grunt.utils.spawn({
 					cmd: "git",
-					args: [ "fetch", "-t" ],
+					// TODO add , "-t" when we switch from master to tags
+					args: [ "fetch" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
 					}
@@ -113,6 +114,7 @@ function checkout( ref ) {
 			// TODO: Figure out how to get correct docs for version. We will
 			// eventually support multiple version and will need to pull in the
 			// docs from the appropriate branch.
+			// See also TODO above for git-fetch
 			function() {
 				grunt.log.writeln( "Checking out api.jqueryui.com/master" );
 				grunt.utils.spawn({
