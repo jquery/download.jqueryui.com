@@ -25,7 +25,7 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 		}
 		// tall panel element (content, overlay, shadow, etc), don't allow glass texture
 		if ( panel === "true" ) {
-			if( texture.file != "02_glass.png" ) {
+			if( texture.file !== "02_glass.png" ) {
 				optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";
 			}
 		} else {
@@ -36,7 +36,7 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 });
 
 Handlebars.registerHelper( "themeParams", function( serializedVars ) {
-	return serializedVars.length > 0 ? "?themeParams=" + escape( serializedVars ) : "";
+	return serializedVars.length > 0 ? "?themeParams=" + querystring.escape( serializedVars ) : "";
 });
 
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
@@ -91,7 +91,7 @@ Frontend.prototype = {
 	},
 
 	rollYourOwn: function( params ) {
-		var theme = new ThemeRoller( querystring.parse( unescape( params.themeParams ) ) );
+		var theme = new ThemeRoller( querystring.parse( querystring.unescape( params.themeParams ) ) );
 		return jsonpTemplate({
 				callback: params.callback,
 				data: JSON.stringify( rollyourownTemplate( theme ) )

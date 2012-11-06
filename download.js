@@ -45,7 +45,7 @@ Frontend.prototype = {
 	theme: function( params ) {
 		var selectedTheme = themeGallery[ 0 ];
 		if ( params.themeParams ) {
-			selectedTheme = new ThemeRoller( querystring.parse( unescape( params.themeParams ) ) );
+			selectedTheme = new ThemeRoller( querystring.parse( querystring.unescape( params.themeParams ) ) );
 		}
 		return jsonpTemplate({
 			callback: params.callback,
