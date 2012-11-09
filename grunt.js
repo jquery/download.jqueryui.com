@@ -99,22 +99,14 @@ function cloneOrFetch( callback ) {
 }
 
 function buildAll( callback ) {
-	var refs = grunt.file.readJSON( "config.json" ).jqueryUi;
+	var config = require( "./lib/config" );
 
-	if ( typeof refs === "string" ) {
-		refs = [ refs ];
-	}
-	if ( !Array.isArray( refs ) ) {
-		grunt.log.error( "Missing jqueryUi branch/tag in config.json" )
-		callback( true );
-	}
-
-	async.forEachSeries( refs, function( ref, callback ) {
+	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
 		async.series([
-			checkout( ref ),
+			checkout( jqueryUi.ref ),
 			install,
 			build,
-			copy( ref )
+			copy( jqueryUi.ref )
 		], function( err ) {
 			callback( err );//go to next ref
 		});
@@ -238,8 +230,8 @@ function build( callback ) {
 
 function copy( ref ) {
 	return function( callback ) {
-		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version;
-		var dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version ),
+		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
+			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version ),
 			docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post";
 		grunt.file.mkdir( "release" );
 		async.series([
@@ -272,7 +264,7 @@ function copy( ref ) {
 				callback();
 			}
 		]);
-	}
+	};
 }
 
 // The ref parameter exists purely for local testing.
