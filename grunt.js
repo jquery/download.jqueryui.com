@@ -98,6 +98,31 @@ function cloneOrFetch( callback ) {
 	]);
 }
 
+function buildAll( callback ) {
+	var refs = grunt.file.readJSON( "config.json" ).jqueryUi;
+
+	if ( typeof refs === "string" ) {
+		refs = [ refs ];
+	}
+	if ( !Array.isArray( refs ) ) {
+		grunt.log.error( "Missing jqueryUi branch/tag in config.json" )
+		callback( true );
+	}
+
+	async.forEachSeries( refs, function( ref, callback ) {
+		async.series([
+			checkout( ref ),
+			install,
+			build,
+			copy( ref )
+		], function( err ) {
+			callback( err );//go to next ref
+		});
+	}, function( err ) {
+		callback( err );//done
+	});
+}
+
 function checkout( ref ) {
 	return function( callback ) {
 		async.series([
@@ -211,39 +236,53 @@ function build( callback ) {
 	]);
 }
 
-function copy( callback ) {
-	var dir = require( "path" ).basename( grunt.file.expandDirs( "tmp/jquery-ui/dist/jquery-ui-*" )[ 0 ] ),
-		docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post";
-	grunt.file.mkdir( "release" );
-	async.series([
-		function( callback ) {
-			grunt.log.writeln( "Copying jQuery UI release over to release/" + dir );
-			grunt.utils.spawn({
-				cmd: "cp",
-				args: [ "-r", "tmp/jquery-ui/dist/" + dir, "release/" + dir ]
-			}, log( callback, "Done copying", "Error copying" ) );
-		},
-		function() {
-			grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + dir + "docs/" );
-			grunt.file.expandFiles( docs + "/**" ).forEach(function( file ) {
-				grunt.file.copy( file, file.replace( docs, "release/" + dir + "docs/" ));
-			});
-			callback();
-		}
-	]);
+function copy( ref ) {
+	return function( callback ) {
+		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version;
+		var dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version ),
+			docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post";
+		grunt.file.mkdir( "release" );
+		async.series([
+			function( callback ) {
+				if ( fs.existsSync( "release/" + ref ) ) {
+					grunt.log.writeln( "Cleaning up existing release/" + ref );
+					grunt.utils.spawn({
+						cmd: "rm",
+						args: [ "-Rf", ref ],
+						opts: {
+							cwd: "release"
+						}
+					}, log( callback, "Cleaned", "Error cleaning" ) );
+				} else {
+					callback();
+				}
+			},
+			function( callback ) {
+				grunt.log.writeln( "Copying jQuery UI " + version + " over to release/" + ref );
+				grunt.utils.spawn({
+					cmd: "cp",
+					args: [ "-r", "tmp/jquery-ui/dist/" + dir, "release/" + ref ]
+				}, log( callback, "Done copying", "Error copying" ) );
+			},
+			function() {
+				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
+				grunt.file.expandFiles( docs + "/**" ).forEach(function( file ) {
+					grunt.file.copy( file, file.replace( docs, "release/" + ref + "/docs/" ));
+				});
+				callback();
+			}
+		]);
+	}
 }
 
 // The ref parameter exists purely for local testing.
 // Production should always use the config values.
-grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( ref ) {
+grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
 	async.series([
 		setup,
 		cloneOrFetch,
-		checkout( ref || grunt.file.readJSON( "config.json" ).jqueryUi ),
-		install,
-		build,
-		copy
+		buildAll
 	], function( err ) {
 		done( err ? false : true );
 	});
