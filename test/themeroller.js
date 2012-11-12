@@ -5,11 +5,11 @@ var fs = require( "fs" ),
 var fixtures = {
 	base: "" +
 		"/*!\n" +
-		" * jQuery UI CSS Framework 1.9.0pre\n" +
+		" * jQuery UI CSS Framework 1.9.1\n" +
 		" * http://jqueryui.com\n" +
 		" *\n" +
 		" * Copyright 2012 jQuery Foundation and other contributors\n" +
-		" * Dual licensed under the MIT or GPL Version 2 licenses.\n" +
+		" * Released under the MIT license.\n" +
 		" * http://jquery.org/license\n" +
 		" *\n" +
 		" * http://docs.jquery.com/UI/Theming/API\n" +
@@ -33,10 +33,9 @@ var fixtures = {
 		".ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #d3d3d3; background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #555555; }\n" +
 		".ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #555555; text-decoration: none; }\n" +
 		".ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #999999; background: #dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }\n" +
-		".ui-state-hover a, .ui-state-hover a:hover { color: #212121; text-decoration: none; }\n" +
+		".ui-state-hover a, .ui-state-hover a:hover, .ui-state-hover a:link, .ui-state-hover a:visited { color: #212121; text-decoration: none; }\n" +
 		".ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #aaaaaa; background: #ffffff url(images/ui-bg_glass_65_ffffff_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }\n" +
 		".ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #212121; text-decoration: none; }\n" +
-		".ui-widget :active { outline: none; }\n" +
 		"\n" +
 		"/* Interaction Cues\n" +
 		"----------------------------------*/\n" +
@@ -48,6 +47,7 @@ var fixtures = {
 		".ui-priority-primary, .ui-widget-content .ui-priority-primary, .ui-widget-header .ui-priority-primary { font-weight: bold; }\n" +
 		".ui-priority-secondary, .ui-widget-content .ui-priority-secondary,  .ui-widget-header .ui-priority-secondary { opacity: .7; filter:Alpha(Opacity=70); font-weight: normal; }\n" +
 		".ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled { opacity: .35; filter:Alpha(Opacity=35); background-image: none; }\n" +
+		".ui-state-disabled .ui-icon { filter:Alpha(Opacity=35); } /* For IE8 - See #6059 */\n" +
 		"\n" +
 		"/* Icons\n" +
 		"----------------------------------*/\n" +
