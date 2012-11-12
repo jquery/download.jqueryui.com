@@ -1,4 +1,5 @@
 var Builder = require( "../lib/builder" ),
+	release = require( "../lib/release" ).all()[ 0 ],
 	ThemeRoller = require( "../lib/themeroller" ),
 	allComponents = release.components().map(function( component ) {
 		return component.name;
