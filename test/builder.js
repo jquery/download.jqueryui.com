@@ -24,7 +24,7 @@ function filePresent( build, filepath ) {
 }
 
 function build( components, theme, callback ) {
-	var builder = new Builder( components, theme );
+	var builder = new Builder( release, components, theme );
 	builder.build(function( err, build ) {
 		if ( err ) {
 			callback( err, null );
@@ -514,7 +514,7 @@ module.exports = {
 	"test: throw error when selecting invalid component": function( test ) {
 		test.expect( 1 );
 		try {
-			new Builder( [ invalidComponent ], new ThemeRoller() );
+			new Builder( release, [ invalidComponent ], new ThemeRoller() );
 		} catch( err ) {
 			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
 		}

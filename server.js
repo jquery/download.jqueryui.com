@@ -27,6 +27,7 @@ var argv = require( "optimist" ).argv,
 	ThemeRoller = require( "./lib/themeroller" );
 
 var frontend = new Frontend();
+Builder.cacheReleases();
 Builder.cacheThemeImages();
 
 function params( request ) {
@@ -46,7 +47,7 @@ function route(app) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
 			try {
-				var field, builder, theme,
+				var builder, field, release, theme,
 					themeVars = null,
 					components = [];
 				if ( fields.theme !== "none" ) {
@@ -64,7 +65,9 @@ function route(app) {
 					components.push( field );
 				}
 				theme = new ThemeRoller( themeVars );
-				builder = new Builder( components, theme );
+				// FIXME Get it from request params
+				release = require( "./lib/release" ).all()[0];
+				builder = new Builder( release, components, theme );
 				response.setHeader( "Content-Type", "application/zip" );
 				response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 				builder.writeTo( response, function( err, result ) {
