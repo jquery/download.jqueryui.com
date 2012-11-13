@@ -9,8 +9,7 @@
  */
 (function( $, undefined ) {
 
-	var dependencies = {},
-		dependents = {},
+	var dependencies, dependents,
 		downloadJqueryuiHost = $( "#download-builder" ).data( "download-jqueryui-host" );
 
 	// rewrite form action for testing on staging
@@ -152,6 +151,68 @@
 		return hashClean( window.location.search );
 	}
 
+	function componentsFetch( version, success, error ) {
+		$.ajax( downloadJqueryuiHost + "/download/components" , {
+			dataType: "jsonp",
+			data: {
+				version: version
+			},
+			success: function( response ) {
+				success( response );
+			},
+			error: error
+		});
+	}
+
+  function loadComponents() {
+		var version = $( "#download-builder [name=version]:checked" ).val();
+		componentsFetch( version, function( componentsSection ) {
+			dependencies = {};
+			dependents = {};
+
+			$( "#download-builder .components-area").html( componentsSection );
+
+			// Initializes dependencies and dependents auxiliary variables.
+			$( "#download-builder input[type=checkbox]" ).each(function() {
+				var checkbox = $( this ),
+					thisDependencies = checkbox.data( "dependencies" ),
+					thisName = checkbox.attr( "name" );
+
+				if ( !thisName || !thisDependencies ) {
+					return;
+				}
+				thisDependencies = thisDependencies.split( "," );
+				dependencies[ thisName ] = $();
+				$.each( thisDependencies, function() {
+					var dependecy = this,
+						dependecyElem = $( "[name=" + this + "]" );
+					dependencies[ thisName ] = dependencies[ thisName ].add( dependecyElem );
+					if ( !dependents[ dependecy ] ) {
+						dependents[ dependecy ] = $();
+					}
+					dependents[ dependecy ] = dependents[ dependecy ].add( checkbox );
+				});
+			});
+
+			// Generating toggle all checkboxes
+			$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
+			$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
+
+			// Binds click handlers on components checkboxes
+			$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
+				var target = $( event.target );
+				if ( target.parent().is( ".toggle" ) ) {
+					check( event, allGroup( this ), $( this ).prop( "checked" ) );
+				} else if ( target.parent().is( ".toggleAll" ) ) {
+					check( event, allComponents(), $( this ).prop( "checked" ) );
+				} else {
+					check( event, $( this ), $( this ).prop( "checked" ) );
+				}
+			});
+
+		});
+	}
+
 	function themeFetch( success, error ) {
 		$.ajax( downloadJqueryuiHost + "/download/theme" + ( currSearch() ? "?" + currSearch() : "" ), {
 			dataType: "jsonp",
@@ -162,47 +223,15 @@
 		});
 	}
 
-	// Initializes dependencies and dependents auxiliary variables.
-	$( "#download-builder input[type=checkbox]" ).each(function() {
-		var checkbox = $( this ),
-			thisDependencies = checkbox.data( "dependencies" ),
-			thisName = checkbox.attr( "name" );
+	// Binds click on version selection
+	$( "#download-builder [name=version]" ).on( "change", loadComponents );
 
-		if ( !thisName || !thisDependencies ) {
-			return;
-		}
-		thisDependencies = thisDependencies.split( "," );
-		dependencies[ thisName ] = $();
-		$.each( thisDependencies, function() {
-			var dependecy = this,
-				dependecyElem = $( "[name=" + this + "]" );
-			dependencies[ thisName ] = dependencies[ thisName ].add( dependecyElem );
-			if ( !dependents[ dependecy ] ) {
-				dependents[ dependecy ] = $();
-			}
-			dependents[ dependecy ] = dependents[ dependecy ].add( checkbox );
-		});
-	});
-
-	// Generating toggle all checkboxes
-	$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
-	$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
-
-	// binds click handlers on checkboxes
-	$( "#download-builder input[type=checkbox]" ).on( "click", function( event ) {
-		var target = $( event.target );
-		if ( target.parent().is( ".toggle" ) ) {
-			check( event, allGroup( this ), $( this ).prop( "checked" ) );
-		} else if ( target.parent().is( ".toggleAll" ) ) {
-			check( event, allComponents(), $( this ).prop( "checked" ) );
-		} else {
-			check( event, $( this ), $( this ).prop( "checked" ) );
-		}
-	});
+	// Loads components
+  loadComponents();
 
 	// Loads theme section.
 	themeFetch(function( themeSection ) {
-		$( "#download-builder .components" ).after( themeSection );
+		$( "#download-builder .theme-area" ).html( themeSection );
 
 		$( "#theme" ).on( "click change", function() {
 			var selected = $( this ).find( "option:selected" ),

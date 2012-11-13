@@ -1,8 +1,9 @@
-var Download = require( "./download" ),
+var config = require( "./config" ),
+	Download = require( "./download" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
-	ThemeRoller = require( "./themeroller" ),
-	config = require( "./config" );
+	Release = require( "./lib/release" ),
+	ThemeRoller = require( "./themeroller" );
 
 var rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
 
@@ -11,7 +12,7 @@ var Frontend = function( host ) {
 		host: ( host || "" ),
 		resources: {
 			jqueryVersion: config.jquery,
-			jqueryuiVersion: config.jqueryUi
+			jqueryuiVersion: Release.getDefault().pkg.version
 		}
 	};
 	this.download = new Download( args );

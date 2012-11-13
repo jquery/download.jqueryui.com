@@ -155,6 +155,22 @@
 	margin: 1% 0;
 	width: 66%
 }
+#download-builder .version-area label > * {
+	float: left;
+}
+#download-builder .version-area label > input {
+	margin: 0.5em 0.5em 0.5em 0;
+}
+#download-builder span.version-title {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin: 0.5em 0.5em 0.5em 0;
+}
+#download-builder span.version-desc {
+	color: #666666;
+	font-size: 1.1em;
+	margin: 0.5em 0;
+}
 @media all and (max-width: 400px) {
 	#download-builder .component-group-desc {
 		width: 96%;
