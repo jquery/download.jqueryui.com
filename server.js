@@ -27,8 +27,10 @@ var argv = require( "optimist" ).argv,
 	ThemeRoller = require( "./lib/themeroller" );
 
 var frontend = new Frontend();
-Builder.cacheReleases();
-Builder.cacheThemeImages();
+if ( process.argv.indexOf( "--nocache" ) === -1 ) {
+	Builder.cacheReleases();
+	Builder.cacheThemeImages();
+}
 
 function params( request ) {
 	return querystring.parse( request.url.split( "?" )[ 1 ] );
