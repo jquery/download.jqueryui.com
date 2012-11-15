@@ -280,41 +280,45 @@ grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified 
 	});
 });
 
-grunt.registerTask( "build", "Builds zip package with all components selected and base theme, inside the given folder", function( folder ) {
+grunt.registerTask( "build", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
 		Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
 		path = require( "path" ),
-		release = require( "./lib/release" ).all()[ 0 ],
+		Release = require( "./lib/release" ),
 		ThemeRoller = require( "./lib/themeroller" ),
-		allComponents = release.components().map(function( component ) {
+		theme = new ThemeRoller();
+
+	async.forEachSeries( Release.all(), function( release, next ) {
+		var allComponents = release.components().map(function( component ) {
 			return component.name;
 		}),
-		theme = new ThemeRoller(),
-		builder = new Builder( allComponents, theme ),
-		filename = path.join( folder, builder.filename() ),
-		stream;
-
-	grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
-	if ( fs.existsSync( filename ) ) {
-		grunt.log.error( "Build: \"" + filename + "\" already exists" );
-		done( false );
-		return;
-	}
-	stream = fs.createWriteStream( filename );
-	builder.writeTo( stream, function( err, result ) {
-		if ( err ) {
-			grunt.log.error( "Build: " + err.message );
-			done( false );
+			builder = new Builder( release, allComponents, theme ),
+			filename = path.join( folder, builder.filename() ),
+			stream;
+		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
+		if ( fs.existsSync( filename ) ) {
+			grunt.log.error( "Build: \"" + filename + "\" already exists" );
+			next( false );
 			return;
 		}
-		stream.on( "close", function() {
-			done();
+		stream = fs.createWriteStream( filename );
+		builder.writeTo( stream, function( err, result ) {
+			if ( err ) {
+				grunt.log.error( "Build: " + err.message );
+				next( false );
+				return;
+			}
+			stream.on( "close", function() {
+				next();
+			});
+			stream.on( "error", function() {
+				next( false );
+			});
+			stream.end();
 		});
-		stream.on( "error", function() {
-			done( false );
-		});
-		stream.end();
+	}, function( err ) {
+		done( err );
 	});
 });
 
