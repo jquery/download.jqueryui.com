@@ -531,7 +531,16 @@ Release.all().forEach(function( release ) {
 						allComponents: release.components().map(function( component ) {
 							return component.name;
 						}),
-						allWidgets: "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),// FIXME deduce this via release manifest
+						allWidgets: release.components().filter(function( component ) {
+							return component.category === "widget";
+						}).map(function( component ) {
+							return [ component.name ].concat( component.dependencies );
+						}).reduce(function( flat, arr ) {
+							return flat.concat( arr );
+						}, [] ).sort().filter(function( element, i, arr ) {
+							// unique
+							return i == arr.indexOf( element );
+						}),
 						allEffects: release.components().filter(function( component ) {
 							return (/effect/).test( component.name );
 						}).map(function( component ) {
