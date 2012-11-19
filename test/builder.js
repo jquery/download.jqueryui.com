@@ -1,15 +1,6 @@
 var Builder = require( "../lib/builder" ),
-	release = require( "../lib/release" ).all()[ 0 ],
+	Release = require( "../lib/release" ),
 	ThemeRoller = require( "../lib/themeroller" ),
-	allComponents = release.components().map(function( component ) {
-		return component.name;
-	}),
-	allWidgets = "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),// TODO deduce this via release manifest
-	allEffects = release.components().filter(function( component ) {
-		return (/effect/).test( component.name );
-	}).map(function( component ) {
-		return component.name;
-	}),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
 	someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " ),
 	noComponents = [],
@@ -23,7 +14,7 @@ function filePresent( build, filepath ) {
 	}).length > 0;
 }
 
-function build( components, theme, callback ) {
+function build( release, components, theme, callback ) {
 	var builder = new Builder( release, components, theme );
 	builder.build(function( err, build ) {
 		if ( err ) {
@@ -353,18 +344,19 @@ function themeFilesCheck( test, build, components, theme ) {
 }
 
 
-var theme = new ThemeRoller(),
+var tests,
+	theme = new ThemeRoller(),
 	namedTheme = new ThemeRoller({
 		folderName: "mytheme"
 	}),
 	noTheme = new ThemeRoller( null );
 
-module.exports = {
+tests = {
 	"test: select all components": {
 		"with a theme": function( test ) {
-			var components = allComponents;
+			var components = this.allComponents;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, theme, function( err, build ) {
+			build( this.release, components, theme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -377,9 +369,9 @@ module.exports = {
 			});
 		},
 		"with a named theme": function( test ) {
-			var components = allComponents;
+			var components = this.allComponents;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, namedTheme, function( err, build ) {
+			build( this.release, components, namedTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -392,9 +384,9 @@ module.exports = {
 			});
 		},
 		"no theme": function( test ) {
-			var components = allComponents;
+			var components = this.allComponents;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, noTheme, function( err, build ) {
+			build( this.release, components, noTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -408,9 +400,9 @@ module.exports = {
 		},
 	},
 	"test: select all widgets": function( test ) {
-		var components = allWidgets;
+		var components = this.allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( err, build ) {
+		build( this.release, components, theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -422,9 +414,9 @@ module.exports = {
 		});
 	},
 	"test: select all effects": function( test ) {
-		var components = allEffects;
+		var components = this.allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( err, build ) {
+		build( this.release, components, theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -439,7 +431,7 @@ module.exports = {
 		"with a theme": function( test ) {
 			var components = someWidgets1;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, theme, function( err, build ) {
+			build( this.release, components, theme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -454,7 +446,7 @@ module.exports = {
 		"with a named theme": function( test ) {
 			var components = someWidgets1;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, namedTheme, function( err, build ) {
+			build( this.release, components, namedTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -470,7 +462,7 @@ module.exports = {
 		 function( test ) {
 			var components = someWidgets1;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( components, noTheme, function( err, build ) {
+			build( this.release, components, noTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -486,7 +478,7 @@ module.exports = {
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( err, build ) {
+		build( this.release, components, theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -500,7 +492,7 @@ module.exports = {
 	"test: select no components": function( test ) {
 		var components = noComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( components, theme, function( err, build ) {
+		build( this.release, components, theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -514,10 +506,42 @@ module.exports = {
 	"test: throw error when selecting invalid component": function( test ) {
 		test.expect( 1 );
 		try {
-			new Builder( release, [ invalidComponent ], new ThemeRoller() );
+			new Builder( this.release, [ invalidComponent ], new ThemeRoller() );
 		} catch( err ) {
 			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
 		}
 		test.done();
 	}
 };
+
+
+module.exports = {};
+
+// Build tests for each jqueryUi release
+Release.all().forEach(function( release ) {
+	function a( exp, tests ) {
+		Object.keys( tests ).forEach(function( i ) {
+			if ( typeof tests[ i ] === "object" ) {
+				exp[ i ] = {};
+				a( exp[ i ], tests[ i ] );
+			} else {
+				exp[ i ] = function( test ) {
+					tests[ i ].call({
+						release: release,
+						allComponents: release.components().map(function( component ) {
+							return component.name;
+						}),
+						allWidgets: "widget core mouse position draggable resizable accordion autocomplete button datepicker dialog menu progressbar slider spinner tabs tooltip".split( " " ),// FIXME deduce this via release manifest
+						allEffects: release.components().filter(function( component ) {
+							return (/effect/).test( component.name );
+						}).map(function( component ) {
+							return component.name;
+						})
+					}, test );
+				};
+			}
+		});
+	}
+	module.exports[ release.pkg.version] = {};
+	a( module.exports[ release.pkg.version], tests );
+});
