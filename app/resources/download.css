@@ -166,7 +166,7 @@
 	font-weight: bold;
 	margin: 0.5em 0.5em 0.5em 0;
 }
-#download-builder span.version-desc {
+#download-builder span.version-label {
 	color: #666666;
 	font-size: 1.1em;
 	margin: 0.5em 0;

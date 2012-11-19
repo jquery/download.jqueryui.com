@@ -16,7 +16,7 @@ Handlebars.registerHelper( "isSelectedTheme", function( theme, selectedTheme ) {
 });
 
 Handlebars.registerHelper( "isVersionChecked", function( release ) {
-	return Release.getDefault().pkg.version === release.pkg.version ? " checked=\"checked\"" : "";
+	return Release.getStable().pkg.version === release.pkg.version ? " checked=\"checked\"" : "";
 });
 
 Handlebars.registerHelper( "themerollerParams", function( serializedVars ) {
@@ -48,7 +48,7 @@ Frontend.prototype = {
 			resources: this.resources,
 			releases: releases.map(function( release ) {
 				return {
-					description: release.description ? "(" + release.description + ")" : "",
+					label: release.label ? "(" + release.label + ")" : "",
 					pkg: release.pkg
 				};
 			})

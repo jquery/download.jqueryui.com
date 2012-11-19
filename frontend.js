@@ -12,7 +12,7 @@ var Frontend = function( host ) {
 		host: ( host || "" ),
 		resources: {
 			jqueryVersion: config.jquery,
-			jqueryuiVersion: Release.getDefault().pkg.version
+			jqueryuiVersion: Release.getStable().pkg.version
 		}
 	};
 	this.download = new Download( args );
