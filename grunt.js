@@ -78,7 +78,6 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
 				grunt.utils.spawn({
 					cmd: "git",
-					// TODO add , "-t" when we switch from master to tags
 					args: [ "fetch" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
@@ -118,6 +117,7 @@ function buildAll( callback ) {
 function checkout( ref ) {
 	return function( callback ) {
 		async.series([
+			// Check out jquery-ui
 			function( callback ) {
 				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
 				grunt.utils.spawn({
@@ -128,19 +128,51 @@ function checkout( ref ) {
 					}
 				}, log( callback, "Done with checkout", "Error checking out" ) );
 			},
-			// TODO: Figure out how to get correct docs for version. We will
-			// eventually support multiple version and will need to pull in the
-			// docs from the appropriate branch.
-			// See also TODO above for git-fetch
+			// Check out api.jqueryui.com
 			function() {
-				grunt.log.writeln( "Checking out api.jqueryui.com/master" );
-				grunt.utils.spawn({
-					cmd: "git",
-					args: [ "checkout", "-f", "origin/master" ],
-					opts: {
-						cwd: "tmp/api.jqueryui.com"
+				var docRef = "origin/master";
+				async.series([
+					// Get the correct documentation for jquery-ui version
+					function( callback ) {
+						// If ref is a branch, then get documentation "master" branch.
+						if ( !(/^\d.\d/).test( ref ) ) {
+							callback();
+						}
+						// If ref is a tag, then get its corresponding <major>-<minor> branch, if available or "master".
+						grunt.utils.spawn({
+							cmd: "git",
+							args: [ "branch", "-a" ],
+							opts: {
+								cwd: "tmp/api.jqueryui.com"
+							}
+						}, function( error, docBranches ) {
+							if ( error ) {
+								grunt.log.error( "Error listing branches: " + error.stderr );
+							} else {
+								var correspondingBranch = ref.replace( /^(\d).(\d).*/, "$1-$2" ),
+									isCorrespondingBranch = function( branch ) {
+										return ( new RegExp( "origin/" + correspondingBranch + "$" ) ).test( branch );
+									};
+								if ( docBranches.split( "\n" ).some( isCorrespondingBranch ) ) {
+									docRef = correspondingBranch;
+								} else {
+									grunt.log.ok( "Did not find a \"" + correspondingBranch + "\" branch, using \"master\"" );
+								}
+								callback();
+							}
+						});
+					},
+					function() {
+						grunt.log.writeln( "Checking out api.jqueryui.com branch/tag: " + docRef );
+						grunt.utils.spawn({
+							cmd: "git",
+							args: [ "checkout", "-f", docRef ],
+							opts: {
+								cwd: "tmp/api.jqueryui.com"
+							}
+						}, log( callback, "Done with checkout", "Error checking out" ) );
 					}
-				}, log( callback, "Done with checkout", "Error checking out" ) );
+				]);
 			}
 		]);
 	};
