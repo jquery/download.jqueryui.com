@@ -1,4 +1,5 @@
 /*jshint jquery: true, browser: true */
+/*global _: false, escape: false, Hash: false, QueryString: false, unescape: false */
 /*!
  * jQuery UI Download Builder client-side JavaScript file
  * http://jqueryui.com/download/
@@ -7,10 +8,13 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, undefined ) {
+(function( _, $, Hash, QueryString, undefined ) {
 
 	var dependencies, dependents,
-		downloadJqueryuiHost = $( "#download-builder" ).data( "download-jqueryui-host" );
+		downloadBuilder = $( "#download-builder" ),
+		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" ),
+		baseVars = downloadBuilder.data( "base-vars" ),
+		model = {};
 
 	// rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -18,6 +22,34 @@
 			return href.replace( /(download\.)/, "stage.$1" );
 		});
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
+	}
+
+	function setModel( attributes ) {
+		_.extend( model, attributes );
+
+		if ( attributes.folderName ) {
+			$( "#theme-folder-name" ).val( model.folderName );
+		}
+		
+		if ( attributes.version ) {
+			$( "#download-builder [name=version][value=\"" + model.version + "\"]" ).trigger( "click" );
+		}
+
+		if ( attributes.themeParams || attributes.version ) {
+			$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
+		}
+
+		updateHash();
+	}
+
+	function themeUrl() {
+		return downloadJqueryuiHost + "/download/theme" + ( model.themeParams !== "none" ? "/?" + QueryString.encode( model ) : "" );
+	}
+
+	function themerollerUrl() {
+		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.parse( unescape ( model.themeParams ) ) : {} ),
+			querystring = QueryString.encode( _.extend( themeParams, _.pick( model, "version" ) ) );
+		return "/themeroller/#" + querystring;
 	}
 
 	function allComponents() {
@@ -68,6 +100,19 @@
 			}
 		});
 		downloadOnOff();
+	}
+
+	function componentsFetch( success, error ) {
+		$.ajax( downloadJqueryuiHost + "/download/components/", {
+			dataType: "jsonp",
+			data: {
+				version: model.version
+			},
+			success: function( response ) {
+				success( response );
+			},
+			error: error
+		});
 	}
 
 	function check( event, elem, value ) {
@@ -139,34 +184,10 @@
 			);
 	}
 
-	function pluralize( count, singular, plural ) {
-		return count === 1 ? singular : plural;
-	}
-
-	function hashClean(locStr){
-		return locStr.replace( /%23/g, "" ).replace( /[\?#]+/g, "" );
-	}
-
-	function currSearch() {
-		return hashClean( window.location.search );
-	}
-
-	function componentsFetch( version, success, error ) {
-		$.ajax( downloadJqueryuiHost + "/download/components" , {
-			dataType: "jsonp",
-			data: {
-				version: version
-			},
-			success: function( response ) {
-				success( response );
-			},
-			error: error
-		});
-	}
-
   function loadComponents() {
-		var version = $( "#download-builder [name=version]:checked" ).val();
-		componentsFetch( version, function( componentsSection ) {
+		var versionElement = $( "#download-builder [name=version]:checked" );
+		setModel({ version: versionElement.val() });
+		componentsFetch(function( componentsSection ) {
 			dependencies = {};
 			dependents = {};
 
@@ -213,8 +234,12 @@
 		});
 	}
 
+	function pluralize( count, singular, plural ) {
+		return count === 1 ? singular : plural;
+	}
+
 	function themeFetch( success, error ) {
-		$.ajax( downloadJqueryuiHost + "/download/theme" + ( currSearch() ? "?" + currSearch() : "" ), {
+		$.ajax( themeUrl(), {
 			dataType: "jsonp",
 			success: function( response ) {
 				success( response );
@@ -223,22 +248,37 @@
 		});
 	}
 
+	// update hash to reflect model
+	function updateHash() {
+		Hash.update( QueryString.encode( model ), true );
+	}
+
+	Hash.on( "change", function( hash ) {
+		setModel( QueryString.parse( hash ) );
+	});
+
+	Hash.init();
+
 	// Binds click on version selection
 	$( "#download-builder [name=version]" ).on( "change", loadComponents );
 
 	// Loads components
-  loadComponents();
+	loadComponents();
 
 	// Loads theme section.
 	themeFetch(function( themeSection ) {
 		$( "#download-builder .theme-area" ).html( themeSection );
 
+		if ( !model.themeParams ) {
+			setModel({ themeParams: escape( $( "#theme option:selected" ).val() ) });
+		}
+
 		$( "#theme" ).on( "click change", function() {
-			var selected = $( this ).find( "option:selected" ),
-				folderName = selected.text().toLowerCase().replace( " ", "-" ),
-				val = selected.val();
-			$( this ).closest( ".download-builder-header" ).find( "a.themeroller-link" ).attr( "href", "/themeroller" + ( val && val !== "none" ? "#" + val : "" ) );
-			$( "#theme-folder-name" ).val( folderName );
+			var selected = $( this ).find( "option:selected" );
+			setModel({
+				folderName: selected.text().toLowerCase().replace( " ", "-" ),
+				themeParams: escape( selected.val() )
+			});
 			downloadOnOff();
 		});
 
@@ -275,7 +315,9 @@
 			}
 		});
 	}, function( jqXHR, textStatus, errorThrown ) {
-		console.log( "Failed loading theme section", textStatus, errorThrown );
+		if ( console && console.log ) {
+			console.log( "Failed loading theme section", textStatus, errorThrown );
+		}
 	});
 
-}( jQuery ));
+}( _, jQuery, Hash, QueryString ) );

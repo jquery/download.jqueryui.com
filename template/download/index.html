@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/download.css">
-<div id="download-builder" data-download-jqueryui-host="{{host}}">
+<div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}">
 	<form action="{{host}}/download" method="POST">
 		<div class="download-builder-header version-area">
 			<h2>Version</h2>
@@ -27,4 +27,8 @@
 </div>
 
 <script src="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/jquery-ui.min.js"></script>
+<script src="/resources/external/event_emitter.min.js"></script>
+<script src="/resources/external/querystring.js"></script>
+<script src="/resources/external/underscore.js"></script>
+<script src="/resources/hash.js"></script>
 <script src="/resources/download.js"></script>

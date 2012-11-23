@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global escape: true, Hash: false */
+/*global _: false, escape: true, Hash: false, QueryString: false */
 /*!
  * jQuery UI Theme Roller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -8,24 +8,67 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, undefined ) {
+(function( _, $, Hash, QueryString, undefined ) {
 	var theme, Theme,
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
+		model = {},
 		openGroups = [],
 		themeroller = $( "#themeroller" ),
 		baseVars = themeroller.data( "base-vars" ),
 		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
-		imageGeneratorUrl = themeroller.data( "image-generator-url" );
+		imageGeneratorUrlPart = themeroller.data( "image-generator-url" );
 
 	// rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
+	function setModel( attributes, opts ) {
+		opts = opts || {};
+		if ( typeof opts.updateHash === "undefined" ) { opts.updateHash = true; }
+		_.extend( model, attributes );
+		if ( opts.reloadRollYourOwn ) {
+			rollYourOwnLoad(function() {
+				$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
+			});
+		}
+		$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
+		updateCSS();
+		if ( opts.updateHash ) { updateHash(); }
+		updateThemeGalleryDownloadLink();
+	}
+
+	// a different querystring structure used by several resources
+	function themeParamsQuerystring( model ) {
+		return querystring = QueryString.encode( _.extend({
+			themeParams: escape( QueryString.encode( _.omit( model, "version" ) ) )
+		}, _.pick( model, "version" ) ) );
+	}
+
+	// returns download url
+	function downloadUrl( customModel ) {
+		return "/download/?" + themeParamsQuerystring( customModel || model );
+	}
+
+	// returns imageGenerator url
+	function imageGeneratorUrl( texturewidth, textureheight, value ) {
+		return imageGeneratorUrlPart + "/?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
+	}
+
+	// returns rollYourOwn url
+	function rollYourOwnUrl() {
+		return downloadJqueryuiHost + "/themeroller/rollyourown/?" + themeParamsQuerystring( model );
+	}
+
+	// returns parsetheme url
+	function parsethemeUrl() {
+		return downloadJqueryuiHost + "/themeroller/parsetheme.css/?" + QueryString.encode( model );
+	}
+
 	// function to append a new theme stylesheet with the new style changes
-	function updateCSS( locStr ) {
-		$( "body" ).append( "<link href=\"" + downloadJqueryuiHost + "/themeroller/parsetheme.css" + ( locStr ? "?" + locStr : "" ) + "\" type=\"text/css\" rel=\"Stylesheet\" />");
+	function updateCSS() {
+		$( "body" ).append( "<link href=\"" + parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
 		var links = $( "link[href*=parsetheme\\.css]" );
 		if ( links.length > 1 ) {
 			// wait a few seconds before removing previous theme(s) to avoid FOUW
@@ -35,12 +78,14 @@
 		}
 	}
 
+	// update hash to reflect model
+	function updateHash() {
+		Hash.update( QueryString.encode( model ), true );
+	}
+
 	// function called after a change event in the form
 	function formChange() {
-		var locStr = themeroller.find( ".application form" ).serialize();
-		locStr = Hash.clean( locStr );
-		updateCSS( locStr );
-		Hash.update( locStr, true );
+		setModel( QueryString.parse( themeroller.find( ".application form" ).serialize() ) );
 	}
 
 	// set up spindowns
@@ -179,15 +224,15 @@
 
 			// scrape options
 			$( this ).find( "option" ).each(function() {
-				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" ) + "&h=" + $( this ).attr( "data-textureheight" ) + "&f=png&q=100&fltr[]=over|textures/" + $( this ).attr( "value" ) + "|0|0|100 ) 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
+				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
 				if( $( this ).get( 0 ).index === sIndex ) {
-					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" ) + "&h=" + $( this ).attr( "data-textureheight" ) + "&f=png&q=60&fltr[]=over|textures/" + $( this ).attr( "value" ) + "|0|0|100 ) 50% 50% repeat" );
+					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat" );
 				}
 			});
 
 			ul.find( "li" ).on( "click", function( event ) {
 				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
-				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" )+"&h=" + $( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/" + $( this ).attr( "class" )+"|0|0|100 ) 50% 50% repeat" );
+				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "class" ) ) + ") 50% 50% repeat" );
 				ul.fadeOut( 100 );
 				formChange();
 				event.preventDefault();
@@ -235,15 +280,6 @@
 			event.preventDefault();
 		});
 
-		//DL theme button
-		$( "#downloadTheme" ).on( "click", function( event ) {
-			var themeParams,
-				href = $( "link[href*=parsetheme\\.css]:last" ).attr( "href" ).replace( "","" );
-			themeParams = href.split( "?" )[ 1 ];
-			location.href = "/download?themeParams=" + ( themeParams ? escape( themeParams ) : escape( baseVars ) );
-			event.preventDefault();
-		});
-
 		if ( openGroups.length > 0 ) {
 			$.each( openGroups, function() {
 				themeroller.find( ".theme-group-content:eq( " + this + " )" ).prev().trigger( "click" );
@@ -252,6 +288,14 @@
 		if( focusedEl ) {
 			themeroller.find( "form" ).find( "input, select, .texturePicker" ).eq( focusedEl ).click();
 		}
+	}
+
+	function updateThemeGalleryDownloadLink() {
+		$( "#themeGallery a.download" )
+			.each(function() {
+				var downloadModel = _.extend( {}, model, QueryString.parse( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
+				 $( this ).attr( "href", downloadUrl( downloadModel ) );
+			});
 	}
 
 	function themeGalleryInit() {
@@ -264,16 +308,20 @@
 			.attr( "title", "Click to preview this theme" )
 			.each(function() {
 				$( this ).after(
-				"<a href=\"/download?themeParams=" + escape( $( this ).attr( "href" ).split( "?" )[ 1 ] ) + "\" class=\"download\" title=\"Download this theme\">Download</a>" +
+				"<a href=\"#\" class=\"download\" title=\"Download this theme\">Download</a>" +
 				"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
 			})
 			.parent()
 			.find( "a.edit" )
 			.on( "click", function( event ) {
-				$( this ).prev().prev().trigger( "click" );
+				setModel( QueryString.parse( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ), {
+					reloadRollYourOwn: true
+				});
 				$( "#rollerTabs" ).tabs( "select", 0 );
 				event.preventDefault();
 			});
+
+			updateThemeGalleryDownloadLink();
 	}
 
 	function demoInit() {
@@ -355,26 +403,9 @@
 		});
 	}
 
-	function rollYourOwnLoad( hash ) {
+	function rollYourOwnLoad( success ) {
 		var curr = ++lastRollYourOwnLoad;
-		$.ajax( downloadJqueryuiHost + "/themeroller/rollyourown?themeParams=" + escape( hash ), {
-			dataType: "jsonp",
-			success: function( response ) {
-				if ( curr !== lastRollYourOwnLoad ) {
-					return;
-				}
-				$( "#rollYourOwn" ).html( response );
-				rollYourOwnInit();
-			},
-			error: function() {
-				if ( console && console.log ) {
-					console.log( "Failed to reload rollYourOwn tab", arguments );
-				}
-			}
-		});
-	}
 
-	Hash.on( "change", function( hash ) {
 		// Roll Your Own
 		// remember which groups are open
 		openGroups = [];
@@ -392,18 +423,37 @@
 			}
 		});
 
-		rollYourOwnLoad( hash );
+		$.ajax( rollYourOwnUrl(), {
+			dataType: "jsonp",
+			success: function( response ) {
+				if ( curr !== lastRollYourOwnLoad ) {
+					return;
+				}
+				$( "#rollYourOwn" ).html( response );
+				rollYourOwnInit();
+				if ( success ) { success(); }
+			},
+			error: function() {
+				if ( console && console.log ) {
+					console.log( "Failed to reload rollYourOwn tab", arguments );
+				}
+			}
+		});
+	}
 
-		// Theme css
-		updateCSS( hash );
+	setModel( QueryString.parse( baseVars ), {
+		updateHash: false
 	});
 
+	Hash.on( "change", function( hash ) {
+		setModel( QueryString.parse( hash ), {
+			reloadRollYourOwn: true
+		});
+	});
+
+	appInit();
+	demoInit();
+	rollYourOwnLoad();
 	Hash.init();
 
-	// dom loaded
-	$(function() {
-		appInit();
-		demoInit();
-		rollYourOwnLoad( baseVars );
-	});
-}( jQuery, Hash ) );
+}( _, jQuery, Hash, QueryString ) );
