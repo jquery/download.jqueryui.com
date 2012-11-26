@@ -441,43 +441,22 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 #cornerWarning {font-size: .9em; margin: 5px 0;}
 
 
-/* Farbtastic styles */
+/* farbtastic overrides */
 .farbtastic {
-	position: relative;
 	background: #555;
 	border: 1px solid #aaa;
 	top: 1px;
 	left: 0;
 	z-index: 99999999;
 }
-.farbtastic * {
-	position: absolute;
-	cursor: crosshair;
-}
-.farbtastic, .farbtastic .wheel {
-	width: 195px;
-	height: 195px;
-}
-.farbtastic .color, .farbtastic .overlay {
-	top: 47px;
-	left: 47px;
-	width: 101px;
-	height: 101px;
-}
 .farbtastic .wheel {
-	background: url(../resources/images/themeroller/wheel.png) no-repeat;
-	width: 195px;
-	height: 195px;
+	background-image: url(../resources/images/farbtastic/wheel.png);
 }
 .farbtastic .overlay {
-	background: url(../resources/images/themeroller/mask.png) no-repeat;
+	background-image: url(../resources/images/farbtastic/mask.png);
 }
 .farbtastic .marker {
-	width: 17px;
-	height: 17px;
-	margin: -8px 0 0 -8px;
-	overflow: hidden;
-	background: url(../resources/images/themeroller/marker.png) no-repeat;
+	background-image: url(../resources/images/farbtastic/marker.png);
 }
 
 
