@@ -7,7 +7,7 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-;(function( $, undefined ) {
+(function( $, undefined ) {
 
 	var dependencies = {},
 		dependents = {},

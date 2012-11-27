@@ -1,20 +1,17 @@
 /*jshint jquery: true, browser: true */
 /*global EventEmitter: false */
 /*!
- * jQuery UI Theme Roller helper JavaScript file for History and hash support
+ * jQuery UI helper JavaScript file for History and hash support
  *
  * Copyright 2012 jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  */
-;(function( exports, $, EventEmitter, undefined ) {
-	/**
-	 * History and hash support
-	 */
-	var currentTabHash = "", // The hash that's only stored on a tab switch
-		ee = new EventEmitter(),
+(function( exports, $, EventEmitter, undefined ) {
+	var emitter = new EventEmitter(),
 		listenDelay = 600,
-		listen = true, // listen to hash changes?
+		// listen to hash changes?
+		listen = true,
 		pollInterval = 500,
 		poll = null,
 		storedHash = "";
@@ -37,7 +34,7 @@
 		if ( storedHash !== hash ) {
 			if ( listen === true ) {
 				// update was made by navigation button
-				ee.trigger( "change", [ currHash() ] );
+				emitter.trigger( "change", [ currHash() ] );
 			}
 			storedHash = hash;
 		}
@@ -81,8 +78,8 @@
 			storedHash = "";
 			checkHashChange();
 		},
-		on: $.proxy( ee.on, ee ),
-		off: $.proxy( ee.off, ee ),
+		on: $.proxy( emitter.on, emitter ),
+		off: $.proxy( emitter.off, emitter ),
 		update: updateHash
 	};
 }( this, jQuery, EventEmitter ) );
