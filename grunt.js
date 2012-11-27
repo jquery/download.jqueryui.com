@@ -8,7 +8,7 @@ module.exports = function( grunt ) {
 grunt.initConfig({
 	pkg: "<json:package.json>",
 	lint: {
-		files: [ "*.js", "lib/**/*.js", "app/**/*.js" ]
+		files: [ "*.js", "lib/**/*.js", "app/resources/*.js" ]
 	},
 	jshint: {
 		options: {
