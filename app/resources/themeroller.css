@@ -441,7 +441,7 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 #cornerWarning {font-size: .9em; margin: 5px 0;}
 
 
-/* farbtastic overrides */
+/* Farbtastic overrides */
 .farbtastic {
 	background: #555;
 	border: 1px solid #aaa;
