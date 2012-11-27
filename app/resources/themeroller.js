@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global EventEmitter: false */
+/*global Hash: false */
 /*!
  * jQuery UI Theme Roller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -8,8 +8,8 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-;(function( $, EventEmitter, undefined ) {
-	var hash, theme, Theme,
+;(function( $, Hash, undefined ) {
+	var theme, Theme,
 		escape = window.escape,
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
@@ -23,86 +23,6 @@
 	if ( /^stage\./.test( location.host ) ) {
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
-
-	/**
-	 * History and hash support
-	 */
-	hash = (function() {
-		var currentTabHash = "", // The hash that's only stored on a tab switch
-			ee = new EventEmitter(),
-			listenDelay = 600,
-			listen = true, // listen to hash changes?
-			pollInterval = 500,
-			poll = null,
-			storedHash = "";
-	
-		// start listening again
-		function startListening() {
-			setTimeout(function() {
-				listen = true;
-			}, listenDelay );
-		}
-
-		// stop listening to hash changes
-		function stopListening() {
-			listen = false;
-		}
-
-		// check if hash has changed
-		function checkHashChange() {
-			var hash = currHash();
-			if ( storedHash !== hash ) {
-				if ( listen === true ) {
-					// update was made by navigation button
-					ee.trigger( "change", [ currHash() ] );
-				}
-				storedHash = hash;
-			}
-
-			if ( !poll ) {
-				poll = setInterval( checkHashChange, pollInterval );
-			}
-		}
-
-		function updateHash( hash, ignore ) {
-			if ( ignore === true ) {
-				stopListening();
-			}
-			window.location.hash = hash;
-			if ( ignore === true ) {
-				storedHash = hash;
-				startListening();
-			}
-		}
-
-		function clean( hash ) {
-			return hash.replace( /%23/g, "" ).replace( /[\?#]+/g, "" );
-		}
-
-		function currHash() {
-			return clean( window.location.hash );
-		}
-
-		function currSearch() {
-			return clean( window.location.search );
-		}
-
-		// Export public interface
-		return {
-			clean: clean,
-			init: function() {
-				if ( currSearch() ) {
-					location.href = "/themeroller/#" + currSearch();
-				}
-
-				storedHash = "";
-				checkHashChange();
-			},
-			on: $.proxy( ee.on, ee ),
-			off: $.proxy( ee.off, ee ),
-			update: updateHash
-		};
-	}());
 
 	// function to append a new theme stylesheet with the new style changes
 	function updateCSS( locStr ){
@@ -119,9 +39,9 @@
 	// function called after a change event in the form
 	function formChange(){
 		var locStr = $( "#themeroller .application form" ).serialize();
-		locStr = hash.clean( locStr );
+		locStr = Hash.clean( locStr );
 		updateCSS( locStr );
-		hash.update( locStr, true );
+		Hash.update( locStr, true );
 	}
 
 	// set up spindowns
@@ -330,7 +250,7 @@
 		// loading and viewing gallery themes
 		$( "#themeGallery a" )
 			.click(function() {
-				hash.update( hash.clean( this.href.split( "?" )[ 1 ] ) );
+				Hash.update( Hash.clean( this.href.split( "?" )[ 1 ] ) );
 				return false;
 			})
 			.attr( "title", "Click to preview this theme" )
@@ -440,7 +360,7 @@
 		});
 	}
 
-	hash.on( "change", function( hash ) {
+	Hash.on( "change", function( hash ) {
 		// Roll Your Own
 		// remember which groups are open
 		openGroups = [];
@@ -464,7 +384,7 @@
 		updateCSS( hash );
 	});
 
-	hash.init();
+	Hash.init();
 
 	// dom loaded
 	$(function() {
@@ -472,4 +392,4 @@
 		demoInit();
 		rollYourOwnLoad( baseVars );
 	});
-}( jQuery, EventEmitter ) );
+}( jQuery, Hash ) );
