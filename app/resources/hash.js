@@ -72,7 +72,7 @@
 		clean: clean,
 		init: function() {
 			if ( currSearch() ) {
-				location.href = "/themeroller/#" + currSearch();
+				location.href = location.pathname.replace( /\/$/, "" ) + "/#" + currSearch();
 			}
 
 			storedHash = "";
