@@ -241,7 +241,9 @@
 		});
 
 		if ( openGroups.length > 0 ) {
-			themeroller.find( ".theme-group-content:eq( " + openGroups.join( "," ) + " )" ).prev().trigger( "click" );
+			$.each( openGroups, function() {
+				themeroller.find( ".theme-group-content:eq( " + this + " )" ).prev().trigger( "click" );
+			});
 		}
 		if( focusedEl ) {
 			themeroller.find( "form" ).find( "input, select, .texturePicker" ).eq( focusedEl ).click();
