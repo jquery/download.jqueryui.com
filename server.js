@@ -89,6 +89,7 @@ function route(app) {
 		}));
 	});
 	app.get( routes.themerollerParseTheme, function( request, response, next ) {
+    request.url = unescape(request.url);
 		response.setHeader( "Content-Type", "text/css" );
 		response.end( frontend.themeroller.css( params( request ) ) );
 	});
