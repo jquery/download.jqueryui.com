@@ -19,11 +19,11 @@ Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 		var name = texture.file.split( "." )[ 0 ].split( "_" ).slice( 1 ).join( " " ),
 			selected = texture.file === select ? " selected=\"selected\"" : "",
 			texturedims = [ texture.width, texture.height ];
-		// large images need hard coded icon sizes to be useful
+		// Large images need hard coded icon sizes to be useful
 		if ( texture.width * texture.height >= 360000 ) {
 			texturedims = [ 16, 16 ];
 		}
-		// tall panel element (content, overlay, shadow, etc), don't allow glass texture
+		// Tall panel element (content, overlay, shadow, etc), don't allow glass texture
 		if ( panel === "true" ) {
 			if( texture.file !== "02_glass.png" ) {
 				optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";

@@ -16,7 +16,7 @@
 		baseVars = downloadBuilder.data( "base-vars" ),
 		model = {};
 
-	// rewrite form action for testing on staging
+	// Rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		$( "#download-builder form" ).attr( "action", function( index, href ) {
 			return href.replace( /(download\.)/, "stage.$1" );

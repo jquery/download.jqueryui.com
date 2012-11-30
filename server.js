@@ -57,7 +57,7 @@ function route(app) {
 				if ( fields.theme !== "none" ) {
 					themeVars = querystring.parse( fields.theme );
 				}
-				// override with fields if they exist
+				// Override with fields if they exist
 				if ( themeVars !== null ) {
 					themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
 					themeVars.scope = fields.scope || themeVars.scope;

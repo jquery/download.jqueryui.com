@@ -19,7 +19,7 @@
 		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
 		imageGeneratorUrlPart = themeroller.data( "image-generator-url" );
 
-	// rewrite host for testing on staging
+	// Rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
@@ -39,29 +39,29 @@
 		updateThemeGalleryDownloadLink();
 	}
 
-	// a different model structure used by several resources
+	// A different model structure used by several resources
 	function downloadBuilderModel( model ) {
 		return _.extend({
 			themeParams: escape( QueryString.encode( _.omit( model, "version" ) ) )
 		}, _.pick( model, "version" ) );
 	}
 
-	// returns download url
+	// Returns download url
 	function downloadUrl( customModel ) {
 		return "/download/?" + QueryString.encode( downloadBuilderModel( customModel || model ) );
 	}
 
-	// returns imageGenerator url
+	// Returns imageGenerator url
 	function imageGeneratorUrl( texturewidth, textureheight, value ) {
 		return imageGeneratorUrlPart + "/?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
 	}
 
-	// returns parsetheme url
+	// Returns parsetheme url
 	function parsethemeUrl() {
 		return downloadJqueryuiHost + "/themeroller/parsetheme.css/?" + QueryString.encode( model );
 	}
 
-	// fetches rollYourOwn content
+	// Fetches rollYourOwn content
 	function rollYourOwnFetch() {
 		return $.ajax( downloadJqueryuiHost + "/themeroller/rollyourown", {
 			dataType: "jsonp",
@@ -69,29 +69,29 @@
 		});
 	}
 
-	// function to append a new theme stylesheet with the new style changes
+	// Function to append a new theme stylesheet with the new style changes
 	function updateCSS() {
 		$( "body" ).append( "<link href=\"" + parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
 		var links = $( "link[href*=parsetheme\\.css]" );
 		if ( links.length > 1 ) {
-			// wait a few seconds before removing previous theme(s) to avoid FOUW
+			// Wait a few seconds before removing previous theme(s) to avoid FOUW
 			setTimeout(function() {
 				links.not( ":last" ).remove();
 			}, 5000 );
 		}
 	}
 
-	// update hash to reflect model
+	// Update hash to reflect model
 	function updateHash() {
 		Hash.update( QueryString.encode( model ), true );
 	}
 
-	// function called after a change event in the form
+	// Function called after a change event in the form
 	function formChange() {
 		setModel( QueryString.parse( themeroller.find( ".application form" ).serialize() ) );
 	}
 
-	// set up spindowns
+	// Set up spindowns
 	$.fn.spinDown = function() {
 		return this.on( "click", function( event ) {
 			var $this = $( this );
@@ -108,26 +108,29 @@
 		});
 	};
 
-	// validation for hex inputs
+	// Validation for hex inputs
 	$.fn.validHex = function() {
 		return this.each(function() {
 			var value = $( this ).val();
-			value = value.replace( /[^#a-fA-F0-9]/g, "" ); // non [#a-f0-9]
+			value = value.replace( /[^#a-fA-F0-9]/g, "" );
 			value = value.toLowerCase();
 			if ( value.match( /#/g ) && value.match( /#/g ).length > 1 ) {
-				value = value.replace( /#/g, "" ); // ##
+				// ##
+				value = value.replace( /#/g, "" );
 			}
 			if ( value.indexOf( "#" ) === -1 ) {
-				value = "#"+value; // no #
+				// No #
+				value = "#"+value;
 			}
 			if ( value.length > 7 ) {
-				value = value.substr( 0, 7 ); // too many chars
+				// Too many chars
+				value = value.substr( 0, 7 );
 			}
 			$( this ).val( value );
 		});
 	};
 
-	// color pickers setup (sets bg color of inputs)
+	// Color pickers setup (sets bg color of inputs)
 	$.fn.applyFarbtastic = function() {
 		return this.each(function() {
 			$( "<div/>" ).farbtastic( this ).remove();
@@ -142,7 +145,7 @@
 
 		themeGalleryInit();
 
-		// general app click cleanup
+		// General app click cleanup
 		$( "body" ).on( "click", function( event ) {
 			if ( $( event.target ).is( "input.hex.focus" )
 				|| $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
@@ -154,13 +157,13 @@
 			themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
 		});
 
-		// links to roll your own from help tab
+		// Links to roll your own from help tab
 		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "select", 0 );
 			event.preventDefault();
 		});
 
-		// links to theme gallery from help tab
+		// Links to theme gallery from help tab
 		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "select", 1 );
 			event.preventDefault();
@@ -179,7 +182,7 @@
 	}
 
 	function rollYourOwnInit() {
-		// hover class toggles in app panel
+		// Hover class toggles in app panel
 		themeroller.find( "li.state-default, div.state-default" )
 			.mouseenter(function() {
 				$( this ).addClass( "state-hover" );
@@ -188,7 +191,7 @@
 				$( this ).removeClass( "state-hover" );
 			});
 
-		// hex inputs
+		// Hex inputs
 		themeroller.find( "input.hex" )
 			.validHex()
 			.keyup(function() {
@@ -206,7 +209,7 @@
 			.wrap( "<div class=\"hasPicker\"></div>" )
 			.applyFarbtastic();
 
-		// focus and blur classes in form
+		// Focus and blur classes in form
 		themeroller.find( "input, select" )
 		.focus(function() {
 			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
@@ -216,7 +219,7 @@
 			$( this ).removeClass( "focus" );
 		});
 
-		// texture pickers from select menus
+		// Texture pickers from select menus
 		themeroller.find( "select.texture" ).each(function() {
 
 			$( this ).after( "<div class=\"texturePicker\"><a href=\"#\"></a><ul></ul></div>" );
@@ -225,7 +228,7 @@
 				ul = texturePicker.find( "ul" ),
 				sIndex = texturePicker.prev().get( 0 ).selectedIndex;
 
-			// scrape options
+			// Scrape options
 			$( this ).find( "option" ).each(function() {
 				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
 				if( $( this ).get( 0 ).index === sIndex ) {
@@ -241,10 +244,10 @@
 				event.preventDefault();
 			});
 
-			// hide the menu and select el
+			// Hide the menu and select el
 			ul.hide();
 
-			// show/hide of menus
+			// Show/hide of menus
 			texturePicker.on( "click", function( event ) {
 				$( this ).addClass( "focus" );
 				$( "#picker" ).remove();
@@ -262,7 +265,7 @@
 			});
 		});
 
-		// ensures numbers only are entered for opacity inputs
+		// Ensures numbers only are entered for opacity inputs
 		themeroller.find( "input.opacity" ).on( "keyup", function() {
 			var number = parseInt( this.value, 10 );
 			if( isNaN( number ) ) {
@@ -272,10 +275,10 @@
 			this.value = Math.max( 0, Math.min( 100, number ) );
 		});
 
-		// spindowns in TR panel
+		// Spindowns in TR panel
 		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
-		// change event in form
+		// Change event in form
 		themeroller.find( ".application form" ).on( "change", function( event ) {
 			formChange();
 			event.preventDefault();
@@ -302,7 +305,7 @@
 	}
 
 	function themeGalleryInit() {
-		// loading and viewing gallery themes
+		// Loading and viewing gallery themes
 		$( "#themeGallery a" )
 			.on( "click", function( event ) {
 				Hash.update( Hash.clean( this.href.split( "?" )[ 1 ] ) );
@@ -380,7 +383,7 @@
 			value: 20
 		});
 
-		// hover states on the static widgets
+		// Hover states on the static widgets
 		$( "#dialog_link, #icons li" )
 			.mouseenter(function() {
 				$( this ).addClass( "ui-state-hover" );
@@ -409,8 +412,8 @@
 	function rollYourOwnLoad( success ) {
 		var curr = ++lastRollYourOwnLoad;
 
-		// Roll Your Own
-		// remember which groups are open
+		// Roll Your Own:
+		// Remember which groups are open
 		openGroups = [];
 		$( "div.theme-group-content" ).each(function( i ) {
 			if ( $( this ).is( ":visible" ) ) {
@@ -418,7 +421,7 @@
 			}
 		});
 
-		// remember any focused element
+		// Remember any focused element
 		focusedEl = null;
 		themeroller.find( "form" ).find( "input, select, .texturePicker" ).each(function( i ) {
 			if ( $( this ).is( ".focus" ) ) {

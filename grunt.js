@@ -107,10 +107,12 @@ function buildAll( callback ) {
 			build,
 			copy( jqueryUi.ref )
 		], function( err ) {
-			callback( err );//go to next ref
+			// Go to next ref
+			callback( err );
 		});
 	}, function( err ) {
-		callback( err );//done
+		// Done
+		callback( err );
 	});
 }
 
