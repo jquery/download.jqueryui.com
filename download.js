@@ -59,22 +59,21 @@ Frontend.prototype = {
 	},
 
 	components: function( params ) {
-		var release;
+		var data, release;
 		if ( params.version ) {
 			release = Release.find( params.version );
 		}
 		if ( release == null ) {
 			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
-			return jsonpTemplate({
-				callback: params.callback,
-				data: JSON.stringify({ error : "invalid version" })
+			data = { error : "invalid version" };
+		} else {
+			data = componentsTemplate({
+				categories: release.categories()
 			});
 		}
 		return jsonpTemplate({
 			callback: params.callback,
-			data: JSON.stringify( componentsTemplate({
-				categories: release.categories()
-			}))
+			data: JSON.stringify( data )
 		});
 	},
 
