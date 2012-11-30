@@ -58,7 +58,9 @@ Frontend.prototype = {
 		var theme = new ThemeRoller( vars );
 		options = options || {};
 		if ( options.wrap ) {
-			options = _.defaults( { wrap: false }, options );
+			options = _.defaults({
+				wrap: false
+			}, options );
 			return wrapTemplate({
 				body: this.index( vars, options ),
 				resources: this.resources
@@ -82,7 +84,9 @@ Frontend.prototype = {
 	},
 
 	css: function( vars ) {
-		var theme = new ThemeRoller( _.extend( { dynamicImage: true }, vars ) );
+		var theme = new ThemeRoller( _.extend({
+			dynamicImage: true
+		}, vars ) );
 		return theme.css();
 	},
 

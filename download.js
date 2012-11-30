@@ -37,7 +37,9 @@ Frontend.prototype = {
 	index: function( params, options ) {
 		options = options || {};
 		if ( options.wrap ) {
-			options = _.defaults( { wrap: false }, options );
+			options = _.defaults({
+				wrap: false
+			}, options );
 			return wrapTemplate({
 				body: this.index( params, options ),
 				resources: this.resources
@@ -65,7 +67,7 @@ Frontend.prototype = {
 			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
 			return jsonpTemplate({
 				callback: params.callback,
-				data: JSON.stringify( { error : "invalid version" } )
+				data: JSON.stringify({ error : "invalid version" })
 			});
 		}
 		return jsonpTemplate({
