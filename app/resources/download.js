@@ -102,16 +102,12 @@
 		downloadOnOff();
 	}
 
-	function componentsFetch( success, error ) {
-		$.ajax( downloadJqueryuiHost + "/download/components/", {
+	function componentsFetch() {
+		return $.ajax( downloadJqueryuiHost + "/download/components/", {
 			dataType: "jsonp",
 			data: {
 				version: model.version
-			},
-			success: function( response ) {
-				success( response );
-			},
-			error: error
+			}
 		});
 	}
 
@@ -187,7 +183,7 @@
   function loadComponents() {
 		var versionElement = $( "#download-builder [name=version]:checked" );
 		setModel({ version: versionElement.val() });
-		componentsFetch(function( componentsSection ) {
+		componentsFetch().done(function( componentsSection ) {
 			dependencies = {};
 			dependents = {};
 
@@ -231,6 +227,10 @@
 				}
 			});
 
+		}).fail(function() {
+			if ( console && console.log ) {
+				console.log( "Failed loading components section", arguments );
+			}
 		});
 	}
 
@@ -238,13 +238,9 @@
 		return count === 1 ? singular : plural;
 	}
 
-	function themeFetch( success, error ) {
-		$.ajax( themeUrl(), {
-			dataType: "jsonp",
-			success: function( response ) {
-				success( response );
-			},
-			error: error
+	function themeFetch() {
+		return $.ajax( themeUrl(), {
+			dataType: "jsonp"
 		});
 	}
 
@@ -266,7 +262,7 @@
 	loadComponents();
 
 	// Loads theme section.
-	themeFetch(function( themeSection ) {
+	themeFetch().done(function( themeSection ) {
 		$( "#download-builder .theme-area" ).html( themeSection );
 
 		if ( !model.themeParams ) {
@@ -314,9 +310,9 @@
 				$( "#theme-folder-name" ).removeData( "edited" );
 			}
 		});
-	}, function( jqXHR, textStatus, errorThrown ) {
+	}).fail(function() {
 		if ( console && console.log ) {
-			console.log( "Failed loading theme section", textStatus, errorThrown );
+			console.log( "Failed loading theme section", arguments );
 		}
 	});
 

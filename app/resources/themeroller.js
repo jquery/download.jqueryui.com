@@ -39,16 +39,16 @@
 		updateThemeGalleryDownloadLink();
 	}
 
-	// a different querystring structure used by several resources
-	function themeParamsQuerystring( model ) {
-		return querystring = QueryString.encode( _.extend({
+	// a different model structure used by several resources
+	function downloadBuilderModel( model ) {
+		return _.extend({
 			themeParams: escape( QueryString.encode( _.omit( model, "version" ) ) )
-		}, _.pick( model, "version" ) ) );
+		}, _.pick( model, "version" ) );
 	}
 
 	// returns download url
 	function downloadUrl( customModel ) {
-		return "/download/?" + themeParamsQuerystring( customModel || model );
+		return "/download/?" + QueryString.encode( downloadBuilderModel( customModel || model ) );
 	}
 
 	// returns imageGenerator url
@@ -56,14 +56,17 @@
 		return imageGeneratorUrlPart + "/?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
 	}
 
-	// returns rollYourOwn url
-	function rollYourOwnUrl() {
-		return downloadJqueryuiHost + "/themeroller/rollyourown/?" + themeParamsQuerystring( model );
-	}
-
 	// returns parsetheme url
 	function parsethemeUrl() {
 		return downloadJqueryuiHost + "/themeroller/parsetheme.css/?" + QueryString.encode( model );
+	}
+
+	// fetches rollYourOwn content
+	function rollYourOwnFetch() {
+		return $.ajax( downloadJqueryuiHost + "/themeroller/rollyourown", {
+			dataType: "jsonp",
+			data: downloadBuilderModel( model )
+		});
 	}
 
 	// function to append a new theme stylesheet with the new style changes
@@ -423,20 +426,16 @@
 			}
 		});
 
-		$.ajax( rollYourOwnUrl(), {
-			dataType: "jsonp",
-			success: function( response ) {
-				if ( curr !== lastRollYourOwnLoad ) {
-					return;
-				}
-				$( "#rollYourOwn" ).html( response );
-				rollYourOwnInit();
-				if ( success ) { success(); }
-			},
-			error: function() {
-				if ( console && console.log ) {
-					console.log( "Failed to reload rollYourOwn tab", arguments );
-				}
+		rollYourOwnFetch().done(function( response ) {
+			if ( curr !== lastRollYourOwnLoad ) {
+				return;
+			}
+			$( "#rollYourOwn" ).html( response );
+			rollYourOwnInit();
+			if ( success ) { success(); }
+		}).fail(function() {
+			if ( console && console.log ) {
+				console.log( "Failed to reload rollYourOwn tab", arguments );
 			}
 		});
 	}
