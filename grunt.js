@@ -264,21 +264,16 @@ function build( callback ) {
 
 function copy( ref ) {
 	return function( callback ) {
-		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
-			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version ),
-			docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post";
+		var docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post",
+			rimraf = require( "rimraf" ),
+			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
+			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
 		grunt.file.mkdir( "release" );
 		async.series([
 			function( callback ) {
 				if ( fs.existsSync( "release/" + ref ) ) {
 					grunt.log.writeln( "Cleaning up existing release/" + ref );
-					grunt.utils.spawn({
-						cmd: "rm",
-						args: [ "-Rf", ref ],
-						opts: {
-							cwd: "release"
-						}
-					}, log( callback, "Cleaned", "Error cleaning" ) );
+					rimraf( "release/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
 				} else {
 					callback();
 				}
