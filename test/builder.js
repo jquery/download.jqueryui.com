@@ -519,13 +519,13 @@ module.exports = {};
 
 // Build tests for each jqueryUi release
 Release.all().forEach(function( release ) {
-	function a( exp, tests ) {
+	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
 			if ( typeof tests[ i ] === "object" ) {
-				exp[ i ] = {};
-				a( exp[ i ], tests[ i ] );
+				obj[ i ] = {};
+				deepTestBuild( obj[ i ], tests[ i ] );
 			} else {
-				exp[ i ] = function( test ) {
+				obj[ i ] = function( test ) {
 					tests[ i ].call({
 						release: release,
 						allComponents: release.components().map(function( component ) {
@@ -552,5 +552,5 @@ Release.all().forEach(function( release ) {
 		});
 	}
 	module.exports[ release.pkg.version] = {};
-	a( module.exports[ release.pkg.version], tests );
+	deepTestBuild( module.exports[ release.pkg.version], tests );
 });
