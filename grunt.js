@@ -158,7 +158,7 @@ function checkout( ref ) {
 								if ( docBranches.split( "\n" ).some( isCorrespondingBranch ) ) {
 									docRef = correspondingBranch;
 								} else {
-									grunt.log.ok( "Did not find a \"" + correspondingBranch + "\" branch, using \"master\"" );
+									grunt.log.writeln( "Did not find a \"" + correspondingBranch + "\" branch, using \"master\"" );
 								}
 								callback();
 							}
