@@ -138,7 +138,7 @@ function checkout( ref ) {
 					function( callback ) {
 						// If ref is a branch, then get documentation "master" branch.
 						if ( !(/^\d.\d/).test( ref ) ) {
-							callback();
+							return callback();
 						}
 						// If ref is a tag, then get its corresponding <major>-<minor> branch, if available or "master".
 						grunt.utils.spawn({
