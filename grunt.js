@@ -279,11 +279,19 @@ function copy( ref ) {
 				}
 			},
 			function( callback ) {
+				var from = "tmp/jquery-ui/dist/" + dir,
+					to = "release/" + ref;
 				grunt.log.writeln( "Copying jQuery UI " + version + " over to release/" + ref );
-				grunt.utils.spawn({
-					cmd: "cp",
-					args: [ "-r", "tmp/jquery-ui/dist/" + dir, "release/" + ref ]
-				}, log( callback, "Done copying", "Error copying" ) );
+				try {
+					grunt.file.recurse( from, function( filepath ) {
+							grunt.file.copy( filepath, filepath.replace( new RegExp( "^" + from ), to ) );
+					});
+				} catch( e ) {
+					grunt.log.error( "Error copying", e.toString() );
+					return callback( e );
+				}
+				grunt.log.ok( "Done copying" );
+				callback();
 			},
 			function() {
 				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
