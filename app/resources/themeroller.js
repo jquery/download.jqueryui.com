@@ -88,7 +88,7 @@
 
 	// Function called after a change event in the form
 	function formChange() {
-		setModel( QueryString.parse( themeroller.find( ".application form" ).serialize() ) );
+		setModel( QueryString.decode( themeroller.find( ".application form" ).serialize() ) );
 	}
 
 	// Set up spindowns
@@ -299,7 +299,7 @@
 	function updateThemeGalleryDownloadLink() {
 		$( "#themeGallery a.download" )
 			.each(function() {
-				var downloadModel = _.extend( {}, model, QueryString.parse( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
+				var downloadModel = _.extend( {}, model, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
 				 $( this ).attr( "href", downloadUrl( downloadModel ) );
 			});
 	}
@@ -320,7 +320,7 @@
 			.parent()
 			.find( "a.edit" )
 			.on( "click", function( event ) {
-				setModel( QueryString.parse( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ), {
+				setModel( QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ), {
 					reloadRollYourOwn: true
 				});
 				$( "#rollerTabs" ).tabs( "select", 0 );
@@ -443,12 +443,12 @@
 		});
 	}
 
-	setModel( QueryString.parse( baseVars ), {
+	setModel( QueryString.decode( baseVars ), {
 		updateHash: false
 	});
 
 	Hash.on( "change", function( hash ) {
-		setModel( QueryString.parse( hash ), {
+		setModel( QueryString.decode( hash ), {
 			reloadRollYourOwn: true
 		});
 	});

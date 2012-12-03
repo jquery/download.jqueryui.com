@@ -47,7 +47,7 @@
 	}
 
 	function themerollerUrl() {
-		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.parse( unescape ( model.themeParams ) ) : {} ),
+		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.decode( unescape ( model.themeParams ) ) : {} ),
 			querystring = QueryString.encode( _.extend( themeParams, _.pick( model, "version" ) ) );
 		return "/themeroller/#" + querystring;
 	}
@@ -250,7 +250,7 @@
 	}
 
 	Hash.on( "change", function( hash ) {
-		setModel( QueryString.parse( hash ) );
+		setModel( QueryString.decode( hash ) );
 	});
 
 	Hash.init();
