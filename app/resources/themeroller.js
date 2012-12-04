@@ -24,9 +24,9 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
-	function setModel( attributes, opts ) {
-		opts = opts || {};
-		if ( typeof opts.updateHash === "undefined" ) { opts.updateHash = true; }
+	function setModel( attributes, options ) {
+		options = options || {};
+		if ( typeof options.updateHash === "undefined" ) { options.updateHash = true; }
 		_.extend( model, attributes );
 		if ( opts.reloadRollYourOwn ) {
 			rollYourOwnLoad(function() {
@@ -35,7 +35,7 @@
 		}
 		$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
 		updateCSS();
-		if ( opts.updateHash ) { updateHash(); }
+		if ( options.updateHash ) { updateHash(); }
 		updateThemeGalleryDownloadLink();
 	}
 
