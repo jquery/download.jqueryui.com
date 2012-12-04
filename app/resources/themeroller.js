@@ -83,7 +83,9 @@
 
 	// Update hash to reflect model
 	function updateHash() {
-		Hash.update( QueryString.encode( model ), true );
+		Hash.update( QueryString.encode( model ), {
+			preventChange: true
+		});
 	}
 
 	// Function called after a change event in the form

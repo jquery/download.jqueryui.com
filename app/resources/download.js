@@ -246,7 +246,9 @@
 
 	// update hash to reflect model
 	function updateHash() {
-		Hash.update( QueryString.encode( model ), true );
+		Hash.update( QueryString.encode( model ), {
+			preventChange: true
+		});
 	}
 
 	Hash.on( "change", function( hash ) {

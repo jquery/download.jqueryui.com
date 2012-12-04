@@ -44,12 +44,13 @@
 		}
 	}
 
-	function updateHash( hash, ignore ) {
-		if ( ignore === true ) {
+	function updateHash( hash, options ) {
+		options = options || {};
+		if ( options.preventChange === true ) {
 			stopListening();
 		}
 		window.location.hash = hash;
-		if ( ignore === true ) {
+		if ( options.preventChange === true ) {
 			storedHash = hash;
 			startListening();
 		}
