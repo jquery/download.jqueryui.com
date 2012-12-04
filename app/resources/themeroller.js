@@ -45,7 +45,7 @@
 
 	// set up spindowns
 	$.fn.spinDown = function() {
-		return this.bind( "click", function( event ) {
+		return this.on( "click", function( event ) {
 			var $this = $( this );
 
 			$this.next().slideToggle( 100 );
@@ -95,7 +95,7 @@
 		themeGalleryInit();
 
 		// general app click cleanup
-		$( "body" ).bind( "click", function( event ) {
+		$( "body" ).on( "click", function( event ) {
 			if ( $( event.target ).is( "input.hex.focus" )
 				|| $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
 				return;
@@ -107,18 +107,18 @@
 		});
 
 		// links to roll your own from help tab
-		$( "#help a[href=\"#rollYourOwn\"]" ).bind( "click", function( event ) {
+		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "select", 0 );
 			event.preventDefault();
 		});
 
 		// links to theme gallery from help tab
-		$( "#help a[href=\"#themeGallery\"]" ).bind( "click", function( event ) {
+		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "select", 1 );
 			event.preventDefault();
 		});
 
-		$( "#reverse-background" ).bind( "click", function() {
+		$( "#reverse-background" ).on( "click", function() {
 			var maskArea = themeroller.find( ".mask-area" );
 			if ( $( this ).is( ":checked" ) ) {
 				maskArea.css({ background: "#333" });
@@ -146,7 +146,7 @@
 			.keyup(function() {
 				$( this ).validHex();
 			})
-			.bind( "click", function( event ) {
+			.on( "click", function( event ) {
 				$( this ).addClass( "focus" );
 				$( "#picker" ).remove();
 				themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
@@ -185,7 +185,7 @@
 				}
 			});
 
-			ul.find( "li" ).bind( "click", function( event ) {
+			ul.find( "li" ).on( "click", function( event ) {
 				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
 				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" )+"&h=" + $( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/" + $( this ).attr( "class" )+"|0|0|100 ) 50% 50% repeat" );
 				ul.fadeOut( 100 );
@@ -197,7 +197,7 @@
 			ul.hide();
 
 			// show/hide of menus
-			texturePicker.bind( "click", function( event ) {
+			texturePicker.on( "click", function( event ) {
 				$( this ).addClass( "focus" );
 				$( "#picker" ).remove();
 				var showIt;
@@ -228,15 +228,15 @@
 		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
 		// change event in form
-		themeroller.find( ".application form" ).bind( "change", function( event ) {
+		themeroller.find( ".application form" ).on( "change", function( event ) {
 			formChange();
 			event.preventDefault();
-		}).bind( "submit", function( event ) {
+		}).on( "submit", function( event ) {
 			event.preventDefault();
 		});
 
 		//DL theme button
-		$( "#downloadTheme" ).bind( "click", function( event ) {
+		$( "#downloadTheme" ).on( "click", function( event ) {
 			var themeParams,
 				href = $( "link[href*=parsetheme\\.css]:last" ).attr( "href" ).replace( "","" );
 			themeParams = href.split( "?" )[ 1 ];
@@ -257,7 +257,7 @@
 	function themeGalleryInit() {
 		// loading and viewing gallery themes
 		$( "#themeGallery a" )
-			.bind( "click", function( event ) {
+			.on( "click", function( event ) {
 				Hash.update( Hash.clean( this.href.split( "?" )[ 1 ] ) );
 				event.preventDefault();
 			})
@@ -269,7 +269,7 @@
 			})
 			.parent()
 			.find( "a.edit" )
-			.bind( "click", function( event ) {
+			.on( "click", function( event ) {
 				$( this ).prev().prev().trigger( "click" );
 				$( "#rollerTabs" ).tabs( "select", 0 );
 				event.preventDefault();
@@ -308,7 +308,7 @@
 		});
 
 		// Dialog Link
-		$( "#dialog_link" ).bind( "click", function( event ) {
+		$( "#dialog_link" ).on( "click", function( event ) {
 			$( "#dialog" ).dialog( "open" );
 			event.preventDefault();
 		});

@@ -189,7 +189,7 @@
 	$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
 	// binds click handlers on checkboxes
-	$( "#download-builder input[type=checkbox]" ).click(function( event ) {
+	$( "#download-builder input[type=checkbox]" ).on( "click", function( event ) {
 		var target = $( event.target );
 		if ( target.parent().is( ".toggle" ) ) {
 			check( event, allGroup( this ), $( this ).prop( "checked" ) );
@@ -223,14 +223,14 @@
 			});
 		});
 
-		$( "#scope" ).keyup(function() {
+		$( "#scope" ).on( "keyup", function() {
 			if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
 				$( "#theme-folder-name" ).data( "suggestedEdit", true );
 				$( "#theme-folder-name" ).val( $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) );
 			}
 		});
 
-		$( "#theme-folder-name" ).keyup(function() {
+		$( "#theme-folder-name" ).on( "keyup", function() {
 			var val = $( this ).val(),
 				escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
 			$( this ).data( "edited", true );
@@ -240,7 +240,7 @@
 			}
 		});
 
-		$( "#theme-folder-name" ).blur(function() {
+		$( "#theme-folder-name" ).on( "blur", function() {
 			if ( $( this ).val() === "" ) {
 				$( "#theme-folder-name" ).removeData( "edited" );
 			}
