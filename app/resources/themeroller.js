@@ -95,7 +95,11 @@
 		themeGalleryInit();
 
 		// general app click cleanup
-		$( "body" ).bind( "click", function() {
+		$( "body" ).bind( "click", function( event ) {
+			if ( $( event.target ).is( "input.hex.focus" )
+				|| $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
+				return;
+			}
 			themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
 			$( "#picker" ).remove();
 			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
