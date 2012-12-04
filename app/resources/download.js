@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global _: false, escape: false, Hash: false, QueryString: false, unescape: false */
+/*global _: false, Hash: false, QueryString: false */
 /*!
  * jQuery UI Download Builder client-side JavaScript file
  * http://jqueryui.com/download/
@@ -12,9 +12,10 @@
 
 	var dependencies, dependents,
 		downloadBuilder = $( "#download-builder" ),
-		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" ),
+		model = {},
+		themesLoad = $.Deferred(),
 		baseVars = downloadBuilder.data( "base-vars" ),
-		model = {};
+		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" );
 
 	// Rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -24,22 +25,37 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
+	/**
+	 * Model
+	 */
 	function setModel( attributes ) {
+		var prev = _.clone( model );
 		_.extend( model, attributes );
 
-		if ( attributes.folderName ) {
-			$( "#theme-folder-name" ).val( model.folderName );
-		}
-		
-		if ( attributes.version ) {
+		themesLoad.done(function() {
+			if ( attributes.folderName && model.folderName !== prev.folderName ) {
+				$( "#theme-folder-name" ).val( model.folderName ).trigger( "change" );
+			}
+
+			if ( attributes.scope && model.scope !== prev.scope ) {
+				$( "#scope" ).val( model.scope ).trigger( "change" );
+			}
+		});
+
+		if ( attributes.version && model.version !== prev.version ) {
 			$( "#download-builder [name=version][value=\"" + model.version + "\"]" ).trigger( "click" );
 		}
 
-		if ( attributes.themeParams || attributes.version ) {
-			$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
-		}
+		$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
 
 		updateHash();
+	}
+
+	function themeRollerModel() {
+		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.decode( decodeURIComponent ( model.themeParams ) ) : {} );
+		return _.extend( themeParams, {
+			downloadParams: encodeURIComponent( QueryString.encode( _.omit( model, "themeParams", "folderName" ) ) )
+		});
 	}
 
 	function themeUrl() {
@@ -47,11 +63,27 @@
 	}
 
 	function themerollerUrl() {
-		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.decode( unescape ( model.themeParams ) ) : {} ),
-			querystring = QueryString.encode( _.extend( themeParams, _.pick( model, "version" ) ) );
-		return "/themeroller/#" + querystring;
+		return "/themeroller/?" + QueryString.encode( themeRollerModel() );
 	}
 
+	function componentsFetch() {
+		return $.ajax( downloadJqueryuiHost + "/download/components/", {
+			dataType: "jsonp",
+			data: {
+				version: model.version
+			}
+		});
+	}
+
+	function themeFetch() {
+		return $.ajax( themeUrl(), {
+			dataType: "jsonp"
+		});
+	}
+
+	/**
+	 * App
+	 */
 	function allComponents() {
 		return $( "#download-builder .component-group-list input[type=checkbox]" );
 	}
@@ -100,15 +132,6 @@
 			}
 		});
 		downloadOnOff();
-	}
-
-	function componentsFetch() {
-		return $.ajax( downloadJqueryuiHost + "/download/components/", {
-			dataType: "jsonp",
-			data: {
-				version: model.version
-			}
-		});
 	}
 
 	function check( event, elem, value ) {
@@ -226,7 +249,6 @@
 					check( event, $( this ), $( this ).prop( "checked" ) );
 				}
 			});
-
 		}).fail(function() {
 			if ( console && console.log ) {
 				console.log( "Failed loading components section", arguments );
@@ -238,13 +260,7 @@
 		return count === 1 ? singular : plural;
 	}
 
-	function themeFetch() {
-		return $.ajax( themeUrl(), {
-			dataType: "jsonp"
-		});
-	}
-
-	// update hash to reflect model
+	// Update hash to reflect model
 	function updateHash() {
 		Hash.update( QueryString.encode( model ), {
 			preventChange: true
@@ -260,7 +276,7 @@
 	// Binds click on version selection
 	$( "#download-builder [name=version]" ).on( "change", loadComponents );
 
-	// Loads components
+	// Load components
 	loadComponents();
 
 	// Loads theme section.
@@ -268,14 +284,14 @@
 		$( "#download-builder .theme-area" ).html( themeSection );
 
 		if ( !model.themeParams ) {
-			setModel({ themeParams: escape( $( "#theme option:selected" ).val() ) });
+			setModel({ themeParams: encodeURIComponent( $( "#theme option:selected" ).val() ) });
 		}
 
 		$( "#theme" ).on( "click change", function() {
 			var selected = $( this ).find( "option:selected" );
 			setModel({
 				folderName: selected.text().toLowerCase().replace( " ", "-" ),
-				themeParams: escape( selected.val() )
+				themeParams: encodeURIComponent( selected.val() )
 			});
 			downloadOnOff();
 		});
@@ -290,28 +306,39 @@
 			});
 		});
 
-		$( "#scope" ).on( "keyup", function() {
-			if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
-				$( "#theme-folder-name" ).data( "suggestedEdit", true );
-				$( "#theme-folder-name" ).val( $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) );
+		$( "#scope" ).on({
+			"change": function() {
+				setModel({ scope: $( this ).val() });
+			},
+			"keyup": function() {
+				if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
+					$( "#theme-folder-name" ).data( "suggestedEdit", true );
+					setModel({ folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) });
+				}
 			}
 		});
 
-		$( "#theme-folder-name" ).on( "keyup", function() {
-			var val = $( this ).val(),
-				escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
-			$( this ).data( "edited", true );
-			$( "#theme-folder-name" ).removeData( "suggestedEdit" );
-			if ( escapedVal !== val ) {
-				$( this ).val( escapedVal );
+		$( "#theme-folder-name" ).on({
+			"blur": function() {
+				if ( $( this ).val() === "" ) {
+					$( "#theme-folder-name" ).removeData( "edited" );
+				}
+			},
+			"change": function() {
+				setModel({ folderName: $( this ).val() });
+			},
+			"keyup": function() {
+				var val = $( this ).val(),
+					escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
+				$( this ).data( "edited", true );
+				$( "#theme-folder-name" ).removeData( "suggestedEdit" );
+				if ( escapedVal !== val ) {
+					setModel({ folderName: escapedVal });
+				}
 			}
 		});
 
-		$( "#theme-folder-name" ).on( "blur", function() {
-			if ( $( this ).val() === "" ) {
-				$( "#theme-folder-name" ).removeData( "edited" );
-			}
-		});
+		themesLoad.resolve();
 	}).fail(function() {
 		if ( console && console.log ) {
 			console.log( "Failed loading theme section", arguments );

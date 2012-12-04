@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global _: false, escape: true, Hash: false, QueryString: false */
+/*global _: false, Hash: false, QueryString: false */
 /*!
  * jQuery UI Theme Roller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -24,9 +24,15 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
+	/**
+	 * Model
+	 */
 	function setModel( attributes, options ) {
+		var prev = _.clone( model );
 		options = options || {};
-		if ( typeof options.updateHash === "undefined" ) { options.updateHash = true; }
+		if ( typeof options.updateHash === "undefined" ) {
+			options.updateHash = true;
+		}
 		_.extend( model, attributes );
 		if ( opts.reloadRollYourOwn ) {
 			rollYourOwnLoad(function() {
@@ -40,15 +46,17 @@
 	}
 
 	// A different model structure used by several resources
-	function downloadBuilderModel( model ) {
-		return _.extend({
-			themeParams: escape( QueryString.encode( _.omit( model, "version" ) ) )
-		}, _.pick( model, "version" ) );
+	function downloadBuilderModel( customModel ) {
+		customModel = customModel || model;
+		var downloadParams = ( customModel.downloadParams ? QueryString.decode( decodeURIComponent ( customModel.downloadParams ) ) : {} );
+		return _.extend( downloadParams, {
+			themeParams: encodeURIComponent( QueryString.encode( _.omit( customModel, "downloadParams" ) ) )
+		});
 	}
 
 	// Returns download url
 	function downloadUrl( customModel ) {
-		return "/download/?" + QueryString.encode( downloadBuilderModel( customModel || model ) );
+		return "/download/?" + QueryString.encode( downloadBuilderModel( customModel ) );
 	}
 
 	// Returns imageGenerator url
@@ -65,10 +73,13 @@
 	function rollYourOwnFetch() {
 		return $.ajax( downloadJqueryuiHost + "/themeroller/rollyourown", {
 			dataType: "jsonp",
-			data: downloadBuilderModel( model )
+			data: downloadBuilderModel()
 		});
 	}
 
+	/**
+	 * App
+	 */
 	// Function to append a new theme stylesheet with the new style changes
 	function updateCSS() {
 		$( "body" ).append( "<link href=\"" + parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
@@ -149,8 +160,7 @@
 
 		// General app click cleanup
 		$( "body" ).on( "click", function( event ) {
-			if ( $( event.target ).is( "input.hex.focus" )
-				|| $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
+			if ( $( event.target ).is( "input.hex.focus" ) || $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
 				return;
 			}
 			themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
@@ -302,7 +312,7 @@
 		$( "#themeGallery a.download" )
 			.each(function() {
 				var downloadModel = _.extend( {}, model, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
-				 $( this ).attr( "href", downloadUrl( downloadModel ) );
+				$( this ).attr( "href", downloadUrl( downloadModel ) );
 			});
 	}
 
