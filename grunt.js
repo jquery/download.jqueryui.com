@@ -78,7 +78,6 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
 				grunt.utils.spawn({
 					cmd: "git",
-					// TODO add , "-t" when we switch from master to tags
 					args: [ "fetch" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
@@ -98,9 +97,29 @@ function cloneOrFetch( callback ) {
 	]);
 }
 
+function buildAll( callback ) {
+	var config = require( "./lib/config" );
+
+	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
+		async.series([
+			checkout( jqueryUi.ref ),
+			install,
+			build,
+			copy( jqueryUi.ref )
+		], function( err ) {
+			// Go to next ref
+			callback( err );
+		});
+	}, function( err ) {
+		// Done
+		callback( err );
+	});
+}
+
 function checkout( ref ) {
 	return function( callback ) {
 		async.series([
+			// Check out jquery-ui
 			function( callback ) {
 				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
 				grunt.utils.spawn({
@@ -111,19 +130,51 @@ function checkout( ref ) {
 					}
 				}, log( callback, "Done with checkout", "Error checking out" ) );
 			},
-			// TODO: Figure out how to get correct docs for version. We will
-			// eventually support multiple version and will need to pull in the
-			// docs from the appropriate branch.
-			// See also TODO above for git-fetch
+			// Check out api.jqueryui.com
 			function() {
-				grunt.log.writeln( "Checking out api.jqueryui.com/master" );
-				grunt.utils.spawn({
-					cmd: "git",
-					args: [ "checkout", "-f", "origin/master" ],
-					opts: {
-						cwd: "tmp/api.jqueryui.com"
+				var docRef = "origin/master";
+				async.series([
+					// Get the correct documentation for jquery-ui version
+					function( callback ) {
+						// If ref is a branch, then get documentation "master" branch.
+						if ( !(/^\d.\d/).test( ref ) ) {
+							return callback();
+						}
+						// If ref is a tag, then get its corresponding <major>-<minor> branch, if available or "master".
+						grunt.utils.spawn({
+							cmd: "git",
+							args: [ "branch", "-a" ],
+							opts: {
+								cwd: "tmp/api.jqueryui.com"
+							}
+						}, function( error, docBranches ) {
+							if ( error ) {
+								grunt.log.error( "Error listing branches: " + error.stderr );
+							} else {
+								var correspondingBranch = ref.replace( /^(\d).(\d).*/, "$1-$2" ),
+									isCorrespondingBranch = function( branch ) {
+										return ( new RegExp( "origin/" + correspondingBranch + "$" ) ).test( branch );
+									};
+								if ( docBranches.split( "\n" ).some( isCorrespondingBranch ) ) {
+									docRef = correspondingBranch;
+								} else {
+									grunt.log.writeln( "Did not find a \"" + correspondingBranch + "\" branch, using \"master\"" );
+								}
+								callback();
+							}
+						});
+					},
+					function() {
+						grunt.log.writeln( "Checking out api.jqueryui.com branch/tag: " + docRef );
+						grunt.utils.spawn({
+							cmd: "git",
+							args: [ "checkout", "-f", docRef ],
+							opts: {
+								cwd: "tmp/api.jqueryui.com"
+							}
+						}, log( callback, "Done with checkout", "Error checking out" ) );
 					}
-				}, log( callback, "Done with checkout", "Error checking out" ) );
+				]);
 			}
 		]);
 	};
@@ -211,79 +262,100 @@ function build( callback ) {
 	]);
 }
 
-function copy( callback ) {
-	var dir = require( "path" ).basename( grunt.file.expandDirs( "tmp/jquery-ui/dist/jquery-ui-*" )[ 0 ] ),
-		docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post";
-	grunt.file.mkdir( "release" );
-	async.series([
-		function( callback ) {
-			grunt.log.writeln( "Copying jQuery UI release over to release/" + dir );
-			grunt.utils.spawn({
-				cmd: "cp",
-				args: [ "-r", "tmp/jquery-ui/dist/" + dir, "release/" + dir ]
-			}, log( callback, "Done copying", "Error copying" ) );
-		},
-		function() {
-			grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + dir + "docs/" );
-			grunt.file.expandFiles( docs + "/**" ).forEach(function( file ) {
-				grunt.file.copy( file, file.replace( docs, "release/" + dir + "docs/" ));
-			});
-			callback();
-		}
-	]);
+function copy( ref ) {
+	return function( callback ) {
+		var docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post",
+			rimraf = require( "rimraf" ),
+			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
+			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
+		grunt.file.mkdir( "release" );
+		async.series([
+			function( callback ) {
+				if ( fs.existsSync( "release/" + ref ) ) {
+					grunt.log.writeln( "Cleaning up existing release/" + ref );
+					rimraf( "release/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
+				} else {
+					callback();
+				}
+			},
+			function( callback ) {
+				var from = "tmp/jquery-ui/dist/" + dir,
+					to = "release/" + ref;
+				grunt.log.writeln( "Copying jQuery UI " + version + " over to release/" + ref );
+				try {
+					grunt.file.recurse( from, function( filepath ) {
+							grunt.file.copy( filepath, filepath.replace( new RegExp( "^" + from ), to ) );
+					});
+				} catch( e ) {
+					grunt.log.error( "Error copying", e.toString() );
+					return callback( e );
+				}
+				grunt.log.ok( "Done copying" );
+				callback();
+			},
+			function() {
+				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
+				grunt.file.expandFiles( docs + "/**" ).forEach(function( file ) {
+					grunt.file.copy( file, file.replace( docs, "release/" + ref + "/docs/" ));
+				});
+				callback();
+			}
+		]);
+	};
 }
 
 // The ref parameter exists purely for local testing.
 // Production should always use the config values.
-grunt.registerTask( "prepare", "Fetches jQuery UI and builds the specified branch or tag", function( ref ) {
+grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
 	async.series([
 		setup,
 		cloneOrFetch,
-		checkout( ref || grunt.file.readJSON( "config.json" ).jqueryUi ),
-		install,
-		build,
-		copy
+		buildAll
 	], function( err ) {
 		done( err ? false : true );
 	});
 });
 
-grunt.registerTask( "build", "Builds zip package with all components selected and base theme, inside the given folder", function( folder ) {
+grunt.registerTask( "build", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
 		Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
 		path = require( "path" ),
-		release = require( "./lib/release" ).all()[ 0 ],
+		Release = require( "./lib/release" ),
 		ThemeRoller = require( "./lib/themeroller" ),
-		allComponents = release.components().map(function( component ) {
+		theme = new ThemeRoller();
+
+	async.forEachSeries( Release.all(), function( release, next ) {
+		var allComponents = release.components().map(function( component ) {
 			return component.name;
 		}),
-		theme = new ThemeRoller(),
-		builder = new Builder( allComponents, theme ),
-		filename = path.join( folder, builder.filename() ),
-		stream;
-
-	grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
-	if ( fs.existsSync( filename ) ) {
-		grunt.log.error( "Build: \"" + filename + "\" already exists" );
-		done( false );
-		return;
-	}
-	stream = fs.createWriteStream( filename );
-	builder.writeTo( stream, function( err, result ) {
-		if ( err ) {
-			grunt.log.error( "Build: " + err.message );
-			done( false );
+			builder = new Builder( release, allComponents, theme ),
+			filename = path.join( folder, builder.filename() ),
+			stream;
+		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
+		if ( fs.existsSync( filename ) ) {
+			grunt.log.error( "Build: \"" + filename + "\" already exists" );
+			next( false );
 			return;
 		}
-		stream.on( "close", function() {
-			done();
+		stream = fs.createWriteStream( filename );
+		builder.writeTo( stream, function( err, result ) {
+			if ( err ) {
+				grunt.log.error( "Build: " + err.message );
+				next( false );
+				return;
+			}
+			stream.on( "close", function() {
+				next();
+			});
+			stream.on( "error", function() {
+				next( false );
+			});
+			stream.end();
 		});
-		stream.on( "error", function() {
-			done( false );
-		});
-		stream.end();
+	}, function( err ) {
+		done( err );
 	});
 });
 

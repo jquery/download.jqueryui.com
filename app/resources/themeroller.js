@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global escape: true, Hash: false */
+/*global Hash: false, QueryString: false */
 /*!
  * jQuery UI Theme Roller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -8,42 +8,111 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, undefined ) {
+(function( $, Hash, QueryString, undefined ) {
 	var theme, Theme,
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
+		model = {},
 		openGroups = [],
 		themeroller = $( "#themeroller" ),
 		baseVars = themeroller.data( "base-vars" ),
 		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
-		imageGeneratorUrl = themeroller.data( "image-generator-url" );
+		imageGeneratorUrlPart = themeroller.data( "image-generator-url" );
 
-	// rewrite host for testing on staging
+	// Rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
-	// function to append a new theme stylesheet with the new style changes
-	function updateCSS( locStr ) {
-		$( "body" ).append( "<link href=\"" + downloadJqueryuiHost + "/themeroller/parsetheme.css" + ( locStr ? "?" + locStr : "" ) + "\" type=\"text/css\" rel=\"Stylesheet\" />");
+	function omit( obj, keys ) {
+		var key,
+			copy = {};
+		for ( key in obj ) {
+			if ( $.inArray( key, keys ) === -1 ) {
+				copy[ key ] = obj[ key ];
+			}
+		}
+		return copy;
+	}
+
+	/**
+	 * Model
+	 */
+	function setModel( attributes, options ) {
+		var prev = $.extend( {}, model );
+		options = options || {};
+		if ( typeof options.updateHash === "undefined" ) {
+			options.updateHash = true;
+		}
+		$.extend( model, attributes );
+		if ( options.reloadRollYourOwn ) {
+			rollYourOwnLoad(function() {
+				$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
+			});
+		}
+		$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
+		updateCSS();
+		if ( options.updateHash ) {
+			Hash.update( QueryString.encode( model ), {
+				ignoreChange: true
+			});
+		}
+		updateThemeGalleryDownloadLink();
+	}
+
+	// A different model structure used by several resources
+	function downloadBuilderModel( customModel ) {
+		customModel = customModel || model;
+		var downloadParams = ( customModel.downloadParams ? QueryString.decode( decodeURIComponent ( customModel.downloadParams ) ) : {} );
+		return $.extend( downloadParams, {
+			themeParams: encodeURIComponent( QueryString.encode( omit( customModel, [ "downloadParams" ] ) ) )
+		});
+	}
+
+	// Returns download url
+	function downloadUrl( customModel ) {
+		return "/download?" + QueryString.encode( downloadBuilderModel( customModel ) );
+	}
+
+	// Returns imageGenerator url
+	function imageGeneratorUrl( texturewidth, textureheight, value ) {
+		return imageGeneratorUrlPart + "?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
+	}
+
+	// Returns parsetheme url
+	function parsethemeUrl() {
+		return downloadJqueryuiHost + "/themeroller/parsetheme.css?" + QueryString.encode( model );
+	}
+
+	// Fetches rollYourOwn content
+	function rollYourOwnFetch() {
+		return $.ajax( downloadJqueryuiHost + "/themeroller/rollyourown", {
+			dataType: "jsonp",
+			data: downloadBuilderModel()
+		});
+	}
+
+	/**
+	 * App
+	 */
+	// Function to append a new theme stylesheet with the new style changes
+	function updateCSS() {
+		$( "body" ).append( "<link href=\"" + parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
 		var links = $( "link[href*=parsetheme\\.css]" );
 		if ( links.length > 1 ) {
-			// wait a few seconds before removing previous theme(s) to avoid FOUW
+			// Wait a few seconds before removing previous theme(s) to avoid FOUW
 			setTimeout(function() {
 				links.not( ":last" ).remove();
 			}, 5000 );
 		}
 	}
 
-	// function called after a change event in the form
+	// Function called after a change event in the form
 	function formChange() {
-		var locStr = themeroller.find( ".application form" ).serialize();
-		locStr = Hash.clean( locStr );
-		updateCSS( locStr );
-		Hash.update( locStr, true );
+		setModel( QueryString.decode( themeroller.find( ".application form" ).serialize() ) );
 	}
 
-	// set up spindowns
+	// Set up spindowns
 	$.fn.spinDown = function() {
 		return this.on( "click", function( event ) {
 			var $this = $( this );
@@ -60,26 +129,29 @@
 		});
 	};
 
-	// validation for hex inputs
+	// Validation for hex inputs
 	$.fn.validHex = function() {
 		return this.each(function() {
 			var value = $( this ).val();
-			value = value.replace( /[^#a-fA-F0-9]/g, "" ); // non [#a-f0-9]
+			value = value.replace( /[^#a-fA-F0-9]/g, "" );
 			value = value.toLowerCase();
 			if ( value.match( /#/g ) && value.match( /#/g ).length > 1 ) {
-				value = value.replace( /#/g, "" ); // ##
+				// ##
+				value = value.replace( /#/g, "" );
 			}
 			if ( value.indexOf( "#" ) === -1 ) {
-				value = "#"+value; // no #
+				// No #
+				value = "#"+value;
 			}
 			if ( value.length > 7 ) {
-				value = value.substr( 0, 7 ); // too many chars
+				// Too many chars
+				value = value.substr( 0, 7 );
 			}
 			$( this ).val( value );
 		});
 	};
 
-	// color pickers setup (sets bg color of inputs)
+	// Color pickers setup (sets bg color of inputs)
 	$.fn.applyFarbtastic = function() {
 		return this.each(function() {
 			$( "<div/>" ).farbtastic( this ).remove();
@@ -94,10 +166,9 @@
 
 		themeGalleryInit();
 
-		// general app click cleanup
+		// General app click cleanup
 		$( "body" ).on( "click", function( event ) {
-			if ( $( event.target ).is( "input.hex.focus" )
-				|| $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
+			if ( $( event.target ).is( "input.hex.focus" ) || $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
 				return;
 			}
 			themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
@@ -106,13 +177,13 @@
 			themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
 		});
 
-		// links to roll your own from help tab
+		// Links to roll your own from help tab
 		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "select", 0 );
 			event.preventDefault();
 		});
 
-		// links to theme gallery from help tab
+		// Links to theme gallery from help tab
 		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "select", 1 );
 			event.preventDefault();
@@ -131,7 +202,7 @@
 	}
 
 	function rollYourOwnInit() {
-		// hover class toggles in app panel
+		// Hover class toggles in app panel
 		themeroller.find( "li.state-default, div.state-default" )
 			.mouseenter(function() {
 				$( this ).addClass( "state-hover" );
@@ -140,7 +211,7 @@
 				$( this ).removeClass( "state-hover" );
 			});
 
-		// hex inputs
+		// Hex inputs
 		themeroller.find( "input.hex" )
 			.validHex()
 			.keyup(function() {
@@ -158,7 +229,7 @@
 			.wrap( "<div class=\"hasPicker\"></div>" )
 			.applyFarbtastic();
 
-		// focus and blur classes in form
+		// Focus and blur classes in form
 		themeroller.find( "input, select" )
 		.focus(function() {
 			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
@@ -168,7 +239,7 @@
 			$( this ).removeClass( "focus" );
 		});
 
-		// texture pickers from select menus
+		// Texture pickers from select menus
 		themeroller.find( "select.texture" ).each(function() {
 
 			$( this ).after( "<div class=\"texturePicker\"><a href=\"#\"></a><ul></ul></div>" );
@@ -177,26 +248,26 @@
 				ul = texturePicker.find( "ul" ),
 				sIndex = texturePicker.prev().get( 0 ).selectedIndex;
 
-			// scrape options
+			// Scrape options
 			$( this ).find( "option" ).each(function() {
-				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" ) + "&h=" + $( this ).attr( "data-textureheight" ) + "&f=png&q=100&fltr[]=over|textures/" + $( this ).attr( "value" ) + "|0|0|100 ) 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
+				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
 				if( $( this ).get( 0 ).index === sIndex ) {
-					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" ) + "&h=" + $( this ).attr( "data-textureheight" ) + "&f=png&q=60&fltr[]=over|textures/" + $( this ).attr( "value" ) + "|0|0|100 ) 50% 50% repeat" );
+					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat" );
 				}
 			});
 
 			ul.find( "li" ).on( "click", function( event ) {
 				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
-				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl + "?new=555555&w=" + $( this ).attr( "data-texturewidth" )+"&h=" + $( this ).attr( "data-textureheight" )+"&f=png&q=100&fltr[]=over|textures/" + $( this ).attr( "class" )+"|0|0|100 ) 50% 50% repeat" );
+				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "class" ) ) + ") 50% 50% repeat" );
 				ul.fadeOut( 100 );
 				formChange();
 				event.preventDefault();
 			});
 
-			// hide the menu and select el
+			// Hide the menu and select el
 			ul.hide();
 
-			// show/hide of menus
+			// Show/hide of menus
 			texturePicker.on( "click", function( event ) {
 				$( this ).addClass( "focus" );
 				$( "#picker" ).remove();
@@ -214,7 +285,7 @@
 			});
 		});
 
-		// ensures numbers only are entered for opacity inputs
+		// Ensures numbers only are entered for opacity inputs
 		themeroller.find( "input.opacity" ).on( "keyup", function() {
 			var number = parseInt( this.value, 10 );
 			if( isNaN( number ) ) {
@@ -224,23 +295,14 @@
 			this.value = Math.max( 0, Math.min( 100, number ) );
 		});
 
-		// spindowns in TR panel
+		// Spindowns in TR panel
 		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
-		// change event in form
+		// Change event in form
 		themeroller.find( ".application form" ).on( "change", function( event ) {
 			formChange();
 			event.preventDefault();
 		}).on( "submit", function( event ) {
-			event.preventDefault();
-		});
-
-		//DL theme button
-		$( "#downloadTheme" ).on( "click", function( event ) {
-			var themeParams,
-				href = $( "link[href*=parsetheme\\.css]:last" ).attr( "href" ).replace( "","" );
-			themeParams = href.split( "?" )[ 1 ];
-			location.href = "/download?themeParams=" + ( themeParams ? escape( themeParams ) : escape( baseVars ) );
 			event.preventDefault();
 		});
 
@@ -254,8 +316,16 @@
 		}
 	}
 
+	function updateThemeGalleryDownloadLink() {
+		$( "#themeGallery a.download" )
+			.each(function() {
+				var downloadModel = $.extend( {}, model, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
+				$( this ).attr( "href", downloadUrl( downloadModel ) );
+			});
+	}
+
 	function themeGalleryInit() {
-		// loading and viewing gallery themes
+		// Loading and viewing gallery themes
 		$( "#themeGallery a" )
 			.on( "click", function( event ) {
 				Hash.update( Hash.clean( this.href.split( "?" )[ 1 ] ) );
@@ -264,16 +334,20 @@
 			.attr( "title", "Click to preview this theme" )
 			.each(function() {
 				$( this ).after(
-				"<a href=\"/download?themeParams=" + escape( $( this ).attr( "href" ).split( "?" )[ 1 ] ) + "\" class=\"download\" title=\"Download this theme\">Download</a>" +
+				"<a href=\"#\" class=\"download\" title=\"Download this theme\">Download</a>" +
 				"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
 			})
 			.parent()
 			.find( "a.edit" )
 			.on( "click", function( event ) {
-				$( this ).prev().prev().trigger( "click" );
+				setModel( QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ), {
+					reloadRollYourOwn: true
+				});
 				$( "#rollerTabs" ).tabs( "select", 0 );
 				event.preventDefault();
 			});
+
+			updateThemeGalleryDownloadLink();
 	}
 
 	function demoInit() {
@@ -329,7 +403,7 @@
 			value: 20
 		});
 
-		// hover states on the static widgets
+		// Hover states on the static widgets
 		$( "#dialog_link, #icons li" )
 			.mouseenter(function() {
 				$( this ).addClass( "ui-state-hover" );
@@ -355,28 +429,11 @@
 		});
 	}
 
-	function rollYourOwnLoad( hash ) {
+	function rollYourOwnLoad( success ) {
 		var curr = ++lastRollYourOwnLoad;
-		$.ajax( downloadJqueryuiHost + "/themeroller/rollyourown?themeParams=" + escape( hash ), {
-			dataType: "jsonp",
-			success: function( response ) {
-				if ( curr !== lastRollYourOwnLoad ) {
-					return;
-				}
-				$( "#rollYourOwn" ).html( response );
-				rollYourOwnInit();
-			},
-			error: function() {
-				if ( console && console.log ) {
-					console.log( "Failed to reload rollYourOwn tab", arguments );
-				}
-			}
-		});
-	}
 
-	Hash.on( "change", function( hash ) {
-		// Roll Your Own
-		// remember which groups are open
+		// Roll Your Own:
+		// Remember which groups are open
 		openGroups = [];
 		$( "div.theme-group-content" ).each(function( i ) {
 			if ( $( this ).is( ":visible" ) ) {
@@ -384,7 +441,7 @@
 			}
 		});
 
-		// remember any focused element
+		// Remember any focused element
 		focusedEl = null;
 		themeroller.find( "form" ).find( "input, select, .texturePicker" ).each(function( i ) {
 			if ( $( this ).is( ".focus" ) ) {
@@ -392,18 +449,33 @@
 			}
 		});
 
-		rollYourOwnLoad( hash );
+		rollYourOwnFetch().done(function( response ) {
+			if ( curr !== lastRollYourOwnLoad ) {
+				return;
+			}
+			$( "#rollYourOwn" ).html( response );
+			rollYourOwnInit();
+			if ( success ) { success(); }
+		}).fail(function() {
+			if ( console && console.log ) {
+				console.log( "Failed to reload rollYourOwn tab", arguments );
+			}
+		});
+	}
 
-		// Theme css
-		updateCSS( hash );
+	setModel( QueryString.decode( baseVars ), {
+		updateHash: false
 	});
 
+	Hash.on( "change", function( hash ) {
+		setModel( QueryString.decode( hash ), {
+			reloadRollYourOwn: true
+		});
+	});
+
+	appInit();
+	demoInit();
+	rollYourOwnLoad();
 	Hash.init();
 
-	// dom loaded
-	$(function() {
-		appInit();
-		demoInit();
-		rollYourOwnLoad( baseVars );
-	});
-}( jQuery, Hash ) );
+}( jQuery, Hash, QueryString ) );

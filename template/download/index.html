@@ -1,36 +1,33 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/download.css">
-<div id="download-builder" data-download-jqueryui-host="{{host}}">
+<div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}">
 	<form action="{{host}}/download" method="POST">
-		<div class="download-builder-header">
+		<div class="download-builder-header version-area">
 			<h2>Version</h2>
-			<p class="component-title">{{pkg.version}}</p>
+			{{#each releases}}
+				<div class="field-pair">
+					<label class="clearfix">
+						<input type="radio" id="version-{{this.pkg.version}}" value="{{this.pkg.version}}" name="version"{{{isVersionChecked this}}}>
+						<span class="version-title">{{this.pkg.version}}</span>
+						<span class="version-label">{{this.label}}</span>
+					</label>
+				</div>
+			{{/each}}
 		</div>
 		<div class="download-builder-header">
 			<h2>Components</h2>
 		</div>
-		<div class="components">
-			{{#each categories}}
-				<div class="ui-widget ui-widget-content component-group clearfix">
-					<div class="component-group-desc">
-						<h3>{{name}}</h3>
-						<p>{{description}}</p>
-					</div>
-					<div class="component-group-list">
-					{{#each components}}
-						<label title="{{description}}" class="clearfix">
-							<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
-							<span class="component-title">{{title}}</span>
-							<span class="component-desc">{{description}}</span>
-						</label>
-					{{/each}}
-					</div>
-				</div>
-			{{/each}}
+		<div class="components-area"></div>
+		<div class="download-builder-header">
+			<h2>Theme</h2>
+			<div class="theme-area"></div>
 		</div>
 		<input type="submit" class="ui-widget-content" value="Download">
 	</form>
 </div>
 
 <script src="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/jquery-ui.min.js"></script>
+<script src="/resources/external/event_emitter.min.js"></script>
+<script src="/resources/hash.js"></script>
+<script src="/resources/querystring.js"></script>
 <script src="/resources/download.js"></script>

@@ -15,9 +15,11 @@ var argv = require( "optimist" ).argv,
 	Frontend = require( "./frontend" ),
 	httpHost = argv.host || "localhost",
 	httpPort = argv.port || 8088,
+	Release = require( "./lib/release" ),
 	routes = {
 		home: "/",
 		download: "/download",
+		downloadComponents: "/download/components",
 		downloadTheme: "/download/theme",
 		themeroller: "/themeroller",
 		themerollerParseTheme: "/themeroller/parsetheme.css",
@@ -27,7 +29,10 @@ var argv = require( "optimist" ).argv,
 	ThemeRoller = require( "./lib/themeroller" );
 
 var frontend = new Frontend();
-Builder.cacheThemeImages();
+if ( process.argv.indexOf( "--nocache" ) === -1 ) {
+	Builder.cacheReleases();
+	Builder.cacheThemeImages();
+}
 
 function params( request ) {
 	return querystring.parse( request.url.split( "?" )[ 1 ] );
@@ -46,25 +51,27 @@ function route(app) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
 			try {
-				var field, builder, theme,
+				var builder, field, theme, version,
 					themeVars = null,
 					components = [];
 				if ( fields.theme !== "none" ) {
 					themeVars = querystring.parse( fields.theme );
 				}
-				// override with fields if they exist
+				// Override with fields if they exist
 				if ( themeVars !== null ) {
 					themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
 					themeVars.scope = fields.scope || themeVars.scope;
 				}
+				version = fields.version;
+				delete fields.scope;
 				delete fields.theme;
 				delete fields[ "theme-folder-name" ];
-				delete fields.scope;
+				delete fields.version;
 				for ( field in fields ) {
 					components.push( field );
 				}
 				theme = new ThemeRoller( themeVars );
-				builder = new Builder( components, theme );
+				builder = new Builder( Release.find( version ), components, theme );
 				response.setHeader( "Content-Type", "application/zip" );
 				response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 				builder.writeTo( response, function( err, result ) {
@@ -78,6 +85,10 @@ function route(app) {
 				response.end();
 			}
 		});
+	});
+	app.get( routes.downloadComponents, function( request, response, next ) {
+		response.setHeader( "Content-Type", "application/json" );
+		response.end( frontend.download.components( params( request ) ) );
 	});
 	app.get( routes.downloadTheme, function( request, response, next ) {
 		response.setHeader( "Content-Type", "application/json" );
