@@ -51,13 +51,13 @@
 			if ( attributes.scope && model.scope !== prev.scope ) {
 				$( "#scope" ).val( model.scope ).trigger( "change" );
 			}
+
+			$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
 		});
 
 		if ( attributes.version && model.version !== prev.version ) {
 			$( "#download-builder [name=version][value=\"" + model.version + "\"]" ).trigger( "click" );
 		}
-
-		$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
 
 		Hash.update( QueryString.encode( model ), {
 			ignoreChange: true
