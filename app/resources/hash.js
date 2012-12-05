@@ -60,7 +60,8 @@
 	}
 
 	function currHash() {
-		return clean( window.location.hash );
+		// Can't use window.location.hash, because Firefox automatically decodes it.
+		return location.href.split( "#" )[ 1 ];
 	}
 
 	function currSearch() {
@@ -69,7 +70,7 @@
 
 	function init() {
 		if ( currSearch() ) {
-			location.href = location.pathname.replace( /\/$/, "" ) + "/#" + encodeURIComponent( currSearch() );
+			location.href = location.pathname.replace( /\/$/, "" ) + "/#" + currSearch();
 		}
 
 		storedHash = "";
