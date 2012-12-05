@@ -59,7 +59,9 @@
 
 		$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
 
-		updateHash();
+		Hash.update( QueryString.encode( model ), {
+			ignoreChange: true
+		});
 	}
 
 	function themeRollerModel() {
@@ -285,13 +287,6 @@
 
 	function pluralize( count, singular, plural ) {
 		return count === 1 ? singular : plural;
-	}
-
-	// Update hash to reflect model
-	function updateHash() {
-		Hash.update( QueryString.encode( model ), {
-			ignoreChange: true
-		});
 	}
 
 	Hash.on( "change", function( hash ) {

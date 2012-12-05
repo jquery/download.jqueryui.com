@@ -52,7 +52,11 @@
 		}
 		$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
 		updateCSS();
-		if ( options.updateHash ) { updateHash(); }
+		if ( options.updateHash ) {
+			Hash.update( QueryString.encode( model ), {
+				ignoreChange: true
+			});
+		}
 		updateThemeGalleryDownloadLink();
 	}
 
@@ -101,13 +105,6 @@
 				links.not( ":last" ).remove();
 			}, 5000 );
 		}
-	}
-
-	// Update hash to reflect model
-	function updateHash() {
-		Hash.update( QueryString.encode( model ), {
-			ignoreChange: true
-		});
 	}
 
 	// Function called after a change event in the form
