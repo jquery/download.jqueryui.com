@@ -46,11 +46,11 @@
 
 	function updateHash( hash, options ) {
 		options = options || {};
-		if ( options.preventChange === true ) {
+		if ( options.ignoreChange === true ) {
 			stopListening();
 		}
 		window.location.hash = hash;
-		if ( options.preventChange === true ) {
+		if ( options.ignoreChange === true ) {
 			storedHash = hash;
 			startListening();
 		}
