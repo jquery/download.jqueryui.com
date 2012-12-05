@@ -106,7 +106,8 @@
 	function _check( elem, value ) {
 		elem.each(function() {
 			var elem = $( this ),
-				name = elem.attr( "name" );
+				name = elem.attr( "name" ),
+				pair = {};
 
 			// Handle dependencies
 			if ( value ) {
@@ -141,6 +142,9 @@
 					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
 				}
 			}
+
+			pair[ name ] = value;
+			setModel( pair );
 		});
 		downloadOnOff();
 	}
@@ -245,6 +249,18 @@
 				});
 			});
 
+			/* Remember components check/uncheck selection
+			 * - If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
+    	 * - If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
+			 */
+			allComponents().each(function() {
+				var elem = $( this ),
+					name = elem.attr( "name" );
+				if ( name in model && !model[ name ] ) {
+					_check( elem, false );
+				}
+			});
+
 			// Generating toggle all checkboxes
 			$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
 			$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
@@ -279,7 +295,14 @@
 	}
 
 	Hash.on( "change", function( hash ) {
-		setModel( QueryString.decode( hash ) );
+		var attributes = QueryString.decode( hash );
+		// "false" -> false
+		for ( i in attributes) {
+			if ( attributes[ i ] === "false" ) {
+				attributes[ i ] = false;
+			}
+		}
+		setModel( attributes );
 	});
 
 	Hash.init();
