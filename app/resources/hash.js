@@ -9,9 +9,9 @@
  */
 (function( exports, $, EventEmitter, undefined ) {
 	var emitter = new EventEmitter(),
-		listenDelay = 600,
 		// listen to hash changes?
 		listen = true,
+		listenDelay = 600,
 		pollInterval = 500,
 		poll = null,
 		storedHash = "";
@@ -67,17 +67,19 @@
 		return clean( window.location.search );
 	}
 
+	function init() {
+		if ( currSearch() ) {
+			location.href = location.pathname.replace( /\/$/, "" ) + "/#" + encodeURIComponent( currSearch() );
+		}
+
+		storedHash = "";
+		checkHashChange();
+	}
+
 	// Export public interface
 	exports.Hash = {
 		clean: clean,
-		init: function() {
-			if ( currSearch() ) {
-				location.href = location.pathname.replace( /\/$/, "" ) + "/#" + encodeURIComponent( currSearch() );
-			}
-
-			storedHash = "";
-			checkHashChange();
-		},
+		init: init,
 		on: $.proxy( emitter.on, emitter ),
 		off: $.proxy( emitter.off, emitter ),
 		update: updateHash
