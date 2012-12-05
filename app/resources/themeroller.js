@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global _: false, Hash: false, QueryString: false */
+/*global Hash: false, QueryString: false */
 /*!
  * jQuery UI Theme Roller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -8,7 +8,7 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( _, $, Hash, QueryString, undefined ) {
+(function( $, Hash, QueryString, undefined ) {
 	var theme, Theme,
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
@@ -24,17 +24,28 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
+	function omit( obj, keys ) {
+		var key,
+			copy = {};
+		for ( key in obj ) {
+			if ( $.inArray( key, keys ) === -1 ) {
+				copy[ key ] = obj[ key ];
+			}
+		}
+		return copy;
+	}
+
 	/**
 	 * Model
 	 */
 	function setModel( attributes, options ) {
-		var prev = _.clone( model );
+		var prev = $.extend( {}, model );
 		options = options || {};
 		if ( typeof options.updateHash === "undefined" ) {
 			options.updateHash = true;
 		}
-		_.extend( model, attributes );
-		if ( opts.reloadRollYourOwn ) {
+		$.extend( model, attributes );
+		if ( options.reloadRollYourOwn ) {
 			rollYourOwnLoad(function() {
 				$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
 			});
@@ -49,8 +60,8 @@
 	function downloadBuilderModel( customModel ) {
 		customModel = customModel || model;
 		var downloadParams = ( customModel.downloadParams ? QueryString.decode( decodeURIComponent ( customModel.downloadParams ) ) : {} );
-		return _.extend( downloadParams, {
-			themeParams: encodeURIComponent( QueryString.encode( _.omit( customModel, "downloadParams" ) ) )
+		return $.extend( downloadParams, {
+			themeParams: encodeURIComponent( QueryString.encode( omit( customModel, [ "downloadParams" ] ) ) )
 		});
 	}
 
@@ -311,7 +322,7 @@
 	function updateThemeGalleryDownloadLink() {
 		$( "#themeGallery a.download" )
 			.each(function() {
-				var downloadModel = _.extend( {}, model, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
+				var downloadModel = $.extend( {}, model, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
 				$( this ).attr( "href", downloadUrl( downloadModel ) );
 			});
 	}
@@ -470,4 +481,4 @@
 	rollYourOwnLoad();
 	Hash.init();
 
-}( _, jQuery, Hash, QueryString ) );
+}( jQuery, Hash, QueryString ) );

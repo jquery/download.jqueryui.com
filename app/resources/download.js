@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global _: false, Hash: false, QueryString: false */
+/*global Hash: false, QueryString: false */
 /*!
  * jQuery UI Download Builder client-side JavaScript file
  * http://jqueryui.com/download/
@@ -8,7 +8,7 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( _, $, Hash, QueryString, undefined ) {
+(function( $, Hash, QueryString, undefined ) {
 
 	var dependencies, dependents,
 		downloadBuilder = $( "#download-builder" ),
@@ -25,12 +25,23 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
+	function omit( obj, keys ) {
+		var key,
+			copy = {};
+		for ( key in obj ) {
+			if ( $.inArray( key, keys ) === -1 ) {
+				copy[ key ] = obj[ key ];
+			}
+		}
+		return copy;
+	}
+
 	/**
 	 * Model
 	 */
 	function setModel( attributes ) {
-		var prev = _.clone( model );
-		_.extend( model, attributes );
+		var prev = $.extend( {}, model );
+		$.extend( model, attributes );
 
 		themesLoad.done(function() {
 			if ( attributes.folderName && model.folderName !== prev.folderName ) {
@@ -53,8 +64,8 @@
 
 	function themeRollerModel() {
 		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.decode( decodeURIComponent ( model.themeParams ) ) : {} );
-		return _.extend( themeParams, {
-			downloadParams: encodeURIComponent( QueryString.encode( _.omit( model, "themeParams", "folderName" ) ) )
+		return $.extend( themeParams, {
+			downloadParams: encodeURIComponent( QueryString.encode( omit( model, [ "themeParams", "folderName" ] ) ) )
 		});
 	}
 
@@ -345,4 +356,4 @@
 		}
 	});
 
-}( _, jQuery, Hash, QueryString ) );
+}( jQuery, Hash, QueryString ) );
