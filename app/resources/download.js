@@ -72,11 +72,11 @@
 	}
 
 	function themeUrl() {
-		return downloadJqueryuiHost + "/download/theme" + ( model.themeParams !== "none" ? "/?" + QueryString.encode( model ) : "" );
+		return downloadJqueryuiHost + "/download/theme" + ( model.themeParams !== "none" ? "?" + QueryString.encode( model ) : "" );
 	}
 
 	function themerollerUrl() {
-		return "/themeroller/?" + QueryString.encode( themeRollerModel() );
+		return "/themeroller?" + QueryString.encode( themeRollerModel() );
 	}
 
 	function componentsFetch() {

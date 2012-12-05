@@ -71,17 +71,17 @@
 
 	// Returns download url
 	function downloadUrl( customModel ) {
-		return "/download/?" + QueryString.encode( downloadBuilderModel( customModel ) );
+		return "/download?" + QueryString.encode( downloadBuilderModel( customModel ) );
 	}
 
 	// Returns imageGenerator url
 	function imageGeneratorUrl( texturewidth, textureheight, value ) {
-		return imageGeneratorUrlPart + "/?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
+		return imageGeneratorUrlPart + "?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
 	}
 
 	// Returns parsetheme url
 	function parsethemeUrl() {
-		return downloadJqueryuiHost + "/themeroller/parsetheme.css/?" + QueryString.encode( model );
+		return downloadJqueryuiHost + "/themeroller/parsetheme.css?" + QueryString.encode( model );
 	}
 
 	// Fetches rollYourOwn content
