@@ -11,6 +11,7 @@
 (function( $, Hash, QueryString, undefined ) {
 
 	var dependencies, dependents,
+		defaults = {},
 		downloadBuilder = $( "#download-builder" ),
 		model = {},
 		themesLoad = $.Deferred(),
@@ -59,16 +60,35 @@
 			$( "#download-builder [name=version][value=\"" + model.version + "\"]" ).trigger( "click" );
 		}
 
-		Hash.update( QueryString.encode( model ), {
+		Hash.update( downloadBuilderQueryString(), {
 			ignoreChange: true
 		});
 	}
 
-	function themeRollerModel() {
+	function downloadBuilderQueryString() {
+		var relevantModel = function() {
+			var irrelevantVars = [];
+			$.each( defaults, function( i, varName ) {
+				if ( model[ varName ] === defaults[ varName ] ) {
+					irrelevantVars.push( varName );
+				}
+			});
+			if ( irrelevantVars.length ) {
+				return omit( model, irrelevantVars );
+			} else {
+				return model;
+			}
+		};
+		return QueryString.encode( relevantModel() );
+	}
+
+	function themeRollerQueryString() {
 		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.decode( decodeURIComponent ( model.themeParams ) ) : {} );
-		return $.extend( themeParams, {
-			downloadParams: encodeURIComponent( QueryString.encode( omit( model, [ "themeParams", "folderName" ] ) ) )
-		});
+		return QueryString.encode(
+			$.extend( themeParams, {
+				downloadParams: encodeURIComponent( QueryString.encode( omit( model, [ "themeParams", "folderName" ] ) ) )
+			})
+		);
 	}
 
 	function themeUrl() {
@@ -76,7 +96,7 @@
 	}
 
 	function themerollerUrl() {
-		return "/themeroller?" + QueryString.encode( themeRollerModel() );
+		return "/themeroller?" + themeRollerQueryString();
 	}
 
 	function componentsFetch() {
@@ -222,6 +242,9 @@
 
   function loadComponents() {
 		var versionElement = $( "#download-builder [name=version]:checked" );
+		if ( defaults[ "version" ] == null ) {
+			defaults[ "version" ] = versionElement.val();
+		}
 		setModel({ version: versionElement.val() });
 		componentsFetch().done(function( componentsSection ) {
 			dependencies = {};
@@ -314,13 +337,16 @@
 		$( "#download-builder .theme-area" ).html( themeSection );
 
 		if ( !model.themeParams ) {
+			defaults[ "themeParams" ] = encodeURIComponent( $( "#theme option:selected" ).val() );
 			setModel({ themeParams: encodeURIComponent( $( "#theme option:selected" ).val() ) });
 		}
 
 		$( "#theme" ).on( "click change", function() {
-			var selected = $( this ).find( "option:selected" );
+			var selected = $( this ).find( "option:selected" ),
+				folderName = selected.text().toLowerCase().replace( " ", "-" );
+			defaults[ "folderName" ] = folderName;
 			setModel({
-				folderName: selected.text().toLowerCase().replace( " ", "-" ),
+				folderName: folderName,
 				themeParams: encodeURIComponent( selected.val() )
 			});
 			downloadOnOff();

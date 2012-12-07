@@ -46,6 +46,10 @@
 
 	function updateHash( hash, options ) {
 		options = options || {};
+		if ( ( hash == null || hash.length === 0 ) && !(/#/).test( location.href ) ) {
+			// If setting hash to null, but it has never been set to anything yet, simply do nothing.
+			return;
+		}
 		if ( options.ignoreChange === true ) {
 			stopListening();
 		}
