@@ -1,19 +1,17 @@
 /*jshint jquery: true, browser: true */
-/*global Hash: false, QueryString: false */
+/*global Hash: false, Model: false, QueryString: false */
 /*!
- * jQuery UI Theme Roller client-side JavaScript file
+ * jQuery UI ThemeRoller client-side JavaScript file
  * http://jqueryui.com/themeroller/
  *
  * Copyright 2012 jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, QueryString, undefined ) {
-	var theme, Theme,
-		defaults = {},
+(function( $, Hash, Model, QueryString, undefined ) {
+	var model, theme, Theme,
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
-		model = {},
 		openGroups = [],
 		themeroller = $( "#themeroller" ),
 		baseVars = QueryString.decode( themeroller.data( "base-vars" ) ),
@@ -25,95 +23,16 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
-	function omit( obj, keys ) {
-		var key,
-			copy = {};
-		for ( key in obj ) {
-			if ( $.inArray( key, keys ) === -1 ) {
-				copy[ key ] = obj[ key ];
-			}
-		}
-		return copy;
-	}
-
-	/**
-	 * Model
-	 */
-	function setModel( attributes, options ) {
-		var prev = $.extend( {}, model );
-		options = options || {};
-		if ( typeof options.updateHash === "undefined" ) {
-			options.updateHash = true;
-		}
-		$.extend( model, attributes );
-		if ( options.reloadRollYourOwn ) {
-			rollYourOwnLoad(function() {
-				$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
-			});
-		}
-		$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
-		updateCSS();
-		if ( options.updateHash ) {
-			Hash.update( themeRollerQueryString(), {
-				ignoreChange: true
-			});
-		}
-		updateThemeGalleryDownloadLink();
-	}
-
-	function themeRollerQueryString() {
-		var relevantModel = function() {
-			var i,
-				isBaseVars = true;
-			// If theme is baseVars, omit it in the querystring.
-			for ( i in baseVars ) {
-				if ( model[ i ] !== baseVars[ i ] ) {
-					isBaseVars = false;
-					break;
-				}
-			}
-			if ( isBaseVars ) {
-				return omit( model,
-					$.map( baseVars, function( value, varName ) {
-						return varName;
-					})
-				);
-			} else {
-				return model;
-			}
-		};
-		return QueryString.encode( relevantModel() );
-	}
-
-	// A different model structure used by several resources
-	function downloadBuilderModel( customModel ) {
-		customModel = customModel || model;
-		var downloadParams = ( customModel.downloadParams ? QueryString.decode( decodeURIComponent ( customModel.downloadParams ) ) : {} );
-		return $.extend( downloadParams, {
-			themeParams: encodeURIComponent( QueryString.encode( omit( customModel, [ "downloadParams" ] ) ) )
-		});
-	}
-
-	// Returns download url
-	function downloadUrl( customModel ) {
-		return "/download?" + QueryString.encode( downloadBuilderModel( customModel ) );
-	}
-
 	// Returns imageGenerator url
 	function imageGeneratorUrl( texturewidth, textureheight, value ) {
 		return imageGeneratorUrlPart + "?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
-	}
-
-	// Returns parsetheme url
-	function parsethemeUrl() {
-		return downloadJqueryuiHost + "/themeroller/parsetheme.css?" + QueryString.encode( model );
 	}
 
 	// Fetches rollYourOwn content
 	function rollYourOwnFetch() {
 		return $.ajax( downloadJqueryuiHost + "/themeroller/rollyourown", {
 			dataType: "jsonp",
-			data: downloadBuilderModel()
+			data: model.downloadBuilderModel().attributes
 		});
 	}
 
@@ -122,7 +41,7 @@
 	 */
 	// Function to append a new theme stylesheet with the new style changes
 	function updateCSS() {
-		$( "body" ).append( "<link href=\"" + parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
+		$( "body" ).append( "<link href=\"" + model.parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
 		var links = $( "link[href*=parsetheme\\.css]" );
 		if ( links.length > 1 ) {
 			// Wait a few seconds before removing previous theme(s) to avoid FOUW
@@ -134,7 +53,7 @@
 
 	// Function called after a change event in the form
 	function formChange() {
-		setModel( QueryString.decode( themeroller.find( ".application form" ).serialize() ) );
+		model.set( QueryString.decode( themeroller.find( ".application form" ).serialize() ) );
 	}
 
 	// Set up spindowns
@@ -344,8 +263,8 @@
 	function updateThemeGalleryDownloadLink() {
 		$( "#themeGallery a.download" )
 			.each(function() {
-				var downloadModel = $.extend( {}, model, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
-				$( this ).attr( "href", downloadUrl( downloadModel ) );
+				var mergeAttributes = QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] );
+				$( this ).attr( "href", model.downloadBuilderModel( mergeAttributes ).url() );
 			});
 	}
 
@@ -365,9 +284,11 @@
 			.parent()
 			.find( "a.edit" )
 			.on( "click", function( event ) {
-				setModel( QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ), {
-					reloadRollYourOwn: true
-				});
+				model.set(
+					$.extend({
+						reloadRollYourOwn: true
+					}, QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) )
+				);
 				$( "#rollerTabs" ).tabs( "select", 0 );
 				event.preventDefault();
 			});
@@ -454,8 +375,9 @@
 		});
 	}
 
-	function rollYourOwnLoad( success ) {
-		var curr = ++lastRollYourOwnLoad;
+	function rollYourOwnLoad() {
+		var curr = ++lastRollYourOwnLoad,
+			deferred = $.Deferred();
 
 		// Roll Your Own:
 		// Remember which groups are open
@@ -480,27 +402,57 @@
 			}
 			$( "#rollYourOwn" ).html( response );
 			rollYourOwnInit();
-			if ( success ) { success(); }
+			deferred.resolve();
 		}).fail(function() {
 			if ( console && console.log ) {
 				console.log( "Failed to reload rollYourOwn tab", arguments );
 			}
 		});
+		
+		return deferred;
 	}
 
-	setModel( baseVars, {
-		updateHash: false
+	model = new Model.ThemeRoller({
+		baseVars: baseVars,
+		host: downloadJqueryuiHost
+	});
+
+	model.on( "change", function ( changed ) {
+		if ( "reloadRollYourOwn" in changed ) {
+			delete model.attributes.reloadRollYourOwn;
+			rollYourOwnLoad().done(function() {
+				$( "#downloadTheme" ).attr( "href", model.downloadUrl() );
+			});
+		}
+		$( "#downloadTheme" ).attr( "href", model.downloadUrl() );
+		updateCSS();
+		if ( "skipHashChange" in changed ) {
+			delete model.attributes.skipHashChange;
+		} else {
+			Hash.update( model.querystring(), {
+				ignoreChange: true
+			});
+		}
+		updateThemeGalleryDownloadLink();
 	});
 
 	Hash.on( "change", function( hash ) {
-		setModel( QueryString.decode( hash ), {
-			reloadRollYourOwn: true
-		});
+		model.set(
+			$.extend({
+				reloadRollYourOwn: true
+			}, QueryString.decode( hash ) )
+		);
 	});
+
+	model.set(
+		$.extend({
+			skipHashChange: true
+		}, baseVars )
+	);
 
 	appInit();
 	demoInit();
 	rollYourOwnLoad();
 	Hash.init();
 
-}( jQuery, Hash, QueryString ) );
+}( jQuery, Hash, Model, QueryString ) );

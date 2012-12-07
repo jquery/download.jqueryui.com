@@ -1,19 +1,17 @@
 /*jshint jquery: true, browser: true */
-/*global Hash: false, QueryString: false */
+/*global Hash: false, Model: false, QueryString: false */
 /*!
- * jQuery UI Download Builder client-side JavaScript file
+ * jQuery UI DownloadBuilder client-side JavaScript file
  * http://jqueryui.com/download/
  *
  * Copyright 2012 jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, QueryString, undefined ) {
+(function( $, Hash, Model, QueryString, undefined ) {
 
-	var dependencies, dependents,
-		defaults = {},
+	var dependencies, dependents, model,
 		downloadBuilder = $( "#download-builder" ),
-		model = {},
 		themesLoad = $.Deferred(),
 		baseVars = downloadBuilder.data( "base-vars" ),
 		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" );
@@ -26,97 +24,21 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
-	function omit( obj, keys ) {
-		var key,
-			copy = {};
-		for ( key in obj ) {
-			if ( $.inArray( key, keys ) === -1 ) {
-				copy[ key ] = obj[ key ];
-			}
-		}
-		return copy;
-	}
-
-	/**
-	 * Model
-	 */
-	function setModel( attributes ) {
-		var prev = $.extend( {}, model );
-		$.extend( model, attributes );
-
-		themesLoad.done(function() {
-			if ( attributes.folderName && model.folderName !== prev.folderName ) {
-				$( "#theme-folder-name" ).val( model.folderName ).trigger( "change" );
-			}
-
-			if ( attributes.scope && model.scope !== prev.scope ) {
-				$( "#scope" ).val( model.scope ).trigger( "change" );
-			}
-
-			$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", themerollerUrl() );
-		});
-
-		if ( attributes.version && model.version !== prev.version ) {
-			$( "#download-builder [name=version][value=\"" + model.version + "\"]" ).trigger( "click" );
-		}
-
-		Hash.update( downloadBuilderQueryString(), {
-			ignoreChange: true
-		});
-	}
-
-	function downloadBuilderQueryString() {
-		var relevantModel = function() {
-			var irrelevantVars = [];
-			$.each( defaults, function( varName ) {
-				if ( model[ varName ] === defaults[ varName ] ) {
-					irrelevantVars.push( varName );
-				}
-			});
-			if ( irrelevantVars.length ) {
-				return omit( model, irrelevantVars );
-			} else {
-				return model;
-			}
-		};
-		return QueryString.encode( relevantModel() );
-	}
-
-	function themeRollerQueryString() {
-		var themeParams = ( model.themeParams && model.themeParams !== "none" ? QueryString.decode( decodeURIComponent ( model.themeParams ) ) : {} );
-		return QueryString.encode(
-			$.extend( themeParams, {
-				downloadParams: encodeURIComponent( QueryString.encode( omit( model, [ "themeParams", "folderName" ] ) ) )
-			})
-		);
-	}
-
-	function themeUrl() {
-		return downloadJqueryuiHost + "/download/theme" + ( model.themeParams !== "none" ? "?" + QueryString.encode( model ) : "" );
-	}
-
-	function themerollerUrl() {
-		return "/themeroller?" + themeRollerQueryString();
-	}
-
 	function componentsFetch() {
 		return $.ajax( downloadJqueryuiHost + "/download/components/", {
 			dataType: "jsonp",
 			data: {
-				version: model.version
+				version: model.get( "version" )
 			}
 		});
 	}
 
 	function themeFetch() {
-		return $.ajax( themeUrl(), {
+		return $.ajax( model.themeUrl(), {
 			dataType: "jsonp"
 		});
 	}
 
-	/**
-	 * App
-	 */
 	function allComponents() {
 		return $( "#download-builder .component-group-list input[type=checkbox]" );
 	}
@@ -167,7 +89,7 @@
 
 			modelUpdates[ name ] = value;
 		});
-		setModel( modelUpdates );
+		model.set( modelUpdates );
 		downloadOnOff();
 	}
 
@@ -242,10 +164,10 @@
 
   function loadComponents() {
 		var versionElement = $( "#download-builder [name=version]:checked" );
-		if ( defaults[ "version" ] == null ) {
-			defaults[ "version" ] = versionElement.val();
+		if ( model.defaults[ "version" ] == null ) {
+			model.defaults[ "version" ] = versionElement.val();
 		}
-		setModel({ version: versionElement.val() });
+		model.set({ version: versionElement.val() });
 		componentsFetch().done(function( componentsSection ) {
 			dependencies = {};
 			dependents = {};
@@ -281,7 +203,7 @@
 			allComponents().each(function() {
 				var elem = $( this ),
 					name = elem.attr( "name" );
-				if ( name in model && !model[ name ] ) {
+				if ( model.has( name ) && !model.get( name ) ) {
 					_check( elem, false );
 				}
 			});
@@ -312,6 +234,33 @@
 		return count === 1 ? singular : plural;
 	}
 
+	model = new Model.DownloadBuilder({
+		baseVars: baseVars,
+		host: downloadJqueryuiHost
+	});
+
+	model.on( "change", function( changed ) {
+		themesLoad.done(function() {
+			if ( "folderName" in changed ) {
+				$( "#theme-folder-name" ).val( model.get( "folderName" ) ).trigger( "change" );
+			}
+
+			if ( "scope" in changed ) {
+				$( "#scope" ).val( model.get( "scope" ) ).trigger( "change" );
+			}
+
+			$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", model.themerollerUrl() );
+		});
+
+		if ( "version" in changed ) {
+			$( "#download-builder [name=version][value=\"" + model.get( "version" ) + "\"]" ).trigger( "click" );
+		}
+
+		Hash.update( model.querystring(), {
+			ignoreChange: true
+		});
+	});
+
 	Hash.on( "change", function( hash ) {
 		var i,
 			attributes = QueryString.decode( hash );
@@ -321,7 +270,7 @@
 				attributes[ i ] = false;
 			}
 		}
-		setModel( attributes );
+		model.set( attributes );
 	});
 
 	Hash.init();
@@ -337,15 +286,15 @@
 		$( "#download-builder .theme-area" ).html( themeSection );
 
 		if ( !model.themeParams ) {
-			defaults[ "themeParams" ] = encodeURIComponent( $( "#theme option:selected" ).val() );
-			setModel({ themeParams: encodeURIComponent( $( "#theme option:selected" ).val() ) });
+			model.defaults[ "themeParams" ] = encodeURIComponent( $( "#theme option:nth-child(2)" ).val() );
+			model.set({ themeParams: encodeURIComponent( $( "#theme option:selected" ).val() ) });
 		}
 
 		$( "#theme" ).on( "click change", function() {
 			var selected = $( this ).find( "option:selected" ),
 				folderName = selected.text().toLowerCase().replace( " ", "-" );
-			defaults[ "folderName" ] = folderName;
-			setModel({
+			model.defaults[ "folderName" ] = folderName;
+			model.set({
 				folderName: folderName,
 				themeParams: encodeURIComponent( selected.val() )
 			});
@@ -364,12 +313,12 @@
 
 		$( "#scope" ).on({
 			"change": function() {
-				setModel({ scope: $( this ).val() });
+				model.set({ scope: $( this ).val() });
 			},
 			"keyup": function() {
 				if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
 					$( "#theme-folder-name" ).data( "suggestedEdit", true );
-					setModel({ folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) });
+					model.set({ folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) });
 				}
 			}
 		});
@@ -381,7 +330,7 @@
 				}
 			},
 			"change": function() {
-				setModel({ folderName: $( this ).val() });
+				model.set({ folderName: $( this ).val() });
 			},
 			"keyup": function() {
 				var val = $( this ).val(),
@@ -389,7 +338,7 @@
 				$( this ).data( "edited", true );
 				$( "#theme-folder-name" ).removeData( "suggestedEdit" );
 				if ( escapedVal !== val ) {
-					setModel({ folderName: escapedVal });
+					model.set({ folderName: escapedVal });
 				}
 			}
 		});
@@ -401,4 +350,4 @@
 		}
 	});
 
-}( jQuery, Hash, QueryString ) );
+}( jQuery, Hash, Model, QueryString ) );
