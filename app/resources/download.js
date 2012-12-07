@@ -252,9 +252,9 @@
 			});
 
 			/* Remember components check/uncheck selection
-			 * - If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
-    	 * - If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
-			 */
+				- If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
+				- If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
+			*/
 			allComponents().each(function() {
 				var elem = $( this ),
 					name = elem.attr( "name" );
@@ -290,7 +290,8 @@
 	}
 
 	Hash.on( "change", function( hash ) {
-		var attributes = QueryString.decode( hash );
+		var i,
+			attributes = QueryString.decode( hash );
 		// "false" -> false
 		for ( i in attributes) {
 			if ( attributes[ i ] === "false" ) {
