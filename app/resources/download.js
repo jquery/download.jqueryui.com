@@ -68,7 +68,7 @@
 	function downloadBuilderQueryString() {
 		var relevantModel = function() {
 			var irrelevantVars = [];
-			$.each( defaults, function( i, varName ) {
+			$.each( defaults, function( varName ) {
 				if ( model[ varName ] === defaults[ varName ] ) {
 					irrelevantVars.push( varName );
 				}
