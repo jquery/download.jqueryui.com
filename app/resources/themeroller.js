@@ -10,12 +10,13 @@
  */
 (function( $, Hash, QueryString, undefined ) {
 	var theme, Theme,
+		defaults = {},
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
 		model = {},
 		openGroups = [],
 		themeroller = $( "#themeroller" ),
-		baseVars = themeroller.data( "base-vars" ),
+		baseVars = QueryString.decode( themeroller.data( "base-vars" ) ),
 		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
 		imageGeneratorUrlPart = themeroller.data( "image-generator-url" );
 
@@ -53,11 +54,35 @@
 		$( "#downloadTheme" ).attr( "href", downloadUrl( model ) );
 		updateCSS();
 		if ( options.updateHash ) {
-			Hash.update( QueryString.encode( model ), {
+			Hash.update( themeRollerQueryString(), {
 				ignoreChange: true
 			});
 		}
 		updateThemeGalleryDownloadLink();
+	}
+
+	function themeRollerQueryString() {
+		var relevantModel = function() {
+			var i,
+				isBaseVars = true;
+			// If theme is baseVars, omit it in the querystring.
+			for ( i in baseVars ) {
+				if ( model[ i ] !== baseVars[ i ] ) {
+					isBaseVars = false;
+					break;
+				}
+			}
+			if ( isBaseVars ) {
+				return omit( model,
+					$.map( baseVars, function( value, varName ) {
+						return varName;
+					})
+				);
+			} else {
+				return model;
+			}
+		};
+		return QueryString.encode( relevantModel() );
 	}
 
 	// A different model structure used by several resources
@@ -463,7 +488,7 @@
 		});
 	}
 
-	setModel( QueryString.decode( baseVars ), {
+	setModel( baseVars, {
 		updateHash: false
 	});
 
