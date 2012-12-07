@@ -106,10 +106,10 @@
 	}
 
 	function _check( elem, value ) {
+		var modelUpdates = {};
 		elem.each(function() {
 			var elem = $( this ),
-				name = elem.attr( "name" ),
-				pair = {};
+				name = elem.attr( "name" );
 
 			// Handle dependencies
 			if ( value ) {
@@ -145,9 +145,9 @@
 				}
 			}
 
-			pair[ name ] = value;
-			setModel( pair );
+			modelUpdates[ name ] = value;
 		});
+		setModel( modelUpdates );
 		downloadOnOff();
 	}
 
