@@ -165,7 +165,7 @@
   function loadComponents() {
 		var versionElement = $( "#download-builder [name=version]:checked" );
 		if ( model.defaults[ "version" ] == null ) {
-			model.defaults[ "version" ] = versionElement.val();
+			model.defaults[ "version" ] = $( "#download-builder [name=version]" ).first().val();
 		}
 		model.set({ version: versionElement.val() });
 		componentsFetch().done(function( componentsSection ) {
