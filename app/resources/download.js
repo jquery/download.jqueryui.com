@@ -285,9 +285,9 @@
 	themeFetch().done(function( themeSection ) {
 		$( "#download-builder .theme-area" ).html( themeSection );
 
-		if ( !model.themeParams ) {
-			model.defaults[ "themeParams" ] = encodeURIComponent( $( "#theme option:nth-child(2)" ).val() );
-			model.set({ themeParams: encodeURIComponent( $( "#theme option:selected" ).val() ) });
+		if ( !model.has( "themeParams" ) ) {
+			model.defaults[ "themeParams" ] = $( "#theme option:nth-child(2)" ).val();
+			model.set({ themeParams: $( "#theme option:selected" ).val() });
 		}
 
 		$( "#theme" ).on( "click change", function() {
@@ -296,7 +296,7 @@
 			model.defaults[ "folderName" ] = folderName;
 			model.set({
 				folderName: folderName,
-				themeParams: encodeURIComponent( selected.val() )
+				themeParams: selected.val()
 			});
 			downloadOnOff();
 		});
