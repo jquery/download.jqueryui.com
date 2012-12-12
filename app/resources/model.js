@@ -243,14 +243,14 @@
 			});
 		},
 
-		themerollerUrl: function() {
+		themerollerUrl: function( callback ) {
 			var themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( decodeURIComponent ( this.get( "themeParams" ) ) ) : {} );
 			this.themeRollerModel.set(
 				$.extend( themeParams, {
 					downloadParams: encodeURIComponent( QueryString.encode( omit( this.attributes, [ "themeParams", "folderName" ] ) ) )
 				})
 			);
-			return this.themeRollerModel.url();
+			this.themeRollerModel.url( callback );
 		},
 
 		themeUrl: function() {
@@ -272,10 +272,10 @@
 	};
 
 	$.extend( ThemeRollerModel.prototype, Model.prototype, {
-		querystring: function() {
+		querystring: function( callback ) {
 			var attributes = this.attributes,
 				baseVars = this.baseVars,
-				relevantModel = function() {
+				relevantAttributes = function() {
 					var i,
 						isBaseVars = true;
 					// If theme is baseVars, omit it in the querystring.
@@ -294,13 +294,57 @@
 					} else {
 						return attributes;
 					}
+				},
+				shorten = function( attributes, callback ) {
+					var shortened = pick( attributes, [ "downloadParams" ] ),
+						df1 = $.Deferred();
+					if ( !$.isEmptyObject( omit( attributes, [ "downloadParams" ] ) ) ) {
+						zip( omit( attributes, [ "downloadParams" ] ), function( zipped ) {
+							shortened.zThemeParams = zipped;
+							df1.resolve();
+						});
+					} else {
+						df1.resolve();
+					}
+					df1.done(function() {
+						callback( attributes, shortened );
+					});
 				};
-			return QueryString.encode( relevantModel() );
+			if ( this.querystringDelay ) {
+				clearTimeout( this.querystringDelay );
+			}
+			// This is an expensive computation, so avoiding two consecutive calls
+			this.querystringDelay = setTimeout(function() {
+				shorten( relevantAttributes(), function( original, shortened ) {
+					original = QueryString.encode( original );
+					shortened = QueryString.encode( shortened );
+					callback( shortened.length < original.length ? shortened : original );
+				});
+			}, 200 );
 		},
 
-		url: function() {
-			var querystring = this.querystring();
-			return "/themeroller" + ( querystring.length ? "?" + querystring : "" );
+		parseHash: function( hash ) {
+			var self = this,
+				attributes = QueryString.decode( hash ),
+				df1 = $.Deferred();
+			if ( "zThemeParams" in attributes ) {
+				unzip( attributes.zThemeParams, function( unzipped ) {
+					delete attributes.zThemeParams;
+					$.extend( attributes, unzipped );
+					df1.resolve();
+				});
+			} else {
+				df1.resolve();
+			}
+			df1.done(function() {
+				self.set.call( self, attributes );
+			});
+		},
+
+		url: function( callback ) {
+			this.querystring(function( querystring ) {
+				callback( "/themeroller" + ( querystring.length ? "?" + querystring : "" ) );
+			});
 		},
 
 		downloadBuilderModel: function( mergeAttributes ) {

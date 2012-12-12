@@ -254,7 +254,9 @@
 			if ( "themeParams" in changed ) {
 				$( "#theme option[value=\"" + model.get( "themeParams" ) + "\"]" ).prop( "selected", true ).trigger( "change" );
 			}
-			$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", model.themerollerUrl() );
+			model.themerollerUrl(function( url ) {
+				$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", url );
+			});
 		});
 
 		componentsLoad.done(function() {
