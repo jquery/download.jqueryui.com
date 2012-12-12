@@ -262,10 +262,12 @@
 	function updateThemeGalleryDownloadLink() {
 		$( "#themeGallery a.download" )
 			.each(function() {
-				var elem = $( this ),
-					mergeAttributes = QueryString.decode( elem.parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] );
-				model.downloadBuilderModel( mergeAttributes ).url(function( url ) {
+				var elem = $( this );
+				model.downloadUrl(function( url ) {
 					elem.attr( "href", url );
+				}, {
+					quick: true,
+					themeParams: elem.parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ]
 				});
 			});
 	}

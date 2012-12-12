@@ -108,6 +108,7 @@
 			if ( changed ) {
 				this.emitter.trigger( "change", [ changedAttributes ] );
 			}
+			return this;
 		},
 
 		get: function( name ) {
@@ -347,24 +348,28 @@
 			});
 		},
 
-		downloadBuilderModel: function( mergeAttributes ) {
-			var attributes = $.extend( {}, this.attributes, ( mergeAttributes || {} ) ),
-				downloadParams = ( "downloadParams" in attributes ? QueryString.decode( decodeURIComponent ( attributes.downloadParams ) ) : {} ),
+		downloadUrl: function( callback, options ) {
+			var downloadBuilderModel, querystring, themeParams,
+				attributes = ( "downloadParams" in this.attributes ? QueryString.decode( decodeURIComponent ( this.attributes.downloadParams ) ) : {} );
+
+			options = options || {};
+			themeParams = encodeURIComponent( options.themeParams || QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) ) );
+
+			if ( themeParams.length ) {
+				attributes.themeParams = themeParams;
+			}
+
+			if ( options.quick ) {
+				querystring = QueryString.encode( attributes );
+				callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
+			} else {
 				downloadBuilderModel = new DownloadBuilderModel({
 					host: this.host
 				});
-			downloadBuilderModel.set(
-				$.extend( downloadParams, {
-					themeParams: encodeURIComponent( QueryString.encode( omit( attributes, [ "downloadParams" ] ) ) )
-				})
-			);
-			return downloadBuilderModel;
-		},
-
-		downloadUrl: function( callback ) {
-			this.downloadBuilderModel().url(function( url ) {
-				callback( url );
-			});
+				downloadBuilderModel.set( attributes ).url(function( url ) {
+					callback( url );
+				});
+			}
 		},
 
 		parsethemeUrl: function() {
