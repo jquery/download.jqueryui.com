@@ -11,7 +11,8 @@
 	var QueryString = exports.QueryString = {};
 
 	QueryString.encode = function( obj ) {
-		return $.param( obj );
+		// Replace s/+/%20 to become similar to Node's QueryString result.
+		return $.param( obj ).replace( /\+/g, "%20" );
 	};
 
 	// Parse 1-depth key=val pairs string. No Arrays supported.

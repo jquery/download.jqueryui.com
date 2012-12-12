@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global EventEmitter: false, QueryString: false */
+/*global EventEmitter: false, LZMA: false, QueryString: false */
 /*!
  * jQuery UI helper JavaScript file for DownloadBuilder and ThemeRoller models
  * http://jqueryui.com/download/
@@ -8,8 +8,10 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( exports, $, EventEmitter, QueryString, undefined ) {
-	var Model, DownloadBuilderModel, ThemeRollerModel;
+(function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
+	var Model, DownloadBuilderModel, ThemeRollerModel, lzmaInterval,
+		lzma = new LZMA( "/resources/external/lzma_worker.js" ),
+		lzmaLoad = $.Deferred();
 
 	function omit( obj, keys ) {
 		var key,
@@ -20,6 +22,66 @@
 			}
 		}
 		return copy;
+	}
+
+	function pick( obj, keys ) {
+		var copy = {};
+		$.each( keys, function( i, key ) {
+			if ( key in obj ) {
+				copy[ key ] = obj[ key ];
+			}
+		});
+		return copy;
+	}
+
+	function unzip( zipped, callback ) {
+		var data,
+			intoDec = function( hex ) {
+				var dec = parseInt( hex, 16 );
+				if ( dec >= 128 ) {
+						dec = dec - 256;
+				}
+				return dec;
+			};
+
+		// Split string into an array of hexes
+		data = [];
+		while( zipped.length ) {
+			data.push( zipped.slice( -2 ) );
+			zipped = zipped.slice( 0, -2 );
+		}
+		data = data.reverse();
+
+		lzmaLoad.done(function() {
+			lzma.decompress( $.map( data, intoDec ), function( unzipped ) {
+				callback( JSON.parse( unzipped ) );
+			});
+		});
+	}
+
+	function zip( obj, callback ) {
+		var data = JSON.stringify( obj ),
+			intoHex = function( byte ) {
+				var hex;
+
+				if ( byte < 0 ) {
+						byte = byte + 256;
+				}
+
+				hex = byte.toString( 16 );
+
+				// Add leading zero.
+				if ( hex.length === 1 ) {
+					hex = "0" + hex;
+				}
+
+				return hex;
+			};
+		lzmaLoad.done(function() {
+			lzma.compress( data, 0, function( zipped ) {
+				callback( $.map( zipped, intoHex ).join( "" ) );
+			});
+		});
 	}
 
 
@@ -75,7 +137,7 @@
 	};
 
 	$.extend( DownloadBuilderModel.prototype, Model.prototype, {
-		querystring: function() {
+		querystring: function( callback ) {
 			var attributes = this.attributes,
 				defaults = this.defaults,
 				relevantAttributes = function() {
@@ -90,13 +152,95 @@
 					} else {
 						return attributes;
 					}
+				},
+				shorten = function( attributes, callback ) {
+					var shortened = pick( attributes, [ "version" ] ),
+						df1 = $.Deferred(),
+						df2 = $.Deferred();
+					if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
+						zip( QueryString.decode( decodeURIComponent( attributes.themeParams ) ), function( zipped ) {
+							shortened.zThemeParams = zipped;
+							df1.resolve();
+						});
+					} else {
+						if ( "themeParams" in attributes ) {
+							shortened.themeParams = attributes.themeParams;
+						}
+						df1.resolve();
+					}
+					if ( !$.isEmptyObject( omit( attributes, [ "themeParams", "version" ] ) ) ) {
+						zip( omit( attributes, [ "themeParams", "version" ] ), function( zipped ) {
+							shortened.zComponents = zipped;
+							df2.resolve();
+						});
+					} else {
+						df2.resolve();
+					}
+					$.when( df1, df2 ).done(function() {
+						callback( attributes, shortened );
+					});
 				};
-			return QueryString.encode( relevantAttributes() );
+			if ( this.querystringDelay ) {
+				clearTimeout( this.querystringDelay );
+			}
+			// This is an expensive computation, so avoiding two consecutive calls
+			this.querystringDelay = setTimeout(function() {
+				shorten( relevantAttributes(), function( original, shortened ) {
+					original = QueryString.encode( original );
+					shortened = QueryString.encode( shortened );
+					callback( shortened.length < original.length ? shortened : original );
+				});
+			}, 200 );
 		},
 
-		url: function() {
-			var querystring = this.querystring();
-			return "/download" + ( querystring.length ? "?" + querystring : "" );
+		parseHash: function( hash ) {
+			var i,
+				self = this,
+				attributes = QueryString.decode( hash ),
+				df1 = $.Deferred(),
+				df2 = $.Deferred();
+			if ( "zComponents" in attributes ) {
+				unzip( attributes.zComponents, function( unzipped ) {
+					var i;
+					delete attributes.zComponents;
+					// "false" -> false
+					for ( i in unzipped) {
+						if ( unzipped[ i ] === "false" ) {
+							unzipped[ i ] = false;
+						}
+					}
+					$.extend( attributes, unzipped );
+					df1.resolve();
+				});
+			} else {
+				// "false" -> false
+				for ( i in attributes) {
+					if ( attributes[ i ] === "false" ) {
+						attributes[ i ] = false;
+					}
+				}
+				df1.resolve();
+			}
+			if ( "zThemeParams" in attributes ) {
+				unzip( attributes.zThemeParams, function( unzipped ) {
+					delete attributes.zThemeParams;
+					$.extend( attributes, {
+						themeParams: QueryString.encode( unzipped )
+					});
+					df2.resolve();
+				});
+			} else {
+				df2.resolve();
+			}
+			$.when( df1, df2 ).done(function() {
+				self.set.call( self, attributes );
+			});
+		},
+
+		url: function( callback ) {
+			this.querystring(function( querystring ) {
+				callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
+			});
 		},
 
 		themerollerUrl: function() {
@@ -173,18 +317,43 @@
 			return downloadBuilderModel;
 		},
 
-		downloadUrl: function() {
-			return this.downloadBuilderModel().url();
+		downloadUrl: function( callback ) {
+			this.downloadBuilderModel().url(function( url ) {
+				callback( url );
+			});
 		},
 
 		parsethemeUrl: function() {
-			return this.host + "/themeroller/parsetheme.css?" + QueryString.encode( this.attributes );
+			var attributes = omit( this.attributes, [ "downloadParams" ] ),
+				downloadParams = ( "downloadParams" in this.attributes ? QueryString.decode( decodeURIComponent ( this.attributes.downloadParams ) ) : {} );
+			if ( downloadParams.version ) {
+				attributes.version = downloadParams.version;
+			}
+			return this.host + "/themeroller/parsetheme.css?" + QueryString.encode( attributes );
+		},
+
+		rollYourOwnUrl: function() {
+			var attributes;
+			if ( !$.isEmptyObject( omit( this.attributes, [ "downloadParams" ] ) ) ) {
+				attributes = {
+					themeParams: encodeURIComponent( QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) ) )
+				};
+			}
+			return this.host + "/themeroller/rollyourown" + ( attributes == null ? "" : "?" + QueryString.encode( attributes ) );
 		}
 	});
+
+	// Workaround to handle asynchronous worker load lzma-bug.
+	lzmaInterval = setInterval(function() {
+		if ( ( typeof Worker === "function" && Worker.prototype.postMessage != null ) || window.onmessage != null ) {
+			lzmaLoad.resolve();
+			clearInterval( lzmaInterval );
+		}
+	}, 200 );
 
 	exports.Model = {
 		DownloadBuilder: DownloadBuilderModel,
 		ThemeRoller: ThemeRollerModel
 	};
 
-}( this, jQuery, EventEmitter, QueryString ) );
+}( this, jQuery, EventEmitter, LZMA, QueryString ) );

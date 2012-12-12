@@ -30,9 +30,8 @@
 
 	// Fetches rollYourOwn content
 	function rollYourOwnFetch() {
-		return $.ajax( downloadJqueryuiHost + "/themeroller/rollyourown", {
-			dataType: "jsonp",
-			data: model.downloadBuilderModel().attributes
+		return $.ajax( model.rollYourOwnUrl(), {
+			dataType: "jsonp"
 		});
 	}
 
@@ -263,8 +262,11 @@
 	function updateThemeGalleryDownloadLink() {
 		$( "#themeGallery a.download" )
 			.each(function() {
-				var mergeAttributes = QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] );
-				$( this ).attr( "href", model.downloadBuilderModel( mergeAttributes ).url() );
+				var elem = $( this ),
+					mergeAttributes = QueryString.decode( elem.parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] );
+				model.downloadBuilderModel( mergeAttributes ).url(function( url ) {
+					elem.attr( "href", url );
+				});
 			});
 	}
 
@@ -421,10 +423,14 @@
 		if ( "reloadRollYourOwn" in changed ) {
 			delete model.attributes.reloadRollYourOwn;
 			rollYourOwnLoad().done(function() {
-				$( "#downloadTheme" ).attr( "href", model.downloadUrl() );
+				model.downloadUrl(function( url ) {
+					$( "#downloadTheme" ).attr( "href", url );
+				});
 			});
 		}
-		$( "#downloadTheme" ).attr( "href", model.downloadUrl() );
+		model.downloadUrl(function( url ) {
+			$( "#downloadTheme" ).attr( "href", url );
+		});
 		updateCSS();
 		if ( "skipHashChange" in changed ) {
 			delete model.attributes.skipHashChange;
