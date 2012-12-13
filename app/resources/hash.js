@@ -61,7 +61,7 @@
 	}
 
 	function clean( hash ) {
-		return hash.replace( /%23/g, "" ).replace( /[\?#]+/g, "" );
+		return hash.replace( /^[\?#]+/g, "" );
 	}
 
 	function currHash() {
