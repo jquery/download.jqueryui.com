@@ -35,9 +35,13 @@
 	}
 
 	function themeFetch() {
-		return $.ajax( model.themeUrl(), {
-			dataType: "jsonp"
+		var dfd = $.Deferred();
+		model.themeUrl(function( url ) {
+			$.ajax( url, {
+				dataType: "jsonp"
+			}).done( dfd.resolve ).fail( dfd.fail );
 		});
+		return dfd;
 	}
 
 	function allComponents() {
@@ -298,7 +302,7 @@
 	themeFetch().done(function( themeSection ) {
 		$( "#download-builder .theme-area" ).html( themeSection );
 
-		if ( !model.has( "themeParams" ) ) {
+		if ( !model.has( "themeParams" ) && !model.has( "zThemeParams" ) ) {
 			model.defaults[ "themeParams" ] = $( "#theme option:nth-child(2)" ).val();
 			model.set({ themeParams: $( "#theme option:selected" ).val() });
 		}

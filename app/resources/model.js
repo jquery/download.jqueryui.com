@@ -131,6 +131,7 @@
 		Model.call( this );
 		this.defaults = {};
 		this.host = obj.host;
+		this.themeParams = $.Deferred().resolve();
 		this.themeRollerModel = new ThemeRollerModel({
 			baseVars: obj.baseVars,
 			host: this.host
@@ -150,12 +151,14 @@
 				});
 			}
 			if ( "zThemeParams" in changed ) {
+				this.themeParams = $.Deferred();
 				delete changed.zThemeParams;
 				unzip( this.get( "zThemeParams" ), function( unzipped ) {
 					delete self.attributes.zThemeParams;
 					self.set.call( self, {
 						themeParams: QueryString.encode( unzipped )
 					});
+					self.themeParams.resolve();
 				});
 			}
 			// "false" -> false, TODO: this should be handled at History() level.
