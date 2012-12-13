@@ -84,6 +84,21 @@
 		});
 	}
 
+	function zParam( paramName, attributes, callback ) {
+		if ( $.isEmptyObject( attributes ) ) {
+			callback( attributes );
+		} else {
+			zip( attributes, function( zipped ) {
+				var shorten,
+					original = QueryString.encode( attributes ).length,
+					shortenAttributes = {};
+				shortenAttributes[ paramName ] = zipped;
+				shorten = QueryString.encode( shortenAttributes ).length;
+				callback( shorten < original ? shortenAttributes : attributes );
+			});
+		}
+	};
+
 
 	/**
 	 * Model
@@ -186,12 +201,12 @@
 					}
 				},
 				shorten = function( attributes, callback ) {
-					var shortened = pick( attributes, [ "version" ] ),
+					var shortened = pick( attributes, [ "folderName", "version" ] ),
 						df1 = $.Deferred(),
 						df2 = $.Deferred();
 					if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
-						zip( QueryString.decode( attributes.themeParams ), function( zipped ) {
-							shortened.zThemeParams = zipped;
+						zParam( "zThemeParams", QueryString.decode( attributes.themeParams ), function( zThemeParams ) {
+							$.extend( shortened, zThemeParams );
 							df1.resolve();
 						});
 					} else {
@@ -200,16 +215,12 @@
 						}
 						df1.resolve();
 					}
-					if ( !$.isEmptyObject( omit( attributes, [ "themeParams", "version" ] ) ) ) {
-						zip( omit( attributes, [ "themeParams", "version" ] ), function( zipped ) {
-							shortened.zComponents = zipped;
-							df2.resolve();
-						});
-					} else {
+					zParam( "zComponents", omit( attributes, [ "folderName", "themeParams", "version" ] ), function( zComponents ) {
+						$.extend( shortened, zComponents );
 						df2.resolve();
-					}
+					});
 					$.when( df1, df2 ).done(function() {
-						callback( attributes, shortened );
+						callback( shortened );
 					});
 				};
 			if ( this.querystringDelay ) {
@@ -217,10 +228,8 @@
 			}
 			// This is an expensive computation, so avoiding two consecutive calls
 			this.querystringDelay = setTimeout(function() {
-				shorten( relevantAttributes(), function( original, shortened ) {
-					original = QueryString.encode( original );
-					shortened = QueryString.encode( shortened );
-					callback( shortened.length < original.length ? shortened : original );
+				shorten( relevantAttributes(), function( shortened ) {
+					callback( QueryString.encode( shortened ) );
 				});
 			}, 200 );
 		},
@@ -236,12 +245,16 @@
 		},
 
 		themerollerUrl: function( callback ) {
-			var themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( this.get( "themeParams" ) ) : {} );
-			this.themeRollerModel.set(
-				$.extend( themeParams, {
-					downloadParams: QueryString.encode( omit( this.attributes, [ "themeParams", "folderName" ] ) )
-				})
-			);
+			var self = this,
+				attributes = this.attributes,
+				themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( this.get( "themeParams" ) ) : {} );
+			zParam( "zComponents", omit( attributes, [ "folderName", "themeParams", "version" ] ), function( zComponents ) {
+				self.themeRollerModel.set(
+					$.extend( themeParams, {
+						downloadParams: QueryString.encode( $.extend( pick( attributes, [ "version" ] ), zComponents ) )
+					})
+				);
+			});
 			this.themeRollerModel.url( callback );
 		},
 
@@ -305,16 +318,12 @@
 				shorten = function( attributes, callback ) {
 					var shortened = pick( attributes, [ "downloadParams" ] ),
 						df1 = $.Deferred();
-					if ( !$.isEmptyObject( omit( attributes, [ "downloadParams" ] ) ) ) {
-						zip( omit( attributes, [ "downloadParams" ] ), function( zipped ) {
-							shortened.zThemeParams = zipped;
+					zParam( "zThemeParams", omit( attributes, [ "downloadParams" ] ), function( zThemeParams ) {
+							$.extend( shortened, zThemeParams );
 							df1.resolve();
 						});
-					} else {
-						df1.resolve();
-					}
 					df1.done(function() {
-						callback( attributes, shortened );
+						callback( shortened );
 					});
 				};
 			if ( this.querystringDelay ) {
@@ -322,10 +331,8 @@
 			}
 			// This is an expensive computation, so avoiding two consecutive calls
 			this.querystringDelay = setTimeout(function() {
-				shorten( relevantAttributes(), function( original, shortened ) {
-					original = QueryString.encode( original );
-					shortened = QueryString.encode( shortened );
-					callback( shortened.length < original.length ? shortened : original );
+				shorten( relevantAttributes(), function( shortened ) {
+					callback( QueryString.encode( shortened ) );
 				});
 			}, 200 );
 		},
