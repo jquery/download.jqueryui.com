@@ -453,7 +453,6 @@
 
 	appInit();
 	demoInit();
-	rollYourOwnLoad();
 	Hash.init();
 
 }( jQuery, Hash, Model, QueryString ) );
