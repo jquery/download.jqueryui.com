@@ -135,9 +135,37 @@
 			baseVars: obj.baseVars,
 			host: this.host
 		});
+		this.on( "change", $.proxy( this._change, this ) );
 	};
 
 	$.extend( DownloadBuilderModel.prototype, Model.prototype, {
+		_change: function( changed ) {
+			var i,
+				self = this;
+			if ( "zComponents" in changed ) {
+				delete changed.zComponents;
+				unzip( this.get( "zComponents" ), function( unzipped ) {
+					delete self.attributes.zComponents;
+					self.set.call( self, unzipped );
+				});
+			}
+			if ( "zThemeParams" in changed ) {
+				delete changed.zThemeParams;
+				unzip( this.get( "zThemeParams" ), function( unzipped ) {
+					delete self.attributes.zThemeParams;
+					self.set.call( self, {
+						themeParams: QueryString.encode( unzipped )
+					});
+				});
+			}
+			// "false" -> false, TODO: this should be handled at History() level.
+			for ( i in changed ) {
+				if ( self.attributes[ i ] === "false" ) {
+					self.attributes[ i ] = false;
+				}
+			}
+		},
+
 		querystring: function( callback ) {
 			var attributes = this.attributes,
 				defaults = this.defaults,
@@ -195,47 +223,7 @@
 		},
 
 		parseHash: function( hash ) {
-			var i,
-				self = this,
-				attributes = QueryString.decode( hash ),
-				df1 = $.Deferred(),
-				df2 = $.Deferred();
-			if ( "zComponents" in attributes ) {
-				unzip( attributes.zComponents, function( unzipped ) {
-					var i;
-					delete attributes.zComponents;
-					// "false" -> false
-					for ( i in unzipped) {
-						if ( unzipped[ i ] === "false" ) {
-							unzipped[ i ] = false;
-						}
-					}
-					$.extend( attributes, unzipped );
-					df1.resolve();
-				});
-			} else {
-				// "false" -> false
-				for ( i in attributes) {
-					if ( attributes[ i ] === "false" ) {
-						attributes[ i ] = false;
-					}
-				}
-				df1.resolve();
-			}
-			if ( "zThemeParams" in attributes ) {
-				unzip( attributes.zThemeParams, function( unzipped ) {
-					delete attributes.zThemeParams;
-					$.extend( attributes, {
-						themeParams: QueryString.encode( unzipped )
-					});
-					df2.resolve();
-				});
-			} else {
-				df2.resolve();
-			}
-			$.when( df1, df2 ).done(function() {
-				self.set.call( self, attributes );
-			});
+			this.set( QueryString.decode( hash ) );
 		},
 
 		url: function( callback ) {
@@ -254,8 +242,11 @@
 			this.themeRollerModel.url( callback );
 		},
 
-		themeUrl: function() {
-			return this.host + "/download/theme" + ( this.get( "themeParams" ) !== "none" ? "?" + QueryString.encode( this.attributes ) : "" );
+		themeUrl: function( callback ) {
+			var self = this;
+			this.themeParams.done(function() {
+				callback( self.host + "/download/theme" + ( self.get.call( self, "themeParams" ) !== "none" ? "?" + QueryString.encode( self.attributes ) : "" ) );
+			});
 		}
 	});
 
@@ -270,9 +261,21 @@
 		Model.call( this );
 		this.baseVars = obj.baseVars;
 		this.host = obj.host;
+		this.on( "change", $.proxy( this._change, this ) );
 	};
 
 	$.extend( ThemeRollerModel.prototype, Model.prototype, {
+		_change: function( changed ) {
+			var self = this;
+			if ( "zThemeParams" in changed ) {
+				delete changed.zThemeParams;
+				unzip( this.get( "zThemeParams" ), function( unzipped ) {
+					delete self.attributes.zThemeParams;
+					self.set.call( self, unzipped );
+				});
+			}
+		},
+
 		querystring: function( callback ) {
 			var attributes = this.attributes,
 				baseVars = this.baseVars,
@@ -325,21 +328,7 @@
 		},
 
 		parseHash: function( hash ) {
-			var self = this,
-				attributes = QueryString.decode( hash ),
-				df1 = $.Deferred();
-			if ( "zThemeParams" in attributes ) {
-				unzip( attributes.zThemeParams, function( unzipped ) {
-					delete attributes.zThemeParams;
-					$.extend( attributes, unzipped );
-					df1.resolve();
-				});
-			} else {
-				df1.resolve();
-			}
-			df1.done(function() {
-				self.set.call( self, attributes );
-			});
+			this.set( QueryString.decode( hash ) );
 		},
 
 		url: function( callback ) {
