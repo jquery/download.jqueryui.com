@@ -145,12 +145,9 @@
 		}
 		Model.call( this );
 		this.defaults = {};
+		this.baseVars = obj.baseVars;
 		this.host = obj.host;
 		this.themeParams = $.Deferred().resolve();
-		this.themeRollerModel = new ThemeRollerModel({
-			baseVars: obj.baseVars,
-			host: this.host
-		});
 		this.on( "change", $.proxy( this._change, this ) );
 	};
 
@@ -201,7 +198,7 @@
 					}
 				},
 				shorten = function( attributes, callback ) {
-					var shortened = pick( attributes, [ "folderName", "version" ] ),
+					var shortened = pick( attributes, [ "folderName", "scope", "version" ] ),
 						df1 = $.Deferred(),
 						df2 = $.Deferred();
 					if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
@@ -215,7 +212,7 @@
 						}
 						df1.resolve();
 					}
-					zParam( "zComponents", omit( attributes, [ "folderName", "themeParams", "version" ] ), function( zComponents ) {
+					zParam( "zComponents", omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ), function( zComponents ) {
 						$.extend( shortened, zComponents );
 						df2.resolve();
 					});
@@ -248,14 +245,18 @@
 			var self = this,
 				attributes = this.attributes,
 				themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( this.get( "themeParams" ) ) : {} );
-			zParam( "zComponents", omit( attributes, [ "folderName", "themeParams", "version" ] ), function( zComponents ) {
-				self.themeRollerModel.set(
+			zParam( "zComponents", omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ), function( zComponents ) {
+				var themeRollerModel = new ThemeRollerModel({
+					baseVars: self.baseVars,
+					host: self.host
+				});
+				themeRollerModel.set(
 					$.extend( themeParams, {
-						downloadParams: QueryString.encode( $.extend( pick( attributes, [ "version" ] ), zComponents ) )
+						downloadParams: QueryString.encode( $.extend( pick( attributes, [ "folderName", "scope", "version" ] ), zComponents ) )
 					})
 				);
+				themeRollerModel.url( callback );
 			});
-			this.themeRollerModel.url( callback );
 		},
 
 		themeUrl: function( callback ) {
@@ -349,7 +350,7 @@
 
 		downloadUrl: function( callback, options ) {
 			var downloadBuilderModel, querystring, themeParams,
-				attributes = ( "downloadParams" in this.attributes ? QueryString.decode( this.attributes.downloadParams ) : {} );
+				attributes = $.extend( pick( this.attributes, [ "folderName", "scope", "version" ] ), ( "downloadParams" in this.attributes ? QueryString.decode( this.attributes.downloadParams ) : {} ) );
 
 			options = options || {};
 			themeParams = options.themeParams || QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) );

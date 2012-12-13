@@ -311,7 +311,7 @@
 			model.set({ themeParams: $( "#theme option:selected" ).val() });
 		}
 
-		$( "#theme" ).on( "click change", function() {
+		$( "#theme" ).on( "change", function() {
 			var selected = $( this ).find( "option:selected" ),
 				folderName = selected.text().toLowerCase().replace( " ", "-" );
 			model.defaults[ "folderName" ] = folderName;
