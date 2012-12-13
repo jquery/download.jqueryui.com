@@ -271,6 +271,10 @@
 					if ( $( this ).prop( "checked" ) !== value ) {
 						_check( $( this ), value );
 					}
+					// Ignore checked-components in the model
+					if ( value ) {
+						delete model.attributes[ attribute ];
+					}
 				});
 			});
 		});
