@@ -190,7 +190,7 @@
 						df1 = $.Deferred(),
 						df2 = $.Deferred();
 					if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
-						zip( QueryString.decode( decodeURIComponent( attributes.themeParams ) ), function( zipped ) {
+						zip( QueryString.decode( attributes.themeParams ), function( zipped ) {
 							shortened.zThemeParams = zipped;
 							df1.resolve();
 						});
@@ -236,10 +236,10 @@
 		},
 
 		themerollerUrl: function( callback ) {
-			var themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( decodeURIComponent ( this.get( "themeParams" ) ) ) : {} );
+			var themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( this.get( "themeParams" ) ) : {} );
 			this.themeRollerModel.set(
 				$.extend( themeParams, {
-					downloadParams: encodeURIComponent( QueryString.encode( omit( this.attributes, [ "themeParams", "folderName" ] ) ) )
+					downloadParams: QueryString.encode( omit( this.attributes, [ "themeParams", "folderName" ] ) )
 				})
 			);
 			this.themeRollerModel.url( callback );
@@ -342,10 +342,10 @@
 
 		downloadUrl: function( callback, options ) {
 			var downloadBuilderModel, querystring, themeParams,
-				attributes = ( "downloadParams" in this.attributes ? QueryString.decode( decodeURIComponent ( this.attributes.downloadParams ) ) : {} );
+				attributes = ( "downloadParams" in this.attributes ? QueryString.decode( this.attributes.downloadParams ) : {} );
 
 			options = options || {};
-			themeParams = encodeURIComponent( options.themeParams || QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) ) );
+			themeParams = options.themeParams || QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) );
 
 			if ( themeParams.length ) {
 				attributes.themeParams = themeParams;
@@ -366,7 +366,7 @@
 
 		parsethemeUrl: function() {
 			var attributes = omit( this.attributes, [ "downloadParams" ] ),
-				downloadParams = ( "downloadParams" in this.attributes ? QueryString.decode( decodeURIComponent ( this.attributes.downloadParams ) ) : {} );
+				downloadParams = ( "downloadParams" in this.attributes ? QueryString.decode( this.attributes.downloadParams ) : {} );
 			if ( downloadParams.version ) {
 				attributes.version = downloadParams.version;
 			}
@@ -377,7 +377,7 @@
 			var attributes;
 			if ( !$.isEmptyObject( omit( this.attributes, [ "downloadParams" ] ) ) ) {
 				attributes = {
-					themeParams: encodeURIComponent( QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) ) )
+					themeParams: QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) )
 				};
 			}
 			return this.host + "/themeroller/rollyourown" + ( attributes == null ? "" : "?" + QueryString.encode( attributes ) );

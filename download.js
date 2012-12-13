@@ -80,7 +80,7 @@ Frontend.prototype = {
 	theme: function( params ) {
 		var selectedTheme = themeGallery[ 0 ];
 		if ( params.themeParams ) {
-			selectedTheme = new ThemeRoller( querystring.parse( querystring.unescape( params.themeParams ) ) );
+			selectedTheme = new ThemeRoller( querystring.parse( params.themeParams ) );
 		}
 		return jsonpTemplate({
 			callback: params.callback,
