@@ -107,9 +107,7 @@
 	function appInit() {
 		$( "#rollerTabs" ).tabs();
 
-		$( "#rollerTabs a[href=\"#themeGallery\"]" ).one( "click", function() {
-			themeGalleryInit();
-		});
+		themeGalleryInit();
 
 		// General app click cleanup
 		$( "body" ).on( "click", function( event ) {
