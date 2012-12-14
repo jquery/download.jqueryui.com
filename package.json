@@ -9,6 +9,7 @@
 		"formidable": "1.0.9",
 		"glob-whatev": "0.1.7",
 		"handlebars": "1.0.7",
+		"lzma": "1.2.1",
 		"optimist": "0.3.4",
 		"rimraf": "2.0.2",
 		"simple-log": "1.0.0",
