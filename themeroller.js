@@ -90,10 +90,6 @@ Frontend.prototype = {
 		return theme.css();
 	},
 
-	gallery: function() {
-		return themeGallery;
-	},
-
 	rollYourOwn: function( params ) {
 		var theme = new ThemeRoller( querystring.parse( params.themeParams ) );
 		return jsonpTemplate({
