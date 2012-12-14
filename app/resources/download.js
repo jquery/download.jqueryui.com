@@ -201,6 +201,10 @@
 				});
 			});
 
+			// Generating toggle all checkboxes
+			$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
+			$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
+
 			/* Remember components check/uncheck selection
 				- If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
 				- If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
@@ -212,10 +216,6 @@
 					_check( elem, false );
 				}
 			});
-
-			// Generating toggle all checkboxes
-			$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
-			$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
 			// Binds click handlers on components checkboxes
 			$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
