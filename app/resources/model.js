@@ -252,7 +252,8 @@
 				});
 				themeRollerModel.set(
 					$.extend( themeParams, {
-						downloadParams: QueryString.encode( $.extend( pick( attributes, [ "folderName", "scope", "version" ] ), zComponents ) )
+						// Skip folderName on purpose, it will be updated based on theme selection anyway
+						downloadParams: QueryString.encode( $.extend( pick( attributes, [ "scope", "version" ] ), zComponents ) )
 					})
 				);
 				themeRollerModel.url( callback );
