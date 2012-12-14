@@ -268,13 +268,9 @@
 			})
 			.attr( "title", "Click to preview this theme" )
 			.each(function() {
-				var elem = $( this );
 				$( this ).after(
 					"<a href=\"#\" class=\"download\" title=\"Download this theme\">Download</a>" +
 					"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
-				model.downloadUrl(function( url ) {
-					elem.parent().find( "a.download" ).attr( "href", url );
-				}, elem.data( "z-theme-params" ) );
 			})
 			.parent()
 			.find( "a.edit" )
@@ -284,6 +280,16 @@
 				$( "#rollerTabs" ).tabs( "select", 0 );
 				event.preventDefault();
 			});
+		updateThemeGalleryDownloadLink();
+	}
+
+	function updateThemeGalleryDownloadLink() {
+		$( "#themeGallery a.download" ).each(function() {
+			var elem = $( this );
+			model.downloadUrl(function( url ) {
+				elem.attr( "href", url );
+			}, elem.parent().find( "a:first-child" ).data( "z-theme-params" ) );
+		});
 	}
 
 	function demoInit() {
@@ -408,6 +414,9 @@
 	});
 
 	model.on( "change", function ( changed ) {
+		if ( "downloadParams" in changed ) {
+			updateThemeGalleryDownloadLink();
+		}
 		if ( reloadRollYourOwn ) {
 			reloadRollYourOwn = false;
 			rollYourOwnLoad().done(function() {
