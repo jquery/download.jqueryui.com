@@ -1,10 +1,10 @@
 <div id="themeGallery">
 	<ul>
 		{{#each themeGallery}}
-			<li><a href="themeroller?{{serializedVars}}">
+			<li><a data-z-theme-params="{{zThemeParams}}" href="themeroller?{{serializedVars}}">
 				<img src="../resources/images/themeGallery/{{thumb}}" alt="{{name}}" title="{{name}}" />
 				<span class="themeName">{{name}}</span>
-			</a></li>		
+			</a></li>
 		{{/each}}
 	</ul>
 </div>

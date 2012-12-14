@@ -107,7 +107,9 @@
 	function appInit() {
 		$( "#rollerTabs" ).tabs();
 
-		themeGalleryInit();
+		$( "#rollerTabs a[href=\"#themeGallery\"]" ).one( "click", function() {
+			themeGalleryInit();
+		});
 
 		// General app click cleanup
 		$( "body" ).on( "click", function( event ) {
@@ -259,31 +261,22 @@
 		}
 	}
 
-	function updateThemeGalleryDownloadLink() {
-		$( "#themeGallery a.download" )
-			.each(function() {
-				var elem = $( this );
-				model.downloadUrl(function( url ) {
-					elem.attr( "href", url );
-				}, {
-					quick: true,
-					themeParams: elem.parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ]
-				});
-			});
-	}
-
 	function themeGalleryInit() {
 		// Loading and viewing gallery themes
 		$( "#themeGallery a" )
 			.on( "click", function( event ) {
-				Hash.update( Hash.clean( this.href.split( "?" )[ 1 ] ) );
+				model.set( QueryString.decode( this.href.split( "?" )[ 1 ] ) );
 				event.preventDefault();
 			})
 			.attr( "title", "Click to preview this theme" )
 			.each(function() {
+				var elem = $( this );
 				$( this ).after(
-				"<a href=\"#\" class=\"download\" title=\"Download this theme\">Download</a>" +
-				"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
+					"<a href=\"#\" class=\"download\" title=\"Download this theme\">Download</a>" +
+					"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
+				model.downloadUrl(function( url ) {
+					elem.parent().find( "a.download" ).attr( "href", url );
+				}, elem.data( "z-theme-params" ) );
 			})
 			.parent()
 			.find( "a.edit" )
@@ -293,8 +286,6 @@
 				$( "#rollerTabs" ).tabs( "select", 0 );
 				event.preventDefault();
 			});
-
-			updateThemeGalleryDownloadLink();
 	}
 
 	function demoInit() {
@@ -440,7 +431,6 @@
 				});
 			});
 		}
-		updateThemeGalleryDownloadLink();
 	});
 
 	Hash.on( "change", function( hash ) {

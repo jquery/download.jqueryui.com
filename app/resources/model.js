@@ -97,7 +97,7 @@
 				callback( shorten < original ? shortenAttributes : attributes );
 			});
 		}
-	};
+	}
 
 
 	/**
@@ -348,21 +348,19 @@
 			});
 		},
 
-		downloadUrl: function( callback, options ) {
+		downloadUrl: function( callback, zThemeParams ) {
 			var downloadBuilderModel, querystring, themeParams,
 				attributes = $.extend( pick( this.attributes, [ "folderName", "scope", "version" ] ), ( "downloadParams" in this.attributes ? QueryString.decode( this.attributes.downloadParams ) : {} ) );
 
-			options = options || {};
-			themeParams = options.themeParams || QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) );
-
-			if ( themeParams.length ) {
-				attributes.themeParams = themeParams;
-			}
-
-			if ( options.quick ) {
+			if ( zThemeParams ) {
+				attributes.zThemeParams = zThemeParams;
 				querystring = QueryString.encode( attributes );
 				callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
 			} else {
+				themeParams = QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) );
+				if ( themeParams.length ) {
+					attributes.themeParams = themeParams;
+				}
 				downloadBuilderModel = new DownloadBuilderModel({
 					host: this.host
 				});
