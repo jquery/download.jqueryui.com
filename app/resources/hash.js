@@ -74,12 +74,12 @@
 	}
 
 	function init() {
-		if ( currSearch() ) {
-			location.href = location.pathname.replace( /\/$/, "" ) + "/#" + currSearch();
-		}
-
 		storedHash = "";
 		checkHashChange();
+	}
+
+	if ( currSearch() ) {
+		location.href = location.pathname.replace( /\/$/, "" ) + "/#" + currSearch();
 	}
 
 	// Export public interface
