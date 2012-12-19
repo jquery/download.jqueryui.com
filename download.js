@@ -47,6 +47,9 @@ Frontend.prototype = {
 		}
 		return indexTemplate({
 			baseVars: themeGallery[ 2 ].serializedVars,
+			components: componentsTemplate({
+				categories: Release.getStable().categories()
+			}),
 			host: this.host,
 			resources: this.resources,
 			releases: releases.map(function( release ) {

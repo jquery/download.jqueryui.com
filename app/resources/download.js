@@ -167,75 +167,63 @@
 			);
 	}
 
-  function loadComponents() {
-		var versionElement = $( "#download-builder [name=version]:checked" );
-		if ( model.defaults[ "version" ] == null ) {
-			model.defaults[ "version" ] = $( "#download-builder [name=version]" ).first().val();
-		}
-		model.set({ version: versionElement.val() });
-		componentsFetch().done(function( componentsSection ) {
-			dependencies = {};
-			dependents = {};
+	function initComponents( html ) {
+		dependencies = {};
+		dependents = {};
 
-			$( "#download-builder .components-area").html( componentsSection );
+		$( "#download-builder .components-area").html( html );
 
-			// Initializes dependencies and dependents auxiliary variables.
-			$( "#download-builder input[type=checkbox]" ).each(function() {
-				var checkbox = $( this ),
-					thisDependencies = checkbox.data( "dependencies" ),
-					thisName = checkbox.attr( "name" );
+		// Initializes dependencies and dependents auxiliary variables.
+		$( "#download-builder input[type=checkbox]" ).each(function() {
+			var checkbox = $( this ),
+				thisDependencies = checkbox.data( "dependencies" ),
+				thisName = checkbox.attr( "name" );
 
-				if ( !thisName || !thisDependencies ) {
-					return;
+			if ( !thisName || !thisDependencies ) {
+				return;
+			}
+			thisDependencies = thisDependencies.split( "," );
+			dependencies[ thisName ] = $();
+			$.each( thisDependencies, function() {
+				var dependecy = this,
+					dependecyElem = $( "[name=" + this + "]" );
+				dependencies[ thisName ] = dependencies[ thisName ].add( dependecyElem );
+				if ( !dependents[ dependecy ] ) {
+					dependents[ dependecy ] = $();
 				}
-				thisDependencies = thisDependencies.split( "," );
-				dependencies[ thisName ] = $();
-				$.each( thisDependencies, function() {
-					var dependecy = this,
-						dependecyElem = $( "[name=" + this + "]" );
-					dependencies[ thisName ] = dependencies[ thisName ].add( dependecyElem );
-					if ( !dependents[ dependecy ] ) {
-						dependents[ dependecy ] = $();
-					}
-					dependents[ dependecy ] = dependents[ dependecy ].add( checkbox );
-				});
+				dependents[ dependecy ] = dependents[ dependecy ].add( checkbox );
 			});
+		});
 
-			// Generating toggle all checkboxes
-			$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
-			$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
+		// Generating toggle all checkboxes
+		$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
+		$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
-			/* Remember components check/uncheck selection
-				- If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
-				- If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
-			*/
-			allComponents().each(function() {
-				var elem = $( this ),
-					name = elem.attr( "name" );
-				if ( model.has( name ) && !model.get( name ) ) {
-					_check( elem, false );
-				}
-			});
-
-			// Binds click handlers on components checkboxes
-			$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
-				var target = $( event.target );
-				if ( target.parent().is( ".toggle" ) ) {
-					check( event, allGroup( this ), $( this ).prop( "checked" ) );
-				} else if ( target.parent().is( ".toggleAll" ) ) {
-					check( event, allComponents(), $( this ).prop( "checked" ) );
-				} else {
-					check( event, $( this ), $( this ).prop( "checked" ) );
-				}
-			});
-
-			componentsLoad.resolve();
-		}).fail(function() {
-			if ( console && console.log ) {
-				console.log( "Failed loading components section", arguments );
+		/* Remember components check/uncheck selection
+			- If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
+			- If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
+		*/
+		allComponents().each(function() {
+			var elem = $( this ),
+				name = elem.attr( "name" );
+			if ( model.has( name ) && !model.get( name ) ) {
+				_check( elem, false );
 			}
 		});
-		componentsLoad = $.Deferred();
+
+		// Binds click handlers on components checkboxes
+		$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
+			var target = $( event.target );
+			if ( target.parent().is( ".toggle" ) ) {
+				check( event, allGroup( this ), $( this ).prop( "checked" ) );
+			} else if ( target.parent().is( ".toggleAll" ) ) {
+				check( event, allComponents(), $( this ).prop( "checked" ) );
+			} else {
+				check( event, $( this ), $( this ).prop( "checked" ) );
+			}
+		});
+
+		componentsLoad.resolve();
 	}
 
 	function pluralize( count, singular, plural ) {
@@ -246,8 +234,16 @@
 		baseVars: baseVars,
 		host: downloadJqueryuiHost
 	});
+	model.defaults[ "version" ] = $( "#download-builder [name=version]" ).first().val();
 
-	model.on( "change", function( changed ) {
+	model.on( "change", function( changed, created ) {
+		// "false" -> false, TODO: this should be handled at History() level.
+		for ( i in changed ) {
+			if ( model.attributes[ i ] === "false" ) {
+				model.attributes[ i ] = false;
+			}
+		}
+
 		themesLoad.done(function() {
 			if ( "folderName" in changed ) {
 				$( "#theme-folder-name" ).val( model.get( "folderName" ) ).trigger( "change" );
@@ -281,6 +277,18 @@
 
 		if ( "version" in changed ) {
 			$( "#download-builder [name=version][value=\"" + model.get( "version" ) + "\"]" ).trigger( "click" );
+			if ( created.version ) {
+				initComponents();
+			} else {
+				componentsFetch().done(function( html ) {
+					initComponents( html );
+				}).fail(function() {
+					if ( console && console.log ) {
+						console.log( "Failed loading components section", arguments );
+					}
+				});
+				componentsLoad = $.Deferred();
+			}
 		}
 
 		model.querystring(function( querystring ) {
@@ -295,10 +303,13 @@
 	});
 
 	// Binds click on version selection
-	$( "#download-builder [name=version]" ).on( "change", loadComponents );
+	$( "#download-builder [name=version]" ).on( "change", function() {
+		model.set({ version: $( this ).val() });
+	});
 
-	// Load components
-	loadComponents();
+	model.set({
+		version: model.defaults[ "version" ]
+	});
 
 	Hash.init();
 

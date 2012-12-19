@@ -177,12 +177,6 @@
 					self.themeParams.resolve();
 				});
 			}
-			// "false" -> false, TODO: this should be handled at History() level.
-			for ( i in changed ) {
-				if ( self.attributes[ i ] === "false" ) {
-					self.attributes[ i ] = false;
-				}
-			}
 		},
 
 		querystring: function( callback ) {
