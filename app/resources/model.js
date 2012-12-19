@@ -113,15 +113,19 @@
 		set: function( attributes ) {
 			var self = this,
 				changed = false,
-				changedAttributes = {};
+				changedAttributes = {},
+				createdAttributes = {};
 			$.each( attributes, function( name ) {
 				if ( self.attributes[ name ] !== attributes[ name ] ) {
 					changedAttributes[ name ] = changed = true;
+					if ( !(name in self.attributes) ) {
+						createdAttributes[ name ] = true;
+					}
 					self.attributes[ name ] = attributes[ name ];
 				}
 			});
 			if ( changed ) {
-				this.emitter.trigger( "change", [ changedAttributes ] );
+				this.emitter.trigger( "change", [ changedAttributes, createdAttributes ] );
 			}
 			return this;
 		},
