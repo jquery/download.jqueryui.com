@@ -157,7 +157,7 @@
 #download-builder span.component-desc {
 	font-size: 1.1em;
 	line-height: 1.2em;
-	width: 75%
+	width: 75%;
 	float: left;
 }
 #download-builder .version-area label > * {
