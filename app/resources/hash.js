@@ -84,7 +84,6 @@
 
 	// Export public interface
 	exports.Hash = {
-		clean: clean,
 		init: init,
 		on: $.proxy( emitter.on, emitter ),
 		off: $.proxy( emitter.off, emitter ),
