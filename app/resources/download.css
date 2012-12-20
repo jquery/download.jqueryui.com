@@ -150,14 +150,14 @@
 	font-size: 1.2em;
 	line-height: 1.2em;
 	font-weight: bold;
-	margin: 0% 2.05% 0% 0;
+	margin: 0% 2% 0% 0;
 	width: 25%;
 	float: left;
 }
 #download-builder span.component-desc {
 	font-size: 1.1em;
 	line-height: 1.2em;
-	width: 75%;
+	width: 73%;
 	float: left;
 }
 #download-builder .version-area label > * {
