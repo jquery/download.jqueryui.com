@@ -1,6 +1,20 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/download.css">
 <div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}">
+	<p class="bundle-links">
+		<strong>Quick downloads:</strong>  
+		{{#each releases}}
+			<a class="download-link" href="/resources/download/jquery-ui-{{this.pkg.version}}.custom.zip">{{this.label}}</a> (<a href="https://github.com/downloads/jquery/jquery-ui/jquery-ui-themes-{{this.pkg.version}}.zip">Themes</a>) ({{this.pkg.version}}: <em>for {{this.dependsOn}}</em>)
+		{{/each}}
+	</p>
+	<p class="bundle-links">
+		<strong>Source (pre-build):</strong>
+		{{#each releases}}
+			<a class="download-link" href="https://github.com/jquery/jquery-ui/archive/{{this.pkg.version}}.zip">{{this.label}}</a> ({{this.pkg.version}}: <em>for {{this.dependsOn}}</em>)
+		{{/each}}
+	  <a class="download-link" href="https://github.com/jquery/jquery-ui/archive/master.zip">Master</a> (unreleased)
+	  <a class="download-link" href="http://github.com/jquery/jquery-ui">GitHub repo</a>
+	</p>
 	<form action="{{host}}/download" method="POST">
 		<div class="download-builder-header version-area">
 			<h2>Version</h2>
@@ -9,7 +23,7 @@
 					<label class="clearfix">
 						<input type="radio" id="version-{{this.pkg.version}}" value="{{this.pkg.version}}" name="version"{{{isVersionChecked this}}}>
 						<span class="version-title">{{this.pkg.version}}</span>
-						<span class="version-label">{{this.label}}</span>
+						<span class="version-label">({{this.label}}, for {{this.dependsOn}})</span>
 					</label>
 				</div>
 			{{/each}}

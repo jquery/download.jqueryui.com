@@ -310,6 +310,10 @@
 
 	Hash.init();
 
+	$( "#download-builder .bundle-links" ).each(function() {
+		$( this ).find( "a.download-link" ).not( ":first" ).before( " | " );
+	});
+
 	// Loads theme section.
 	themeFetch().done(function( themeSection ) {
 		$( "#download-builder .theme-area" ).html( themeSection );

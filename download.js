@@ -52,12 +52,7 @@ Frontend.prototype = {
 			}),
 			host: this.host,
 			resources: this.resources,
-			releases: releases.map(function( release ) {
-				return {
-					label: release.label ? "(" + release.label + ")" : "",
-					pkg: release.pkg
-				};
-			})
+			releases: releases
 		});
 	},
 
