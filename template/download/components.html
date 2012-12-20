@@ -6,11 +6,13 @@
 		</div>
 		<div class="component-group-list">
 		{{#each components}}
-			<label title="{{description}}" class="clearfix">
-				<input type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
-				<span class="component-title">{{title}}</span>
-				<span class="component-desc">{{description}}</span>
-			</label>
+			<div class="clearfix">
+				<input id="name" type="checkbox" checked name="{{name}}" class="ui-widget-content" data-dependencies="{{dependencies}}">
+				<label for="name" title="{{description}}" class="clearfix">
+					<span class="component-title">{{title}}</span>
+					<span class="component-desc">{{description}}</span>
+				</label>
+			</div>
 		{{/each}}
 		</div>
 	</div>

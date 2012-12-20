@@ -132,28 +132,33 @@
 	margin: 1.8% 0;
 	width: 70%;
 }
-#download-builder .component-group-list > label {
+#download-builder .component-group-list > div {
 	clear: both;
 	width: 100%;
 }
-#download-builder .component-group-list > label > * {
+#download-builder .component-group-list > div > * {
 	float: left;
 }
-#download-builder .component-group-list > label input {
+#download-builder .component-group-list > div input {
 	margin: 1% 1% 1% 0;
+}
+#download-builder .component-group-list > div label {
+	margin: 1% 0%;
+	width: 89%;
 }
 #download-builder span.component-title {
 	font-size: 1.2em;
 	line-height: 1.2em;
 	font-weight: bold;
-	margin: 1% 1.8% 1% 0;
-	width: 22%;
+	margin: 0% 2.05% 0% 0;
+	width: 25%;
+	float: left;
 }
 #download-builder span.component-desc {
 	font-size: 1.1em;
 	line-height: 1.2em;
-	margin: 1% 0;
-	width: 66%
+	width: 75%
+	float: left;
 }
 #download-builder .version-area label > * {
 	float: left;
