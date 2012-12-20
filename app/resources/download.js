@@ -206,7 +206,7 @@
 		allComponents().each(function() {
 			var elem = $( this ),
 				name = elem.attr( "name" );
-			if ( model.has( name ) && !model.get( name ) ) {
+			if ( model.has( name ) && model.get( name ) === false ) {
 				_check( elem, false );
 			}
 		});
@@ -237,13 +237,6 @@
 	model.defaults[ "version" ] = $( "#download-builder [name=version]" ).first().val();
 
 	model.on( "change", function( changed, created ) {
-		// "false" -> false, TODO: this should be handled at History() level.
-		for ( i in changed ) {
-			if ( model.attributes[ i ] === "false" ) {
-				model.attributes[ i ] = false;
-			}
-		}
-
 		themesLoad.done(function() {
 			if ( "folderName" in changed ) {
 				$( "#theme-folder-name" ).val( model.get( "folderName" ) ).trigger( "change" );
@@ -264,8 +257,12 @@
 				var value = model.get( attribute );
 				// If attribute is a component.
 				$( "#download-builder .component-group-list input[name=\"" + attribute + "\"]" ).each(function() {
-					if ( $( this ).prop( "checked" ) !== value ) {
-						_check( $( this ), value );
+					// "false" -> false, TODO: this should be handled at History() level.
+					if ( value === "false" ) {
+						model.attributes[ attribute ] = value = false;
+					}
+					if ( value === false && $( this ).prop( "checked" ) !== value ) {
+						_check( $( this ), false );
 					}
 					// Ignore checked-components in the model
 					if ( value ) {
