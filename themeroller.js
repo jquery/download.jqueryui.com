@@ -90,6 +90,11 @@ Frontend.prototype = {
 		return theme.css();
 	},
 
+	// used by jQuery UI release process to generate themes
+	gallery: function() {
+		return themeGallery;
+	},
+
 	rollYourOwn: function( params ) {
 		var theme = new ThemeRoller( querystring.parse( params.themeParams ) );
 		return jsonpTemplate({
