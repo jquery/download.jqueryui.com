@@ -8,6 +8,7 @@
 		"dateformat": "1.0.2-1.2.3",
 		"formidable": "1.0.9",
 		"glob-whatev": "0.1.7",
+		"grunt": "0.3.12",
 		"handlebars": "1.0.7",
 		"lzma": "1.2.1",
 		"optimist": "0.3.4",
@@ -18,7 +19,6 @@
 		"winston": "0.6.2"
 	},
 	"devDependencies": {
-		"grunt": "0.3.12",
 		"nodeunit": "~0.7.4"
 	},
 	"main": "frontend.js",
