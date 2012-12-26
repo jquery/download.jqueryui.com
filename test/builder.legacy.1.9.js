@@ -1,4 +1,4 @@
-var Builder = require( "../lib/builder" ),
+var Builder = require( "../lib/builder.legacy.1.9" ),
 	Release = require( "../lib/release" ),
 	semver = require( "semver" ),
 	ThemeRoller = require( "../lib/themeroller" ),
@@ -60,6 +60,9 @@ var commonFiles = [
 	"development-bundle/external/globalize.culture.de-DE.js",
 	"development-bundle/external/globalize.culture.ja-JP.js",
 	"development-bundle/external/globalize.js",
+	"development-bundle/external/jquery.bgiframe-2.1.2.js",
+	"development-bundle/external/jquery.cookie.js",
+	"development-bundle/external/jquery.metadata.js",
 	"development-bundle/external/jquery.mousewheel.js",
 	"development-bundle/external/jshint.js",
 	"development-bundle/external/qunit.css",
@@ -67,7 +70,6 @@ var commonFiles = [
 	"development-bundle/themes/base/jquery.ui.base.css",
 	"development-bundle/themes/base/jquery.ui.theme.css",
 	"development-bundle/themes/base/jquery-ui.css",
-	"development-bundle/themes/base/images/animated-overlay.gif",
 	"development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png",
 	"development-bundle/themes/base/images/ui-bg_flat_75_ffffff_40x100.png",
 	"development-bundle/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png",
@@ -83,7 +85,6 @@ var commonFiles = [
 	"development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png",
 	"development-bundle/themes/base/minified/jquery.ui.theme.min.css",
 	"development-bundle/themes/base/minified/jquery-ui.min.css",
-	"development-bundle/themes/base/minified/images/animated-overlay.gif",
 	"development-bundle/themes/base/minified/images/ui-bg_flat_0_aaaaaa_40x100.png",
 	"development-bundle/themes/base/minified/images/ui-bg_flat_75_ffffff_40x100.png",
 	"development-bundle/themes/base/minified/images/ui-bg_glass_55_fbf9ee_1x400.png",
@@ -520,7 +521,7 @@ module.exports = {};
 // Build tests for each jqueryUi release
 Release.all().filter(function( release ) {
 	// Filter supported releases only
-	return semver.gte( release.pkg.version, "1.10.0" );
+	return semver.lt( release.pkg.version, "1.10.0" );
 }).forEach(function( release ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
@@ -554,6 +555,6 @@ Release.all().filter(function( release ) {
 			}
 		});
 	}
-	module.exports[ release.pkg.version ] = {};
-	deepTestBuild( module.exports[ release.pkg.version ], tests );
+	module.exports[ release.pkg.version] = {};
+	deepTestBuild( module.exports[ release.pkg.version], tests );
 });

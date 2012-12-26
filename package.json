@@ -19,7 +19,8 @@
 		"winston": "0.6.2"
 	},
 	"devDependencies": {
-		"nodeunit": "~0.7.4"
+		"nodeunit": "~0.7.4",
+		"semver": "1.1.0"
 	},
 	"main": "frontend.js",
 	"engine": {
