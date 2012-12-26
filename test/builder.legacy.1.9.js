@@ -1,4 +1,4 @@
-var Builder = require( "../lib/builder.legacy.1.9" ),
+var Builder = require( "../lib/builder" ),
 	Release = require( "../lib/release" ),
 	semver = require( "semver" ),
 	ThemeRoller = require( "../lib/themeroller" ),
