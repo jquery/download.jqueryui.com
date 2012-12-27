@@ -70,7 +70,10 @@ function route(app) {
 				for ( field in fields ) {
 					components.push( field );
 				}
-				theme = new ThemeRoller( themeVars );
+				theme = new ThemeRoller({
+					vars: themeVars,
+					version: version
+				});
 				builder = new Builder( Release.find( version ), components, theme );
 				response.setHeader( "Content-Type", "application/zip" );
 				response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );

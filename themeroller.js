@@ -55,7 +55,9 @@ var Frontend = function( args ) {
 
 Frontend.prototype = {
 	index: function( vars, options ) {
-		var theme = new ThemeRoller( vars );
+		var theme = new ThemeRoller({
+			vars: vars
+		});
 		options = options || {};
 		if ( options.wrap ) {
 			options = _.defaults({

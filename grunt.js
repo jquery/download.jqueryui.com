@@ -323,13 +323,13 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 		fs = require( "fs" ),
 		path = require( "path" ),
 		Release = require( "./lib/release" ),
-		ThemeRoller = require( "./lib/themeroller" ),
-		theme = new ThemeRoller();
+		ThemeRoller = require( "./lib/themeroller" );
 
 	async.forEachSeries( Release.all(), function( release, next ) {
 		var allComponents = release.components().map(function( component ) {
 			return component.name;
 		}),
+			theme = new ThemeRoller({ version: release.pkg.version }),
 			builder = new Builder( release, allComponents, theme ),
 			filename = path.join( folder, builder.filename() ),
 			stream;

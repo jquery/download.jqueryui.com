@@ -344,17 +344,11 @@ function themeFilesCheck( test, build, components, theme ) {
 }
 
 
-var tests,
-	theme = new ThemeRoller(),
-	namedTheme = new ThemeRoller({
-		folderName: "mytheme"
-	}),
-	noTheme = new ThemeRoller( null );
-
-tests = {
+var tests = {
 	"test: select all components": {
 		"with a theme": function( test ) {
-			var components = this.allComponents;
+			var components = this.allComponents,
+				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
 			build( this.release, components, theme, function( err, build ) {
 				if ( err ) {
@@ -369,7 +363,8 @@ tests = {
 			});
 		},
 		"with a named theme": function( test ) {
-			var components = this.allComponents;
+			var components = this.allComponents,
+				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
 			build( this.release, components, namedTheme, function( err, build ) {
 				if ( err ) {
@@ -384,7 +379,8 @@ tests = {
 			});
 		},
 		"no theme": function( test ) {
-			var components = this.allComponents;
+			var components = this.allComponents,
+				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
 			build( this.release, components, noTheme, function( err, build ) {
 				if ( err ) {
@@ -402,7 +398,7 @@ tests = {
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, theme, function( err, build ) {
+		build( this.release, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -416,7 +412,7 @@ tests = {
 	"test: select all effects": function( test ) {
 		var components = this.allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, theme, function( err, build ) {
+		build( this.release, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -429,7 +425,8 @@ tests = {
 	},
 	"test: select some widgets (1)": {
 		"with a theme": function( test ) {
-			var components = someWidgets1;
+			var components = someWidgets1,
+				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
 			build( this.release, components, theme, function( err, build ) {
 				if ( err ) {
@@ -444,7 +441,8 @@ tests = {
 			});
 		},
 		"with a named theme": function( test ) {
-			var components = someWidgets1;
+			var components = someWidgets1,
+				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
 			build( this.release, components, namedTheme, function( err, build ) {
 				if ( err ) {
@@ -460,7 +458,8 @@ tests = {
 		},
 		"no theme": 
 		 function( test ) {
-			var components = someWidgets1;
+			var components = someWidgets1,
+				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
 			build( this.release, components, noTheme, function( err, build ) {
 				if ( err ) {
@@ -478,7 +477,7 @@ tests = {
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, theme, function( err, build ) {
+		build( this.release, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -492,7 +491,7 @@ tests = {
 	"test: select no components": function( test ) {
 		var components = noComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, theme, function( err, build ) {
+		build( this.release, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -531,6 +530,15 @@ Release.all().filter(function( release ) {
 				obj[ i ] = function( test ) {
 					tests[ i ].call({
 						release: release,
+						theme: new ThemeRoller({ version: release.pkg.version }),
+						namedTheme: new ThemeRoller({
+							vars: { folderName: "mytheme" },
+							version: release.pkg.version
+						}),
+						noTheme: new ThemeRoller({
+							vars: null,
+							version: release.pkg.version
+						}),
 						allComponents: release.components().map(function( component ) {
 							return component.name;
 						}),
