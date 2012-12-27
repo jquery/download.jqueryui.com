@@ -86,9 +86,11 @@ Frontend.prototype = {
 	},
 
 	css: function( vars ) {
-		var theme = new ThemeRoller( _.extend({
-			dynamicImage: true
-		}, vars ) );
+		var theme = new ThemeRoller({
+			vars: _.extend({
+				dynamicImage: true
+			}, vars )
+		});
 		return theme.css();
 	},
 
@@ -98,7 +100,9 @@ Frontend.prototype = {
 	},
 
 	rollYourOwn: function( params ) {
-		var theme = new ThemeRoller( querystring.parse( params.themeParams ) );
+		var theme = new ThemeRoller({
+			vars: querystring.parse( params.themeParams )
+		});
 		return jsonpTemplate({
 				callback: params.callback,
 				data: JSON.stringify( rollyourownTemplate( theme ) )

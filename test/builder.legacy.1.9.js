@@ -504,9 +504,10 @@ var tests = {
 		});
 	},
 	"test: throw error when selecting invalid component": function( test ) {
+		var theme = this.theme;
 		test.expect( 1 );
 		try {
-			new Builder( this.release, [ invalidComponent ], new ThemeRoller() );
+			new Builder( this.release, [ invalidComponent ], theme );
 		} catch( err ) {
 			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
 		}
