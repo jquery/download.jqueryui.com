@@ -288,7 +288,7 @@
 			}
 		}
 
-		model.querystring(function( querystring ) {
+		model.querystring().done(function( querystring ) {
 			Hash.update( querystring, {
 				ignoreChange: true
 			});

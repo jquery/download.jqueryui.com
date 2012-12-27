@@ -136,6 +136,39 @@
 
 		has: function( name ) {
 			return name in this.attributes;
+		},
+
+		/**
+		 * querystring( [options] )
+		 * Returns a Deferred with the model querystring when done.
+		 * - options.pick: Array of attributes to pick. Use pick or omit. Default: pick all attributes;
+		 * - options.omit: Array of attributes to omit. Use pick or omit. Default: omit none;
+		 * - options.shorten: A boolean whether or not to shorten the querystring. Default: true.
+		 */
+		querystring: function( options ) {
+			var self = this,
+				attributes = this.attributes,
+				dfd = $.Deferred();
+			options = options || {};
+			if ( options.pick ) {
+				attributes = pick( attributes, options.pick );
+			} else if ( options.omit ) {
+				attributes = omit( attributes, options.omit );
+			}
+			if ( "shorten" in options && !options.shorten ) {
+				dfd.resolve( QueryString.encode( this._relevantAttributes( attributes ) ) );
+			} else {
+				if ( this.querystringDelay ) {
+					clearTimeout( this.querystringDelay );
+				}
+				// This is an expensive computation, so avoiding two consecutive calls
+				this.querystringDelay = setTimeout(function() {
+					self._shorten.call( self, self._relevantAttributes.call( self, attributes ), function( shortened ) {
+						dfd.resolve( QueryString.encode( shortened ) );
+					});
+				}, 200 );
+			}
+			return dfd;
 		}
 	};
 
@@ -151,7 +184,7 @@
 		this.defaults = {};
 		this.baseVars = obj.baseVars;
 		this.host = obj.host;
-		this.themeParams = $.Deferred().resolve();
+		this.themeParamsUnzipping = $.Deferred().resolve();
 		this.on( "change", $.proxy( this._change, this ) );
 	};
 
@@ -167,66 +200,57 @@
 				});
 			}
 			if ( "zThemeParams" in changed ) {
-				this.themeParams = $.Deferred();
+				this.themeParamsUnzipping = $.Deferred();
 				delete changed.zThemeParams;
 				unzip( this.get( "zThemeParams" ), function( unzipped ) {
 					delete self.attributes.zThemeParams;
 					self.set.call( self, {
 						themeParams: QueryString.encode( unzipped )
 					});
-					self.themeParams.resolve();
+					self.themeParamsUnzipping.resolve();
 				});
 			}
 		},
 
-		querystring: function( callback ) {
-			var attributes = this.attributes,
-				defaults = this.defaults,
-				relevantAttributes = function() {
-					var irrelevantAttributes = [];
-					$.each( defaults, function( varName ) {
-						if ( attributes[ varName ] === defaults[ varName ] ) {
-							irrelevantAttributes.push( varName );
-						}
-					});
-					if ( irrelevantAttributes.length ) {
-						return omit( attributes, irrelevantAttributes );
-					} else {
-						return attributes;
-					}
-				},
-				shorten = function( attributes, callback ) {
-					var shortened = pick( attributes, [ "folderName", "scope", "version" ] ),
-						df1 = $.Deferred(),
-						df2 = $.Deferred();
-					if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
-						zParam( "zThemeParams", QueryString.decode( attributes.themeParams ), function( zThemeParams ) {
-							$.extend( shortened, zThemeParams );
-							df1.resolve();
-						});
-					} else {
-						if ( "themeParams" in attributes ) {
-							shortened.themeParams = attributes.themeParams;
-						}
-						df1.resolve();
-					}
-					zParam( "zComponents", omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ), function( zComponents ) {
-						$.extend( shortened, zComponents );
-						df2.resolve();
-					});
-					$.when( df1, df2 ).done(function() {
-						callback( shortened );
-					});
-				};
-			if ( this.querystringDelay ) {
-				clearTimeout( this.querystringDelay );
+		_relevantAttributes: function( attributes ) {
+			var defaults = this.defaults,
+				irrelevantAttributes = [];
+			$.each( defaults, function( varName ) {
+				if ( attributes[ varName ] === defaults[ varName ] ) {
+					irrelevantAttributes.push( varName );
+				}
+			});
+			if ( irrelevantAttributes.length ) {
+				return omit( attributes, irrelevantAttributes );
+			} else {
+				return attributes;
 			}
-			// This is an expensive computation, so avoiding two consecutive calls
-			this.querystringDelay = setTimeout(function() {
-				shorten( relevantAttributes(), function( shortened ) {
-					callback( QueryString.encode( shortened ) );
-				});
-			}, 200 );
+		},
+
+		_shorten: function( attributes, callback ) {
+			var shortened = pick( attributes, [ "folderName", "scope", "version" ] ),
+				df1 = $.Deferred(),
+				df2 = $.Deferred();
+			this.themeParamsUnzipping.done(function() {
+				if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
+					zParam( "zThemeParams", QueryString.decode( attributes.themeParams ), function( zThemeParams ) {
+						$.extend( shortened, zThemeParams );
+						df1.resolve();
+					});
+				} else {
+					if ( "themeParams" in attributes ) {
+						shortened.themeParams = attributes.themeParams;
+					}
+					df1.resolve();
+				}
+			});
+			zParam( "zComponents", omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ), function( zComponents ) {
+				$.extend( shortened, zComponents );
+				df2.resolve();
+			});
+			$.when( df1, df2 ).done(function() {
+				callback( shortened );
+			});
 		},
 
 		parseHash: function( hash ) {
@@ -234,9 +258,9 @@
 		},
 
 		url: function( callback ) {
-			var self = this;
-			this.querystring(function( querystring ) {
-				callback( self.host + "/download" + ( querystring.length ? "?" + querystring : "" ) );
+			var host = this.host;
+			this.querystring().done(function( querystring ) {
+				callback( host + "/download" + ( querystring.length ? "?" + querystring : "" ) );
 			});
 		},
 
@@ -260,9 +284,12 @@
 		},
 
 		themeUrl: function( callback ) {
-			var self = this;
-			this.themeParams.done(function() {
-				callback( self.host + "/download/theme" + ( self.get.call( self, "themeParams" ) !== "none" ? "?" + QueryString.encode( self.attributes ) : "" ) );
+			var host = this.host;
+			this.querystring({
+				pick: [ "themeParams" ],
+				shorten: false
+			}).done(function( querystring ) {
+				callback( host + "/download/theme" + ( querystring.length ? "?" + querystring : "" ) );
 			});
 		}
 	});
@@ -293,49 +320,37 @@
 			}
 		},
 
-		querystring: function( callback ) {
-			var attributes = this.attributes,
-				baseVars = this.baseVars,
-				relevantAttributes = function() {
-					var i,
-						isBaseVars = true;
-					// If theme is baseVars, omit it in the querystring.
-					for ( i in baseVars ) {
-						if ( attributes[ i ] !== baseVars[ i ] ) {
-							isBaseVars = false;
-							break;
-						}
-					}
-					if ( isBaseVars ) {
-						return omit( attributes,
-							$.map( baseVars, function( value, varName ) {
-								return varName;
-							})
-						);
-					} else {
-						return attributes;
-					}
-				},
-				shorten = function( attributes, callback ) {
-					var shortened = pick( attributes, [ "downloadParams" ] ),
-						df1 = $.Deferred();
-					zParam( "zThemeParams", omit( attributes, [ "downloadParams" ] ), function( zThemeParams ) {
-							$.extend( shortened, zThemeParams );
-							df1.resolve();
-						});
-					df1.done(function() {
-						callback( shortened );
-					});
-				};
-			if ( this.querystringDelay ) {
-				clearTimeout( this.querystringDelay );
+		_relevantAttributes: function( attributes ) {
+			var i,
+				isBaseVars = true;
+			// If theme is baseVars, omit it in the querystring.
+			for ( i in this.baseVars ) {
+				if ( attributes[ i ] !== this.baseVars[ i ] ) {
+					isBaseVars = false;
+					break;
+				}
 			}
-			// This is an expensive computation, so avoiding two consecutive calls
-			this.querystringDelay = setTimeout(function() {
-				shorten( relevantAttributes(), function( shortened ) {
-					callback( QueryString.encode( shortened ) );
+			if ( isBaseVars ) {
+				return omit( attributes,
+					$.map( this.baseVars, function( value, varName ) {
+						return varName;
+					})
+				);
+			} else {
+				return attributes;
+			}
+		},
+
+		_shorten: function( attributes, callback ) {
+			var shortened = pick( attributes, [ "downloadParams" ] ),
+				df1 = $.Deferred();
+			zParam( "zThemeParams", omit( attributes, [ "downloadParams" ] ), function( zThemeParams ) {
+					$.extend( shortened, zThemeParams );
+					df1.resolve();
 				});
-			}, 200 );
+			df1.done(function() {
+				callback( shortened );
+			});
 		},
 
 		parseHash: function( hash ) {
@@ -343,9 +358,9 @@
 		},
 
 		url: function( callback ) {
-			var self = this;
-			this.querystring(function( querystring ) {
-				callback( self.host + "/themeroller" + ( querystring.length ? "?" + querystring : "" ) );
+			var host = this.host;
+			this.querystring().done(function( querystring ) {
+				callback( host + "/themeroller" + ( querystring.length ? "?" + querystring : "" ) );
 			});
 		},
 
