@@ -35,9 +35,20 @@
 		});
 	}
 
-	/**
-	 * App
-	 */
+	function isHexColor( value ) {
+		if ( (/[^#a-fA-F0-9]/g).test( value ) ) {
+			return false;
+		}
+		if ( value.lastIndexOf( "#" ) !== 0 ) {
+			// If # in any position but 0.
+			return false;
+		}
+		if ( value.length !== 4 && value.length !== 7 ) {
+			return false;
+		}
+		return true;
+	}
+
 	// Function to append a new theme stylesheet with the new style changes
 	function updateCSS() {
 		$( "body" ).append( "<link href=\"" + model.parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
@@ -69,28 +80,6 @@
 				$this.removeClass( "corner-top" ).addClass( "corner-all" );
 			}
 			event.preventDefault();
-		});
-	};
-
-	// Validation for hex inputs
-	$.fn.validHex = function() {
-		return this.each(function() {
-			var value = $( this ).val();
-			value = value.replace( /[^#a-fA-F0-9]/g, "" );
-			value = value.toLowerCase();
-			if ( value.match( /#/g ) && value.match( /#/g ).length > 1 ) {
-				// ##
-				value = value.replace( /#/g, "" );
-			}
-			if ( value.indexOf( "#" ) === -1 ) {
-				// No #
-				value = "#"+value;
-			}
-			if ( value.length > 7 ) {
-				// Too many chars
-				value = value.substr( 0, 7 );
-			}
-			$( this ).val( value );
 		});
 	};
 
@@ -145,6 +134,16 @@
 	}
 
 	function rollYourOwnInit() {
+		$( "#downloadTheme" ).on({
+			"click": function() {
+				var form = $( this ).parent().find( "form" );
+				if ( form.find( ".state-error" ).length ) {
+					// TODO: tell user submit has been cancelled, because there are errors!
+					return false;
+				}
+			}
+		});
+
 		// Hover class toggles in app panel
 		themeroller.find( "li.state-default, div.state-default" )
 			.mouseenter(function() {
@@ -156,19 +155,29 @@
 
 		// Hex inputs
 		themeroller.find( "input.hex" )
-			.validHex()
-			.keyup(function() {
-				$( this ).validHex();
+			.on({
+				"change": function() {
+					$( this ).trigger( "validate" );
+				},
+				"click": function( event ) {
+					$( this ).addClass( "focus" );
+					$( "#picker" ).remove();
+					themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
+					themeroller.find( "div.texturePicker ul:visible" ).hide( 0 ).parent().css( "position", "static" );
+					$( this ).after( "<div id=\"picker\"></div>" ).parent().addClass( "picker-on" );
+					$( "#picker" ).farbtastic( this );
+					event.preventDefault();
+				},
+				"validate": function() {
+					// Validate hex colors
+					if ( isHexColor( $( this ).val() ) ) {
+						$( this ).removeClass( "state-error" );
+					} else {
+						$( this ).addClass( "state-error" );
+					}
+				}
 			})
-			.on( "click", function( event ) {
-				$( this ).addClass( "focus" );
-				$( "#picker" ).remove();
-				themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
-				themeroller.find( "div.texturePicker ul:visible" ).hide( 0 ).parent().css( "position", "static" );
-				$( this ).after( "<div id=\"picker\"></div>" ).parent().addClass( "picker-on" );
-				$( "#picker" ).farbtastic( this );
-				event.preventDefault();
-			})
+			.trigger( "validate" )
 			.wrap( "<div class=\"hasPicker\"></div>" )
 			.applyFarbtastic();
 
@@ -229,24 +238,39 @@
 		});
 
 		// Ensures numbers only are entered for opacity inputs
-		themeroller.find( "input.opacity" ).on( "keyup", function() {
-			var number = parseInt( this.value, 10 );
+		themeroller.find( "input.opacity" ).on( "change", function() {
+			var withinThreshold,
+				number = parseInt( $( this ).val(), 10 );
 			if( isNaN( number ) ) {
-				this.value = "";
-				return;
+				$( this ).val( "" );
+			} else {
+				withinThreshold = Math.max( 0, Math.min( 100, number ) );
+				if ( $( this ).val() !== withinThreshold ) {
+					$( this ).val( withinThreshold );
+				}
 			}
-			this.value = Math.max( 0, Math.min( 100, number ) );
 		});
 
 		// Spindowns in TR panel
 		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
 		// Change event in form
-		themeroller.find( ".application form" ).on( "change", function( event ) {
-			formChange();
-			event.preventDefault();
-		}).on( "submit", function( event ) {
-			event.preventDefault();
+		themeroller.find( ".application form" ).on({
+			"change": function( event ) {
+				formChange();
+				event.preventDefault();
+			},
+			"submit": function( event ) {
+				event.preventDefault();
+			},
+			"validate": function() {
+				var form = $( this ).parent().find( "form" );
+				if ( form.find( ".state-error" ).length ) {
+					$( "#downloadTheme" ).addClass( "ui-state-disabled" );
+				} else {
+					$( "#downloadTheme" ).removeClass( "ui-state-disabled" );
+				}
+			}
 		});
 
 		if ( openGroups.length > 0 ) {

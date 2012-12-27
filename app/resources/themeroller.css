@@ -334,6 +334,10 @@
 	padding: 2px;
 	vertical-align: top;
 }
+#themeroller .application input.state-error,
+#themeroller .application select.state-error {
+	border: 1px solid #CD0A0A;
+}
 #themeroller .application select {
 	padding: 1px;
 }

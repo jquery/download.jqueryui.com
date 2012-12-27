@@ -340,16 +340,12 @@
 			});
 		});
 
-		$( "#scope" ).on({
-			"change": function() {
-				model.set({ scope: $( this ).val() });
-			},
-			"keyup": function() {
-				if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
-					$( "#theme-folder-name" ).data( "suggestedEdit", true );
-					model.set({ folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) });
-				}
+		$( "#scope" ).on("change", function() {
+			if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
+				$( "#theme-folder-name" ).data( "suggestedEdit", true );
+				model.set({ folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) });
 			}
+			model.set({ scope: $( this ).val() });
 		});
 
 		$( "#theme-folder-name" ).on({
@@ -359,9 +355,6 @@
 				}
 			},
 			"change": function() {
-				model.set({ folderName: $( this ).val() });
-			},
-			"keyup": function() {
 				var val = $( this ).val(),
 					escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
 				$( this ).data( "edited", true );
@@ -369,6 +362,7 @@
 				if ( escapedVal !== val ) {
 					model.set({ folderName: escapedVal });
 				}
+				model.set({ folderName: $( this ).val() });
 			}
 		});
 
