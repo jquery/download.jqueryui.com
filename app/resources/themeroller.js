@@ -449,6 +449,7 @@
 	model.set( baseVars );
 
 	appInit();
+	rollYourOwnInit();
 	demoInit();
 	Hash.init();
 
