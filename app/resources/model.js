@@ -261,7 +261,7 @@
 			var self = this;
 			this.themeParamsUnzipping.done(function() {
 				self.querystring.call( self ).done(function( querystring ) {
-					callback( self.host + "/download" + ( querystring.length ? "?" + querystring : "" ) );
+					callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
 				});
 			});
 		},
@@ -364,9 +364,8 @@
 		},
 
 		url: function( callback ) {
-			var host = this.host;
 			this.querystring().done(function( querystring ) {
-				callback( host + "/themeroller" + ( querystring.length ? "?" + querystring : "" ) );
+				callback( "/themeroller" + ( querystring.length ? "?" + querystring : "" ) );
 			});
 		},
 
@@ -377,7 +376,7 @@
 			if ( zThemeParams ) {
 				attributes.zThemeParams = zThemeParams;
 				querystring = QueryString.encode( attributes );
-				callback( this.host + "/download" + ( querystring.length ? "?" + querystring : "" ) );
+				callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
 			} else {
 				themeParams = QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) );
 				if ( themeParams.length ) {
