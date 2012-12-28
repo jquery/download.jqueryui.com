@@ -441,7 +441,7 @@
 		if ( "downloadParams" in changed ) {
 			updateThemeGalleryDownloadLink();
 		}
-		if ( reloadRollYourOwn ) {
+		if ( reloadRollYourOwn && !( "zThemeParams" in changed ) ) {
 			reloadRollYourOwn = false;
 			rollYourOwnLoad().done(function() {
 				model.downloadUrl(function( url ) {
