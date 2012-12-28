@@ -7,7 +7,7 @@
 			"dependsOn": "jQuery1.6+"
 		},
 		"legacy": {
-			"version": "master",
+			"version": "origin/master",
 			"dependsOn": "jQuery1.7+"
 		}
 	},
