@@ -258,38 +258,44 @@
 		},
 
 		url: function( callback ) {
-			var host = this.host;
-			this.querystring().done(function( querystring ) {
-				callback( host + "/download" + ( querystring.length ? "?" + querystring : "" ) );
+			var self = this;
+			this.themeParamsUnzipping.done(function() {
+				self.querystring.call( self ).done(function( querystring ) {
+					callback( self.host + "/download" + ( querystring.length ? "?" + querystring : "" ) );
+				});
 			});
 		},
 
 		themerollerUrl: function( callback ) {
-			var self = this,
-				attributes = this.attributes,
-				themeParams = ( this.has( "themeParams" ) && this.get( "themeParams" ) !== "none" ? QueryString.decode( this.get( "themeParams" ) ) : {} );
-			zParam( "zComponents", omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ), function( zComponents ) {
-				var themeRollerModel = new ThemeRollerModel({
-					baseVars: self.baseVars,
-					host: self.host
+			var self = this, themeParams,
+				attributes = this.attributes;
+			this.themeParamsUnzipping.done(function() {
+				themeParams = ( self.has.call( self, "themeParams" ) && self.get.call( self, "themeParams" ) !== "none" ? QueryString.decode( self.get.call( self, "themeParams" ) ) : {} );
+				zParam( "zComponents", omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ), function( zComponents ) {
+					var themeRollerModel = new ThemeRollerModel({
+						baseVars: self.baseVars,
+						host: self.host
+					});
+					themeRollerModel.set(
+						$.extend( themeParams, {
+							// Skip folderName on purpose, it will be updated based on theme selection anyway
+							downloadParams: QueryString.encode( $.extend( pick( attributes, [ "scope", "version" ] ), zComponents ) )
+						})
+					);
+					themeRollerModel.url( callback );
 				});
-				themeRollerModel.set(
-					$.extend( themeParams, {
-						// Skip folderName on purpose, it will be updated based on theme selection anyway
-						downloadParams: QueryString.encode( $.extend( pick( attributes, [ "scope", "version" ] ), zComponents ) )
-					})
-				);
-				themeRollerModel.url( callback );
 			});
 		},
 
 		themeUrl: function( callback ) {
-			var host = this.host;
-			this.querystring({
-				pick: [ "themeParams" ],
-				shorten: false
-			}).done(function( querystring ) {
-				callback( host + "/download/theme" + ( querystring.length ? "?" + querystring : "" ) );
+			var self = this;
+			this.themeParamsUnzipping.done(function() {
+				self.querystring.call( self, {
+					pick: [ "themeParams" ],
+					shorten: false
+				}).done(function( querystring ) {
+					callback( self.host + "/download/theme" + ( querystring.length ? "?" + querystring : "" ) );
+				});
 			});
 		}
 	});
