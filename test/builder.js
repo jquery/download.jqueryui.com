@@ -520,7 +520,8 @@ module.exports = {};
 // Build tests for each jqueryUi release
 Release.all().filter(function( release ) {
 	// Filter supported releases only
-	return semver.gte( release.pkg.version, "1.10.0" );
+	// FIXME below s/1.10.0pre/1.10.0. This is a temporary test change.
+	return semver.gte( release.pkg.version, "1.10.0pre" );
 }).forEach(function( release ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
