@@ -36,21 +36,21 @@
 	line-height: 1.3;
 }
 #download-builder p.intro,
-#download-builder p.bundle_links {
+#download-builder p.bundle-links {
 	color: #666666;
 	font-size: 1.5em;
 	line-height: 1.5;
 	margin: 1em 0;
 	width: 580px;
 }
-#download-builder p.bundle_links {
+#download-builder p.bundle-links {
 	font-size: 1.2em;
 }
-#download-builder p.bundle_links strong {
+#download-builder p.bundle-links strong {
 	color: #333333;
 	font-weight: bold;
 }
-#download-builder p.bundle_links em {
+#download-builder p.bundle-links em {
 	color: #666666;
 }
 #download-builder img#download_builder_icon {
