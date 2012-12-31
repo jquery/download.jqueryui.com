@@ -59,18 +59,40 @@
 	}
 }
 
-/* ui site overrides for TR */
-.content {
-	overflow: visible;
+/* jqueryui.com site overrides for TR */
+#themeroller-content {
+	float: left;
+	width: 100%;
+	padding-left: 0;
+	padding-right: 0;
 }
-#content-wrapper {
-	background: none;
+
+#themeroller-content h1 {
+	text-align: center;
+	font: normal 36px/36px "Proxima-Nova", "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	letter-spacing: -1px;
 }
-.content-top {
-	background-image: url(/resources/images/themeroller/content_top_bg_trFix.gif);
+
+#themeroller-content * {
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
 }
-#application-content {
-	background: #fff;
+
+#themeroller-content p {
+	margin: 0;
+}
+
+#themeroller-content input[type="text"],
+#themeroller-content textarea {
+	margin: 0;
+	min-width: 0;
+	padding: 0;
+}
+
+#themeroller-content .ui-spinner-input {
+	border: none;
+	box-shadow: none;
 }
 
 /* TR application styles */

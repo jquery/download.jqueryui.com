@@ -94,6 +94,9 @@
 	 * App
 	 */
 	function appInit() {
+		/* jqueryui.com site overrides for TR */
+		$( "#content" ).attr( "id", "themeroller-content" );
+
 		$( "#rollerTabs" ).tabs();
 
 		themeGalleryInit();
