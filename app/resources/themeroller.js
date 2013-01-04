@@ -125,13 +125,14 @@
 		});
 
 		$( "#reverse-background" ).on( "click", function() {
-			var maskArea = themeroller.find( ".mask-area" );
+			var maskArea = themeroller.find( ".mask-area" ),
+				textElems = themeroller.find( ".demoHeaders, #demo-options" );
 			if ( $( this ).is( ":checked" ) ) {
 				maskArea.css({ background: "#333" });
-				themeroller.find( ".demoHeaders" ).css({ color: "#CCC" });
+				textElems.css({ color: "#CCC" });
 			} else {
 				maskArea.css({ background: "#FFF" });
-				themeroller.find( ".demoHeaders" ).css({ color: "#000" });
+				textElems.css({ color: "#000" });
 			}
 		});
 	}

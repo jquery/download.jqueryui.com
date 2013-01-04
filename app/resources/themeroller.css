@@ -390,10 +390,19 @@ input.cornerRadius {
 
 /*demoOptions*/
 #demo-options {
-	padding-top: 12px;
-	padding-left: 12px;
+	clear: both;
 	font-family: Verdana, Arial, sans-serif;
-	font-size: 10px;
+	margin: 2em 0 1em;
+	padding-left: 12px;
+	padding-top: 12px;
+}
+#demo-options > input {
+	display: block;
+	float: left;
+}
+#demo-options > label {
+	display: block;
+	line-height: 15px;
 }
 
 
