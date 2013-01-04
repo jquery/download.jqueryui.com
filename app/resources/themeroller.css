@@ -23,6 +23,10 @@
 	margin: 1em 0;
 }
 
+#themeroller-content form {
+	padding: 0;
+}
+
 #themeroller-content input[type="text"],
 #themeroller-content textarea {
 	margin: 0;
