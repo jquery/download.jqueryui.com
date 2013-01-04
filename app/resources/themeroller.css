@@ -39,6 +39,13 @@
 #themeroller {
 	font-size: 10px;
 }
+#themeroller button,
+#themeroller input,
+#themeroller select,
+#themeroller textarea {
+	font-size: 12px;
+	line-height: 20px;
+}
 #themeroller .mask-area {
 	clear: both;
 	float: left;

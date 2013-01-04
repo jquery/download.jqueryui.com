@@ -43,6 +43,13 @@
 	font-size: 10px;
 	padding: 10px 0 20px 30px;
 }
+#download-builder button,
+#download-builder input,
+#download-builder select,
+#download-builder textarea {
+	font-size: 15px;
+	line-height: 20px;
+}
 #download-builder * {
 	color: #000000;
 	font-family: "Trebuchet MS",Verdana,sans-serif;
