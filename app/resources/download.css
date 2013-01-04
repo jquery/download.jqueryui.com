@@ -21,7 +21,7 @@
 }
 
 #download-builder-content p {
-	margin: 0;
+	margin: 1em 0;
 }
 
 #download-builder-content input[type="text"],
