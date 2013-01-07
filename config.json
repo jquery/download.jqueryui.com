@@ -5,10 +5,6 @@
 		"stable": {
 			"version": "1.9.2",
 			"dependsOn": "jQuery1.6+"
-		},
-		"legacy": {
-			"version": "origin/master",
-			"dependsOn": "jQuery1.7+"
 		}
 	},
 	"jquery": "1.8.3"
