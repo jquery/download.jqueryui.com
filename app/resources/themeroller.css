@@ -56,7 +56,6 @@
 #themeroller select,
 #themeroller textarea {
 	font-size: 12px;
-	line-height: 20px;
 }
 #themeroller .mask-area {
 	clear: both;
@@ -492,6 +491,9 @@ input.cornerRadius {
 /* rounded corner warnings */
 a.cornerWarning { color: red !important; text-decoration: none; }
 #cornerWarning {font-size: .9em; margin: 5px 0;}
+#cornerWarning * {
+	color: #fff;
+}
 
 
 /* Farbtastic overrides */
