@@ -22,10 +22,10 @@ var pkg = {
 		]
 	},
 	fileNames = [ "jquery.ui.autocomplete.js", "jquery.ui.accordion.js" ],
-	output = "/*! jQuery UI - v1.9.0 - " + today("isoDate") + "\n" +
+	output = "/*! jQuery UI - v1.9.0 - " + today( "isoDate" ) + "\n" +
 		"* http://jqueryui.com\n" +
 		"* Includes: jquery.ui.autocomplete.js, jquery.ui.accordion.js\n" +
-		"* Copyright (c) 2012 authors.txt Licensed MIT, GPL */";
+		"* Copyright (c) " + today( "yyyy" ) + " authors.txt Licensed MIT, GPL */";
 
 module.exports = {
 	"test: case 1": function( test ) {
