@@ -310,6 +310,9 @@
 
 	Hash.init();
 
+	/* jqueryui.com site overrides for DB */
+	$( "#content" ).attr( "id", "download-builder-content" );
+
 	// Loads theme section.
 	themeFetch().done(function( themeSection ) {
 		$( "#download-builder .theme-area" ).html( themeSection );

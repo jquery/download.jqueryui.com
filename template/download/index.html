@@ -7,14 +7,6 @@
 			<a class="download-link" href="/resources/download/jquery-ui-{{this.pkg.version}}.custom.zip">{{this.label}}</a> (<a href="/resources/download/jquery-ui-themes-{{this.pkg.version}}.zip">Themes</a>) ({{this.pkg.version}}: <em>for {{this.dependsOn}}</em>)
 		{{/join}}
 	</p>
-	<p class="bundle-links">
-		<strong>Source (pre-build):</strong>
-		{{#join releases " | "}}
-			<a class="download-link" href="https://github.com/jquery/jquery-ui/archive/{{this.pkg.version}}.zip">{{this.label}}</a> ({{this.pkg.version}}: <em>for {{this.dependsOn}}</em>)
-		{{/join}} |
-	  <a class="download-link" href="https://github.com/jquery/jquery-ui/archive/master.zip">Master</a> (unreleased) |
-	  <a class="download-link" href="http://github.com/jquery/jquery-ui">GitHub repo</a>
-	</p>
 	<form action="{{host}}/download" method="POST">
 		<div class="download-builder-header version-area">
 			<h2>Version</h2>

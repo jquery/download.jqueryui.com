@@ -1,6 +1,54 @@
+
+/* jqueryui.com site overrides for DB */
+
+#download-builder-content {
+	float: left;
+	width: 100%;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#download-builder-content h1 {
+	text-align: center;
+	font: normal 36px/36px "Proxima-Nova", "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	letter-spacing: -1px;
+}
+
+#download-builder-content * {
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+}
+
+#download-builder-content p {
+	margin: 1em 0;
+}
+
+#download-builder-content input[type="text"],
+#download-builder-content textarea {
+	margin: 0;
+	min-width: 0;
+	padding: 0;
+}
+
+/* DB application styles */
+
+#download-builder-content {
+	float: left;
+	padding: 0 0 70px;
+	width: 100%;
+}
+
 #download-builder {
 	font-size: 10px;
 	padding: 10px 0 20px 30px;
+}
+#download-builder button,
+#download-builder input,
+#download-builder select,
+#download-builder textarea {
+	font-size: 15px;
+	line-height: 20px;
 }
 #download-builder * {
 	color: #000000;
@@ -10,11 +58,6 @@
 }
 #download-builder ul {
 	list-style-type: none;
-}
-.download-builder-content {
-	float: left;
-	padding: 0 0 70px;
-	width: 100%;
 }
 #download-builder h1 {
 	font-size: 2.7em;

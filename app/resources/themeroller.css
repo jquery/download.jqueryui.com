@@ -1,7 +1,62 @@
+
+/* jqueryui.com site overrides for TR */
+#themeroller-content {
+	float: left;
+	width: 100%;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#themeroller-content h1 {
+	text-align: center;
+	font: 700 36px/36px "klavika-web","Helvetica Neue",Helvetica,Arial,Geneva,sans-serif;
+	letter-spacing: -1px;
+}
+
+#themeroller-content h2,
+#themeroller-content h3,
+#themeroller-content h4,
+#themeroller-content h5,
+#themeroller-content h6 {
+	font-family: inherit !important;
+}
+
+#themeroller-content * {
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+}
+
+#themeroller-content p {
+	margin: 1em 0;
+}
+
+#themeroller-content form {
+	padding: 0;
+}
+
+#themeroller-content input[type="text"],
+#themeroller-content textarea {
+	margin: 0;
+	min-width: 0;
+	padding: 0;
+}
+
+#themeroller-content .ui-spinner-input {
+	border: none;
+	box-shadow: none;
+}
+
+/* TR application styles */
 #themeroller {
 	font-size: 10px;
 }
-
+#themeroller button,
+#themeroller input,
+#themeroller select,
+#themeroller textarea {
+	font-size: 12px;
+}
 #themeroller .mask-area {
 	clear: both;
 	float: left;
@@ -9,13 +64,13 @@
 	position: relative;
 	width: 100%;
 }
-.mid-area {
+#themeroller .mid-area {
 	float: left;
 	left: 224px;/* 214px + 4px*2 + 1px*2 */
 	position: relative;
 	width: 200%;
 }
-.right-area {
+#themeroller .right-area {
 	float: left;
 	left: 50%;
 	margin-left: -460px;/* 230px*2 */
@@ -23,7 +78,7 @@
 	width: 100%;
 	z-index: 0;
 }
-.app-area {
+#themeroller .app-area {
 	float: left;
 	left: 239px;/* 224px + 15px */
 	margin-left: -50%;
@@ -32,48 +87,32 @@
 	width: 224px;
 	z-index: 2;
 }
-.components-b-area {
+#themeroller .components-b-area {
 	float: left;
 	left: 0px;
 	overflow: hidden;
 	position: relative;
 	width: 230px;
 }
-.components-a-wrap {
+#themeroller .components-a-wrap {
 	float: right;
 	position: relative;
 	right: 100%;
 	width: 50%;
 	z-index: 1;
 }
-.components-a-pad {
+#themeroller .components-a-pad {
 	margin: 0 15px 0 478px;
 	overflow: hidden;
 }
 @media all and (max-width: 1100px) {
-	.components-b-area {
+	#themeroller .components-b-area {
 		clear: both;
 	}
-	.components-a-pad {
+	#themeroller .components-a-pad {
 		margin: 0 15px 0 239px;
 	}
 }
-
-/* ui site overrides for TR */
-.content {
-	overflow: visible;
-}
-#content-wrapper {
-	background: none;
-}
-.content-top {
-	background-image: url(/resources/images/themeroller/content_top_bg_trFix.gif);
-}
-#application-content {
-	background: #fff;
-}
-
-/* TR application styles */
 
 /* hide elements if js is avail */
 .js .theme-group-content, .js #submitBtn, .js select.texture, .js #themeGallery, .js #help {
@@ -362,10 +401,19 @@ input.cornerRadius {
 
 /*demoOptions*/
 #demo-options {
-	padding-top: 12px;
-	padding-left: 12px;
+	clear: both;
 	font-family: Verdana, Arial, sans-serif;
-	font-size: 10px;
+	margin: 2em 0 1em;
+	padding-left: 12px;
+	padding-top: 12px;
+}
+#demo-options > input {
+	display: block;
+	float: left;
+}
+#demo-options > label {
+	display: block;
+	line-height: 15px;
 }
 
 
@@ -443,6 +491,9 @@ input.cornerRadius {
 /* rounded corner warnings */
 a.cornerWarning { color: red !important; text-decoration: none; }
 #cornerWarning {font-size: .9em; margin: 5px 0;}
+#cornerWarning * {
+	color: #fff;
+}
 
 
 /* Farbtastic overrides */
