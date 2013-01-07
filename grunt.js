@@ -55,13 +55,30 @@ function cloneOrFetch( callback ) {
 		function( callback ) {
 			if ( fs.existsSync( "tmp/jquery-ui" ) ) {
 				grunt.log.writeln( "Fetch updates for jquery-ui repo" );
-				grunt.utils.spawn({
-					cmd: "git",
-					args: [ "fetch" ],
-					opts: {
-						cwd: "tmp/jquery-ui"
+				async.series([
+
+					// Fetch branch heads (even if not referenced by tags), see c08cf67.
+					function( callback ) {
+						grunt.utils.spawn({
+							cmd: "git",
+							args: [ "fetch" ],
+							opts: {
+								cwd: "tmp/jquery-ui"
+							}
+						}, callback );
+					},
+
+					// Fetch tags not referenced by heads. Yes, we need both.
+					function( callback ) {
+						grunt.utils.spawn({
+							cmd: "git",
+							args: [ "fetch", "-t" ],
+							opts: {
+								cwd: "tmp/jquery-ui"
+							}
+						}, callback );
 					}
-				}, log( callback, "Fetched repo", "Error fetching repo" ) );
+				], log( callback, "Fetched repo", "Error fetching repo" ) );
 			} else {
 				grunt.log.writeln( "Cloning jquery-ui repo" );
 				grunt.utils.spawn({
