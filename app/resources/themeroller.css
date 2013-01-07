@@ -9,8 +9,16 @@
 
 #themeroller-content h1 {
 	text-align: center;
-	font: normal 36px/36px "Proxima-Nova", "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	font: 700 36px/36px "klavika-web","Helvetica Neue",Helvetica,Arial,Geneva,sans-serif;
 	letter-spacing: -1px;
+}
+
+#themeroller-content h2,
+#themeroller-content h3,
+#themeroller-content h4,
+#themeroller-content h5,
+#themeroller-content h6 {
+	font-family: inherit !important;
 }
 
 #themeroller-content * {
