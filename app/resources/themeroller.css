@@ -645,6 +645,15 @@ ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; f
 ul#icons span.ui-icon {float: left; margin: 0 4px;}
 
 
+/* Demo */
+
+/*
+ * 1: On 1.10, `.ui-widget-overlay` position has been changed to "fixed". Reverting it to absolute in the demo, so it's possible to contain overlay inside `.fakewindowcontain`.
+ */
+#themeroller .fakewindowcontain .ui-widget-overlay {
+	position: absolute; /* 1 */
+}
+
 /* Clearfix */
 .clearfix:after {
 	content: ".";
