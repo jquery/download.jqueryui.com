@@ -52,53 +52,62 @@
 		return $( referenceElement ).closest( ".component-group" ).find( ".component-group-list input[type=checkbox]" );
 	}
 
-	function _check( elem, value ) {
-		var modelUpdates = {};
+	function _check( elem, value, options ) {
+		var modelUpdates = {},
+			depElem = $();
+		options = options || {};
+
 		elem.each(function() {
 			var elem = $( this ),
 				name = elem.attr( "name" );
 
 			// Handle dependencies
-			if ( value ) {
+			if ( value && !options.skipDependencies ) {
 				if ( dependencies[ name ] ) {
 					// Whenever a checkbox is activated, also activate all dependencies
-					_check( dependencies[ name ], value );
+					depElem = depElem.add( dependencies[ name ] );
 				}
-			} else if ( dependents[ name ] ) {
+			} else if ( dependents[ name ] && !options.skipDependencies ) {
 				// Whenever a checkbox is deactivated, also deactivate all dependents
-				_check( dependents[ name ], value );
+				depElem = depElem.add( dependents[ name ] );
 			}
 
 			elem.prop( "checked", value );
 
-			// Update toggle all
-			if ( value ) {
-				// Set group toggle all if all components of its group are checked
-				if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
-					$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
-				}
-				// Set toggle all if all components are checked
-				if ( !allComponents().filter( ":not(:checked)" ).length ) {
-					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
-				}
-			} else {
-				// Unset group toggle all if no components of its group are checked
-				if ( !allGroup( elem ).filter( ":checked" ).length ) {
-					$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
-				}
-				// Unset toggle all if no components are checked
-				if ( !allComponents().filter( ":checked" ).length ) {
-					$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
-				}
-			}
-
 			modelUpdates[ name ] = value;
 		});
+
+		// Update dependencies
+		if ( depElem.length ) {
+			_check( depElem, value );
+		}
+
+		// Update toggle all
+		if ( value ) {
+			// Set group toggle all if all components of its group are checked
+			if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
+				$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
+			}
+			// Set toggle all if all components are checked
+			if ( !allComponents().filter( ":not(:checked)" ).length ) {
+				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
+			}
+		} else {
+			// Unset group toggle all if no components of its group are checked
+			if ( !allGroup( elem ).filter( ":checked" ).length ) {
+				$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
+			}
+			// Unset toggle all if no components are checked
+			if ( !allComponents().filter( ":checked" ).length ) {
+				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
+			}
+		}
+
 		model.set( modelUpdates );
 		downloadOnOff();
 	}
 
-	function check( event, elem, value ) {
+	function check( event, elem, value, options ) {
 		var consolidatedDependents, consolidatedNames;
 
 		// Uncheck validations
@@ -129,7 +138,7 @@
 						modal: true,
 						buttons: {
 							"Remove": function() {
-								_check( elem, value );
+								_check( elem, value, options );
 								$( this ).remove();
 							},
 							"Cancel": function() {
@@ -139,12 +148,12 @@
 					})
 					.dialog( "widget" ).addClass( "download-builder-dialog" );
 			} else {
-				_check( elem, value );
+				_check( elem, value, options );
 			}
 
 		// Check validations (none)
 		} else {
-			_check( elem, value );
+			_check( elem, value, options );
 		}
 	}
 
@@ -214,7 +223,9 @@
 
 		// Binds click handlers on components checkboxes
 		toggleAll.find( "input[type=checkbox]" ).on( "click", function( event ) {
-			check( event, allComponents(), $( this ).prop( "checked" ) );
+			check( event, allComponents(), $( this ).prop( "checked" ), {
+				skipDependencies: true
+			});
 		});
 		$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
 			var target = $( event.target );
