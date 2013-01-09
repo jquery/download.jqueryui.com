@@ -168,6 +168,7 @@
 	}
 
 	function initComponents( html ) {
+		var toggleAll;
 		dependencies = {};
 		dependents = {};
 
@@ -196,7 +197,7 @@
 		});
 
 		// Generating toggle all checkboxes
-		$( "#download-builder .components" ).prev().find( "h2" ).after( drawToggleAll( "toggleAll" ) );
+		toggleAll = drawToggleAll( "toggleAll" ).insertAfter( $( "#download-builder .components-area" ).prev().find( "h2" ) );
 		$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
 		/* Remember components check/uncheck selection
@@ -212,12 +213,13 @@
 		});
 
 		// Binds click handlers on components checkboxes
+		toggleAll.find( "input[type=checkbox]" ).on( "click", function( event ) {
+			check( event, allComponents(), $( this ).prop( "checked" ) );
+		});
 		$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
 			var target = $( event.target );
 			if ( target.parent().is( ".toggle" ) ) {
 				check( event, allGroup( this ), $( this ).prop( "checked" ) );
-			} else if ( target.parent().is( ".toggleAll" ) ) {
-				check( event, allComponents(), $( this ).prop( "checked" ) );
 			} else {
 				check( event, $( this ), $( this ).prop( "checked" ) );
 			}
