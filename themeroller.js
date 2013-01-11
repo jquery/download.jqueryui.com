@@ -1,11 +1,26 @@
 var _ = require( "underscore" ),
-	config = require( "./config" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	querystring = require( "querystring" ),
 	textures = require( "./lib/themeroller.textures" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
+
+function imagesGeneratorHelper( fn, params, response, callback ) {
+	try {
+		fn( params, function( err, data ) {
+			if ( err ) {
+				callback( err );
+			} else {
+				response.setHeader( "Content-Type", "image/png" );
+				response.end( data );
+				callback();
+			}
+		});
+	} catch( err ) {
+		callback( err );
+	}
+}
 
 // Returns 'selected="selected"' if param == value
 Handlebars.registerHelper( "selected", function( param, value ) {
@@ -16,20 +31,19 @@ Handlebars.registerHelper( "selected", function( param, value ) {
 Handlebars.registerHelper( "textureOptions", function( select, panel ) {
 	var optSet = "";
 	textures.forEach(function( texture ) {
-		var name = texture.file.split( "." )[ 0 ].split( "_" ).slice( 1 ).join( " " ),
-			selected = texture.file === select ? " selected=\"selected\"" : "",
-			texturedims = [ texture.width, texture.height ];
+		var name = texture.type,
+			selected = texture.type === select ? " selected=\"selected\"" : "";
 		// Large images need hard coded icon sizes to be useful
 		if ( texture.width * texture.height >= 360000 ) {
-			texturedims = [ 16, 16 ];
+			texture.width = texture.height = 16;
 		}
 		// Tall panel element (content, overlay, shadow, etc), don't allow glass texture
 		if ( panel === "true" ) {
-			if( texture.file !== "02_glass.png" ) {
-				optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";
+			if( texture.type !== "glass" ) {
+				optSet += "<option value=\"" + texture.type + "\"" + selected + " data-texturewidth=\"" + texture.width + "\" data-textureheight=\"" + texture.height + "\">" + name + "</option>";
 			}
 		} else {
-			optSet += "<option value=\"" + texture.file + "\"" + selected + " data-texturewidth=\"" + texturedims[0] + "\" data-textureheight=\"" + texturedims[1] + "\">" + name + "</option>";
+			optSet += "<option value=\"" + texture.type + "\"" + selected + " data-texturewidth=\"" + texture.width + "\" data-textureheight=\"" + texture.height + "\">" + name + "</option>";
 		}
 	});
 	return optSet;
@@ -80,7 +94,6 @@ Frontend.prototype = {
 			compGroupA: compGroupATemplate(),
 			compGroupB: compGroupBTemplate(),
 			host: this.host,
-			imageGeneratorUrl: "http://" + config.imageGeneratorHost + config.imageGeneratorPath + "/",
 			resources: this.resources
 		});
 	},
@@ -88,7 +101,8 @@ Frontend.prototype = {
 	css: function( vars ) {
 		var theme = new ThemeRoller({
 			vars: _.extend({
-				dynamicImage: true
+				dynamicImage: true,
+				dynamicImageHost: this.host
 			}, vars )
 		});
 		return theme.css();
@@ -99,6 +113,27 @@ Frontend.prototype = {
 		return themeGallery;
 	},
 
+	icon: function( filename, response, error ) {
+		var match, params;
+
+		// ui-icons_<color>_256x240.png
+		match = filename.match( /^ui-icons_(\w+)_256x240.png$/i );
+
+		if ( match == null ) {
+			return error( new Error( "Invalid format: " + filename ), response );
+		}
+
+		params = {
+			color: match[ 1 ]
+		};
+
+		imagesGeneratorHelper( ThemeRoller.generateIcon, params, response, function( err ) {
+			if ( err ) {
+				error( err, response );
+			}
+		});
+	},
+
 	rollYourOwn: function( params ) {
 		var theme = new ThemeRoller({
 			vars: querystring.parse( params.themeParams )
@@ -107,6 +142,31 @@ Frontend.prototype = {
 				callback: params.callback,
 				data: JSON.stringify( rollyourownTemplate( theme ) )
 			});
+	},
+
+	texture: function( filename, response, error ) {
+		var match, params;
+
+		// ui-bg_<type>_<opacity>_<color>_<width>x<height>.png
+		match = filename.match( /^ui-bg_([a-z0-9\-]+)_(\w+)_(\w+)_(\d+)x(\d+).png$/i );
+
+		if ( match == null ) {
+			return error( new Error( "Invalid format: " + filename ), response );
+		}
+
+		params = {
+			type: match[ 1 ],
+			opacity: match[ 2 ],
+			color: match[ 3 ],
+			width: match[ 4 ],
+			height: match[ 5 ]
+		};
+
+		imagesGeneratorHelper( ThemeRoller.generateTexture, params, response, function( err ) {
+			if ( err ) {
+				error( err, response );
+			}
+		});
 	}
 };
 
