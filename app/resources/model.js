@@ -413,7 +413,7 @@
 
 	// Workaround to handle asynchronous worker load lzma-bug.
 	lzmaInterval = setInterval(function() {
-		if ( ( typeof Worker === "function" && Worker.prototype.postMessage != null ) || window.onmessage != null ) {
+		if ( ( ( typeof Worker === "function" || typeof Worker === "object" ) && Worker.prototype.postMessage != null ) || window.onmessage != null ) {
 			lzmaLoad.resolve();
 			clearInterval( lzmaInterval );
 		}
