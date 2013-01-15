@@ -34,20 +34,26 @@ if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	Builder.cacheThemeImages();
 }
 
+// OBS: We are using an older version of connect, which lacks a descent way to centralize requests error handling.
+function error( err, response ) {
+	logger.error( "User request exception: " + ( err.stack || err ) );
+	frontend.error( response );
+}
+
 function params( request ) {
 	return querystring.parse( request.url.split( "?" )[ 1 ] );
 }
 
-function route(app) {
-	app.get( routes.home, function( request, response, next ) {
+function route( app ) {
+	app.get( routes.home, function( request, response ) {
 		response.end( frontend.root() );
 	});
-	app.get( routes.download, function( request, response, next) {
+	app.get( routes.download, function( request, response ) {
 		response.end( frontend.download.index( params( request ), {
 			wrap: true
 		}));
 	});
-	app.post( routes.download, function( request, response, next) {
+	app.post( routes.download, function( request, response ) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
 			try {
@@ -79,34 +85,32 @@ function route(app) {
 				response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 				builder.writeTo( response, function( err, result ) {
 					if ( err ) {
-						response.writeHead( 500, err.message );
+						error( err, response );
 					}
-					response.end();
 				});
 			} catch( err ) {
-				response.writeHead( 500, err.message );
-				response.end();
+				error( err, response );
 			}
 		});
 	});
-	app.get( routes.downloadComponents, function( request, response, next ) {
+	app.get( routes.downloadComponents, function( request, response ) {
 		response.setHeader( "Content-Type", "application/json" );
 		response.end( frontend.download.components( params( request ) ) );
 	});
-	app.get( routes.downloadTheme, function( request, response, next ) {
+	app.get( routes.downloadTheme, function( request, response ) {
 		response.setHeader( "Content-Type", "application/json" );
 		response.end( frontend.download.theme( params( request ) ) );
 	});
-	app.get( routes.themeroller, function( request, response, next ) {
+	app.get( routes.themeroller, function( request, response ) {
 		response.end( frontend.themeroller.index( params( request ), {
 			wrap: true
 		}));
 	});
-	app.get( routes.themerollerParseTheme, function( request, response, next ) {
+	app.get( routes.themerollerParseTheme, function( request, response ) {
 		response.setHeader( "Content-Type", "text/css" );
 		response.end( frontend.themeroller.css( params( request ) ) );
 	});
-	app.get( routes.themerollerRollYourOwn, function( request, response, next ) {
+	app.get( routes.themerollerRollYourOwn, function( request, response ) {
 		response.setHeader( "Content-Type", "application/json" );
 		response.end( frontend.themeroller.rollYourOwn( params( request ) ) );
 	});

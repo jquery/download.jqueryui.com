@@ -5,7 +5,8 @@ var config = require( "./config" ),
 	Release = require( "./lib/release" ),
 	ThemeRoller = require( "./themeroller" );
 
-var rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
+var errorTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/500.html", "utf-8" ) ),
+	rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
 
 var Frontend = function( host ) {
 	var args = {
@@ -22,6 +23,11 @@ var Frontend = function( host ) {
 Frontend.prototype = {
 	root: function() {
 		return rootTemplate();
+	},
+
+	error: function( response ) {
+		response.writeHead( 500 );
+		response.end( errorTemplate() );
 	}
 };
 
