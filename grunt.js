@@ -154,7 +154,7 @@ function checkout( ref ) {
 					// Get the correct documentation for jquery-ui version
 					function( callback ) {
 						// If ref is a branch, then get documentation "master" branch.
-						if ( !(/^\d.\d/).test( ref ) ) {
+						if ( !(/^\d+.\d+/).test( ref ) ) {
 							return callback();
 						}
 						// If ref is a tag, then get its corresponding <major>-<minor> branch, if available or "master".
@@ -168,7 +168,7 @@ function checkout( ref ) {
 							if ( error ) {
 								grunt.log.error( "Error listing branches: " + error.stderr );
 							} else {
-								var correspondingBranch = ref.replace( /^(\d).(\d).*/, "$1-$2" ),
+								var correspondingBranch = ref.replace( /^(\d+).(\d+).*/, "$1-$2" ),
 									isCorrespondingBranch = function( branch ) {
 										return ( new RegExp( "origin/" + correspondingBranch + "$" ) ).test( branch );
 									};
