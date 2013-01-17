@@ -3,6 +3,10 @@
 	"imageGeneratorPath": "/themeroller/images",
 	"jqueryUi": {
 		"stable": {
+			"version": "1.10.0",
+			"dependsOn": "jQuery1.6+"
+		},
+		"legacy": {
 			"version": "1.9.2",
 			"dependsOn": "jQuery1.6+"
 		}
