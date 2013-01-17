@@ -6,6 +6,8 @@
 		{{#join releases " | "}}
 			<a class="download-link" href="/resources/download/jquery-ui-{{this.pkg.version}}.custom.zip">{{this.label}}</a> (<a href="/resources/download/jquery-ui-themes-{{this.pkg.version}}.zip">Themes</a>) ({{this.pkg.version}}: <em>for {{this.dependsOn}}</em>)
 		{{/join}}
+		<br>
+		<a class="download-link" href="/download/all">All jQuery UI Downloads</a>
 	</p>
 	<form action="{{host}}/download" method="POST">
 		<div class="download-builder-header version-area">
