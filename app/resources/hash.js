@@ -37,7 +37,6 @@
 				if ( hash ) {
 					hash = hash.replace( /^!*/, "" );
 				}
-				console.log("trigger hash change", hash);
 				emitter.trigger( "change", [ hash ] );
 			}
 			storedHash = hash;
