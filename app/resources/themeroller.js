@@ -114,13 +114,13 @@
 
 		// Links to roll your own from help tab
 		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
-			$( "#rollerTabs" ).tabs( "select", 0 );
+			$( "#rollerTabs" ).tabs( "option", "active", 0 );
 			event.preventDefault();
 		});
 
 		// Links to theme gallery from help tab
 		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
-			$( "#rollerTabs" ).tabs( "select", 1 );
+			$( "#rollerTabs" ).tabs( "option", "active", 1 );
 			event.preventDefault();
 		});
 
@@ -305,7 +305,7 @@
 			.on( "click", function( event ) {
 				reloadRollYourOwn = true;
 				model.set( QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
-				$( "#rollerTabs" ).tabs( "select", 0 );
+				$( "#rollerTabs" ).tabs( "option", "active", 0 );
 				event.preventDefault();
 			});
 		updateThemeGalleryDownloadLink();
