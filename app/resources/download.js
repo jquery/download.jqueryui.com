@@ -206,7 +206,9 @@
 		});
 
 		// Generating toggle all checkboxes
-		toggleAll = drawToggleAll( "toggleAll" ).insertAfter( $( "#download-builder .components-area" ).prev().find( "h2" ) );
+		if ( !( toggleAll = $( "#download-builder .toggleAll" ) ).length ) {
+			toggleAll = drawToggleAll( "toggleAll" ).insertAfter( $( "#download-builder .components-area" ).prev().find( "h2" ) );
+		}
 		$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
 
 		/* Remember components check/uncheck selection
