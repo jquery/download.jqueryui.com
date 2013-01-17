@@ -34,7 +34,10 @@
 		if ( storedHash !== hash ) {
 			if ( listen === true ) {
 				// update was made by navigation button
-				emitter.trigger( "change", [ currHash() ] );
+				if ( hash ) {
+					hash = hash.replace( /^!*/, "" );
+				}
+				emitter.trigger( "change", [ hash ] );
 			}
 			storedHash = hash;
 		}
@@ -53,7 +56,7 @@
 		if ( options.ignoreChange === true ) {
 			stopListening();
 		}
-		window.location.hash = hash;
+		window.location.hash = hash.replace( /^!*(.*)/, "!$1" );
 		if ( options.ignoreChange === true ) {
 			storedHash = hash;
 			startListening();
