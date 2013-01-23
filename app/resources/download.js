@@ -183,6 +183,12 @@
 
 		$( "#download-builder .components-area").html( html );
 
+		model.setOrderedComponents(
+			$( "#download-builder .components-area input[type=checkbox]" ).map(function() {
+				return this.name;
+			})
+		);
+
 		// Initializes dependencies and dependents auxiliary variables.
 		$( "#download-builder input[type=checkbox]" ).each(function() {
 			var checkbox = $( this ),
@@ -252,7 +258,16 @@
 	model.defaults[ "version" ] = $( "#download-builder [name=version]" ).first().val();
 
 	model.on( "change", function( changed, created ) {
+		if ( "folderName" in changed && !model.get( "folderName" ).length ) {
+			delete model.attributes.folderName;
+			delete changed.folderName;
+		}
+		if ( "scope" in changed && !model.get( "scope" ).length ) {
+			delete model.attributes.scope;
+			delete changed.scope;
+		}
 		themesLoad.done(function() {
+			var themeOption;
 			if ( "folderName" in changed ) {
 				$( "#theme-folder-name" ).val( model.get( "folderName" ) ).trigger( "change" );
 			}
@@ -260,7 +275,10 @@
 				$( "#scope" ).val( model.get( "scope" ) ).trigger( "change" );
 			}
 			if ( "themeParams" in changed ) {
-				$( "#theme option[value=\"" + model.get( "themeParams" ) + "\"]" ).prop( "selected", true ).trigger( "change" );
+				themeOption = $( "#theme option[value=\"" + model.get( "themeParams" ) + "\"]" );
+				if ( !themeOption.filter( ":selected" ) ) {
+					themeOption.prop( "selected", true ).trigger( "change" );
+				}
 			}
 			model.themerollerUrl(function( url ) {
 				$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", url );
@@ -292,6 +310,7 @@
 			if ( created.version ) {
 				initComponents();
 			} else {
+				model.unsetOrderedComponents();
 				componentsFetch().done(function( html ) {
 					initComponents( html );
 				}).fail(function() {
@@ -377,10 +396,12 @@
 					escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
 				$( this ).data( "edited", true );
 				$( "#theme-folder-name" ).removeData( "suggestedEdit" );
+				console.log("theme-folder-name change, setting folderName", escapedVal, val, model.get("folderName"));
 				if ( escapedVal !== val ) {
 					model.set({ folderName: escapedVal });
+				} else {
+					model.set({ folderName: $( this ).val() });
 				}
-				model.set({ folderName: $( this ).val() });
 			}
 		});
 
@@ -391,4 +412,5 @@
 		}
 	});
 
+window.model = model;
 }( jQuery, Hash, Model ) );
