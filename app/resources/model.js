@@ -324,7 +324,7 @@
 				self.querystring.call( self, {
 					concurrencyDelay: self._urlQuerystringDelay
 				}).done(function( querystring ) {
-					callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
+					callback( "/download/" + ( querystring.length ? "?" + querystring : "" ) );
 				});
 			});
 		},
@@ -437,7 +437,7 @@
 			this.querystring({
 				concurrencyDelay: this._urlQuerystringDelay
 			}).done(function( querystring ) {
-				callback( "/themeroller" + ( querystring.length ? "?" + querystring : "" ) );
+				callback( "/themeroller/" + ( querystring.length ? "?" + querystring : "" ) );
 			});
 		},
 
@@ -448,7 +448,7 @@
 			if ( zThemeParams ) {
 				attributes.zThemeParams = zThemeParams;
 				querystring = QueryString.encode( attributes );
-				callback( "/download" + ( querystring.length ? "?" + querystring : "" ) );
+				callback( "/download/" + ( querystring.length ? "?" + querystring : "" ) );
 			} else {
 				themeParams = QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) );
 				if ( themeParams.length ) {
