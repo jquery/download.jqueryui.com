@@ -13,19 +13,20 @@
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
 		openGroups = [],
+		textureVars = "bgTextureDefault bgTextureHover bgTextureActive bgTextureHeader bgTextureContent bgTextureHighlight bgTextureError bgTextureOverlay bgTextureShadow".split( " " ),
 		themeroller = $( "#themeroller" ),
 		baseVars = QueryString.decode( themeroller.data( "base-vars" ) ),
-		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
-		imageGeneratorUrlPart = themeroller.data( "image-generator-url" );
+		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" );
 
 	// Rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
-	// Returns imageGenerator url
-	function imageGeneratorUrl( texturewidth, textureheight, value ) {
-		return imageGeneratorUrlPart + "?new=555555&w=" + texturewidth + "&h=" + textureheight + "&f=png&q=100&fltr[]=over|textures/" + value + "|0|0|100";
+	// Returns texture url
+	function textureUrl( type, width, height ) {
+		// ui-bg_<type>_<opacity>_<color>_<width>x<height>.png
+		return downloadJqueryuiHost + "/themeroller/images/ui-bg_" + type.replace( /_/g, "-" ) + "_100_555_" + width + "x" + height + ".png";
 	}
 
 	// Fetches rollYourOwn content
@@ -206,15 +207,15 @@
 
 			// Scrape options
 			$( this ).find( "option" ).each(function() {
-				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
+				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
 				if( $( this ).get( 0 ).index === sIndex ) {
-					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "value" ) ) + ") 50% 50% repeat" );
+					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
 				}
 			});
 
 			ul.find( "li" ).on( "click", function( event ) {
 				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
-				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + imageGeneratorUrl( $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ), $( this ).attr( "class" ) ) + ") 50% 50% repeat" );
+				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "class" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
 				ul.fadeOut( 100 );
 				formChange();
 				event.preventDefault();
@@ -441,7 +442,26 @@
 		host: downloadJqueryuiHost
 	});
 
+	// Update textureVars from previous filename format (eg. 02_glass.png) to type-only format (eg. glass). Changed on images generation rewrite (port to nodejs).
+	function oldImagesBackCompat( changed ) {
+		$.each( changed, function( changed ) {
+			var newValue, pair, value;
+			if ( $.inArray( changed, textureVars ) >= 0 ) {
+				value = model.get( changed );
+				newValue = value.replace( /[0-9]*_([^\.]*).png/, "$1" );
+				if ( value !== newValue ) {
+					pair = {};
+					pair[ changed ] = newValue;
+					model.set( pair );
+				}
+			}
+		});
+	}
+
 	model.on( "change", function ( changed ) {
+		if ( oldImagesBackCompat( changed ) ) {
+			return;
+		}
 		if ( "downloadParams" in changed ) {
 			updateThemeGalleryDownloadLink();
 		}
