@@ -7,9 +7,9 @@ var _ = require( "underscore" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
-function imagesGeneratorHelper( fn, params, response, callback ) {
+function imagesGeneratorHelper( params, response, callback ) {
 	try {
-		fn( params, function( err, data ) {
+		getImage( params, function( err, data ) {
 			if ( err ) {
 				callback( err );
 			} else {
@@ -129,7 +129,7 @@ Frontend.prototype = {
 			color: match[ 1 ]
 		};
 
-		imagesGeneratorHelper( getImage, params, response, function( err ) {
+		imagesGeneratorHelper( params, response, function( err ) {
 			if ( err ) {
 				error( err, response );
 			}
@@ -164,7 +164,7 @@ Frontend.prototype = {
 			height: match[ 5 ]
 		};
 
-		imagesGeneratorHelper( getImage, params, response, function( err ) {
+		imagesGeneratorHelper( params, response, function( err ) {
 			if ( err ) {
 				error( err, response );
 			}
