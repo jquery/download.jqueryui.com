@@ -1,15 +1,15 @@
 var _ = require( "underscore" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
+	Image = require( "./lib/themeroller.image" ),
 	querystring = require( "querystring" ),
 	textures = require( "./lib/themeroller.textures" ),
-	getImage = require( "./lib/themeroller.images" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
-function imagesGeneratorHelper( params, response, callback ) {
+function renderImage( filename, response, callback ) {
 	try {
-		getImage( params, function( err, data ) {
+		new Image( filename ).get(function( err, filename, data ) {
 			if ( err ) {
 				callback( err );
 			} else {
@@ -115,21 +115,7 @@ Frontend.prototype = {
 	},
 
 	icon: function( filename, response, error ) {
-		var match, params;
-
-		// ui-icons_<color>_256x240.png
-		match = filename.match( /^ui-icons_(\w+)_256x240.png$/i );
-
-		if ( match == null ) {
-			return error( new Error( "Invalid format: " + filename ), response );
-		}
-
-		params = {
-			icon: true,
-			color: match[ 1 ]
-		};
-
-		imagesGeneratorHelper( params, response, function( err ) {
+		renderImage( filename, response, function( err ) {
 			if ( err ) {
 				error( err, response );
 			}
@@ -147,24 +133,7 @@ Frontend.prototype = {
 	},
 
 	texture: function( filename, response, error ) {
-		var match, params;
-
-		// ui-bg_<type>_<opacity>_<color>_<width>x<height>.png
-		match = filename.match( /^ui-bg_([a-z0-9\-]+)_(\w+)_(\w+)_(\d+)x(\d+).png$/i );
-
-		if ( match == null ) {
-			return error( new Error( "Invalid format: " + filename ), response );
-		}
-
-		params = {
-			type: match[ 1 ],
-			opacity: match[ 2 ],
-			color: match[ 3 ],
-			width: match[ 4 ],
-			height: match[ 5 ]
-		};
-
-		imagesGeneratorHelper( params, response, function( err ) {
+		renderImage( filename, response, function( err ) {
 			if ( err ) {
 				error( err, response );
 			}
