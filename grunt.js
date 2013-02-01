@@ -47,6 +47,9 @@ function setup( callback ) {
 	if ( !fs.existsSync( "tmp" ) ) {
 		grunt.file.mkdir( "tmp" );
 	}
+	if ( !fs.existsSync( "tmp/cache" ) ) {
+		grunt.file.mkdir( "tmp/cache" );
+	}
 	callback();
 }
 
