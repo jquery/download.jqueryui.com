@@ -3,12 +3,13 @@ var _ = require( "underscore" ),
 	Handlebars = require( "handlebars" ),
 	querystring = require( "querystring" ),
 	textures = require( "./lib/themeroller.textures" ),
+	getImage = require( "./lib/themeroller.images" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
-function imagesGeneratorHelper( fn, params, response, callback ) {
+function imagesGeneratorHelper( params, response, callback ) {
 	try {
-		fn( params, function( err, data ) {
+		getImage( params, function( err, data ) {
 			if ( err ) {
 				callback( err );
 			} else {
@@ -124,10 +125,11 @@ Frontend.prototype = {
 		}
 
 		params = {
+			icon: true,
 			color: match[ 1 ]
 		};
 
-		imagesGeneratorHelper( ThemeRoller.generateIcon, params, response, function( err ) {
+		imagesGeneratorHelper( params, response, function( err ) {
 			if ( err ) {
 				error( err, response );
 			}
@@ -162,7 +164,7 @@ Frontend.prototype = {
 			height: match[ 5 ]
 		};
 
-		imagesGeneratorHelper( ThemeRoller.generateTexture, params, response, function( err ) {
+		imagesGeneratorHelper( params, response, function( err ) {
 			if ( err ) {
 				error( err, response );
 			}
