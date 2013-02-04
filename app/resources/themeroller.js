@@ -444,6 +444,7 @@
 
 	// Update textureVars from previous filename format (eg. 02_glass.png) to type-only format (eg. glass). Changed on images generation rewrite (port to nodejs).
 	function oldImagesBackCompat( changed ) {
+		var modified;
 		$.each( changed, function( changed ) {
 			var newValue, pair, value;
 			if ( $.inArray( changed, textureVars ) >= 0 ) {
@@ -453,9 +454,13 @@
 					pair = {};
 					pair[ changed ] = newValue;
 					model.set( pair );
+					modified = true;
 				}
 			}
 		});
+		if ( modified ) {
+			return true;
+		}
 	}
 
 	model.on( "change", function ( changed ) {
