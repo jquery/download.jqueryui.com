@@ -302,11 +302,17 @@ var themeFiles = {
 		"development-bundle/themes/{folder_name}/minified/jquery-ui.min.css"
 	],
 	"anyTheme": [
-		"css/{folder_name}/images/*",
+		"css/{folder_name}/images/animated-overlay.gif",
+		"css/{folder_name}/images/ui-icons*png",
+		"css/{folder_name}/images/ui-bg*png",
 		"development-bundle/themes/{folder_name}/jquery.ui.theme.css",
-		"development-bundle/themes/{folder_name}/images/*",
+		"development-bundle/themes/{folder_name}/images/animated-overlay.gif",
+		"development-bundle/themes/{folder_name}/images/ui-icons*png",
+		"development-bundle/themes/{folder_name}/images/ui-bg*png",
 		"development-bundle/themes/{folder_name}/minified/jquery.ui.theme.min.css",
-		"development-bundle/themes/{folder_name}/minified/images/*"
+		"development-bundle/themes/{folder_name}/minified/images/animated-overlay.gif",
+		"development-bundle/themes/{folder_name}/minified/images/ui-icons*png",
+		"development-bundle/themes/{folder_name}/minified/images/ui-bg*png"
 	]
 };
 var themeComponents = "accordion autocomplete button core datepicker dialog menu progressbar resizable selectable slider spinner tabs tooltip".split( " " ),
