@@ -10,12 +10,14 @@ process.on( "uncaughtException", function ( err ) {
 var argv = require( "optimist" ).argv,
 	Builder = require( "./lib/builder" ),
 	connect = require( "connect" ),
-	querystring = require( "querystring" ),
 	formidable = require( "formidable" ),
 	Frontend = require( "./frontend" ),
+	Image = require( "./lib/themeroller.image" ),
+	querystring = require( "querystring" ),
+	Release = require( "./lib/release" ),
+	ThemeRoller = require( "./lib/themeroller" ),
 	httpHost = argv.host || "localhost",
 	httpPort = argv.port || 8088,
-	Release = require( "./lib/release" ),
 	routes = {
 		home: "/",
 		download: "/download",
@@ -27,13 +29,13 @@ var argv = require( "optimist" ).argv,
 		themerollerRollYourOwn: "/themeroller/rollyourown",
 		themerollerTexture: /^\/themeroller\/images\/(ui-bg_.+)$/
 	},
-	staticDir = "app",
-	ThemeRoller = require( "./lib/themeroller" );
+	staticDir = "app";
 
 var frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	Builder.cacheReleases();
 	Builder.cacheThemeImages();
+	Image.setCacheExpires( 60000 * 60 );
 }
 
 // OBS: We are using an older version of connect, which lacks a descent way to centralize requests error handling.
