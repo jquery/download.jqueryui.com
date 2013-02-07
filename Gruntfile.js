@@ -54,7 +54,7 @@ grunt.initConfig({
 		},
 		// DownloadBuilder minified frontend bundle
 		download: {
-			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/download.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
+			src: [ "app/src/external/download-builder.min.js", "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/download.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
 			dest: "app/resources/download.all.min.js"
 		},
 		// ThemeRoller minified frontend bundle

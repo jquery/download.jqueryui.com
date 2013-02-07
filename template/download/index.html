@@ -24,6 +24,10 @@
 		</div>
 		<div class="download-builder-header">
 			<h2>Components</h2>
+			<label>
+				<input type="checkbox" checked="" class="toggle-all ui-widget-content">
+				Toggle All
+			</label>
 		</div>
 		<div class="components-area"></div>
 		<div class="download-builder-header">
@@ -38,6 +42,7 @@
 {{#if production}}
 	<script src="/resources/download.all.min.js"></script>
 {{else}}
+	<script src="/src/external/download-builder.min.js"></script>
 	<script src="/src/external/event_emitter.min.js"></script>
 	<script src="/src/external/handlebars.runtime.js"></script>
 	<script src="/src/template/download.js"></script>
