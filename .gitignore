@@ -1,4 +1,5 @@
-node_modules
+app/resources/template
 log/downloads.log
+node_modules
 release
 tmp

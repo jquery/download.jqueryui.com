@@ -1,11 +1,27 @@
-var async = require( "async" );
-var fs = require( "fs" );
+var async = require( "async" ),
+	fs = require( "fs" ),
+	path = require( "path" );
 
 module.exports = function( grunt ) {
 
 "use strict";
+grunt.loadNpmTasks('grunt-contrib-handlebars');
 
 grunt.initConfig({
+	handlebars: {
+		options: {
+			processName: function( filepath ) {
+				// Use `basename( filepath )` as the key for the precompiled object.
+				return path.basename( filepath );
+			},
+			wrapped: true
+		},
+		compile: {
+			files: {
+				"app/resources/template/download.js": [ "template/download/components.html", "template/download/theme.html" ]
+			}
+		}
+	},
 	lint: {
 		files: [ "*.js", "lib/**/*.js", "app/resources/*.js" ]
 	},
@@ -39,13 +55,6 @@ function log( callback, successMsg, errorMsg ) {
 		}
 		callback( error, result, code );
 	};
-}
-
-function setup( callback ) {
-	if ( !fs.existsSync( "tmp" ) ) {
-		grunt.file.mkdir( "tmp" );
-	}
-	callback();
 }
 
 function cloneOrFetch( callback ) {
@@ -363,12 +372,24 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 	});
 });
 
+grunt.registerTask( "mkdirs", "Create directories", function() {
+	var done = this.async();
+	if ( !fs.existsSync( "app/resources/template" ) ) {
+		grunt.file.mkdir( "app/resources/template" );
+	}
+	if ( !fs.existsSync( "tmp" ) ) {
+		grunt.file.mkdir( "tmp" );
+	}
+	done();
+});
+
+grunt.registerTask( "prepare", [ "mkdirs", "handlebars", "prepare-release" ] );
+
 // The ref parameter exists purely for local testing.
 // Production should always use the config values.
-grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified in config file", function() {
+grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
 	async.series([
-		setup,
 		cloneOrFetch,
 		buildAll
 	], function( err ) {

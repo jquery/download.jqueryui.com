@@ -10,11 +10,6 @@ var releases,
 
 releases = Release.all();
 
-// Returns 'selected="selected"' if param == value
-Handlebars.registerHelper( "isSelectedTheme", function( theme, selectedTheme ) {
-	return theme.isEqual( selectedTheme ) ? "selected=\"selected\"" : "";
-});
-
 Handlebars.registerHelper( "isVersionChecked", function( release ) {
 	return Release.getStable().pkg.version === release.pkg.version ? " checked=\"checked\"" : "";
 });
@@ -25,12 +20,7 @@ Handlebars.registerHelper( "join", function( array, sep, options ) {
 		}).join( sep );
 });
 
-Handlebars.registerHelper( "themerollerParams", function( serializedVars ) {
-	return serializedVars.length > 0 ? "#" + serializedVars : "";
-});
-
-var componentsTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/components.html", "utf8" ) ),
-	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
+var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/index.html", "utf8" ) ),
 	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
 	themeTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/theme.html", "utf8" ) ),
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/wrap.html", "utf8" ) );
@@ -53,7 +43,7 @@ Frontend.prototype = {
 		}
 		return indexTemplate({
 			baseVars: themeGallery[ 2 ].serializedVars,
-			components: componentsTemplate({
+			components: JSON.stringify({
 				categories: Release.getStable().categories()
 			}),
 			host: this.host,
@@ -71,9 +61,7 @@ Frontend.prototype = {
 			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
 			data = { error : "invalid version" };
 		} else {
-			data = componentsTemplate({
-				categories: release.categories()
-			});
+			data = { categories: release.categories() };
 		}
 		return jsonpTemplate({
 			callback: params.callback,
@@ -90,11 +78,17 @@ Frontend.prototype = {
 		}
 		return jsonpTemplate({
 			callback: params.callback,
-			data: JSON.stringify( themeTemplate({
+			data: JSON.stringify({
 				folderName: selectedTheme.folderName(),
-				selectedTheme: selectedTheme,
-				themeGallery: selectedTheme.name === "Custom Theme" ?  [ selectedTheme ].concat( themeGallery ) : themeGallery
-			}))
+				themeGallery: ( selectedTheme.name === "Custom Theme" ?  [ selectedTheme ].concat( themeGallery ) : themeGallery ).map(function( theme ) {
+					return {
+						isSelected: theme.isEqual( selectedTheme ) ? "selected=\"selected\"" : "",
+						name: theme.name,
+						serializedVars: theme.serializedVars
+					};
+				}),
+				themerollerParams: selectedTheme.serializedVars.length > 0 ? "#" + selectedTheme.serializedVars : ""
+			})
 		});
 	}
 };

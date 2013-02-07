@@ -10,7 +10,6 @@
 		"glob-whatev": "0.1.7",
 		"gm": "1.8.1",
 		"grunt": "0.3.12",
-		"handlebars": "1.0.7",
 		"lzma": "1.2.1",
 		"optimist": "0.3.4",
 		"rimraf": "2.0.2",
@@ -21,6 +20,7 @@
 		"winston": "0.6.2"
 	},
 	"devDependencies": {
+		"grunt-contrib-handlebars": "0.3.4",
 		"nodeunit": "~0.7.4"
 	},
 	"main": "frontend.js",

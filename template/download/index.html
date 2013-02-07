@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/download.css">
-<div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}">
+<div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}" data-initial-components="{{components}}">
 	<p class="bundle-links">
 		<strong>Quick downloads:</strong>  
 		{{#join releases " | "}}
@@ -25,7 +25,7 @@
 		<div class="download-builder-header">
 			<h2>Components</h2>
 		</div>
-		<div class="components-area">{{{components}}}</div>
+		<div class="components-area"></div>
 		<div class="download-builder-header">
 			<h2>Theme</h2>
 			<div class="theme-area"></div>
@@ -36,6 +36,8 @@
 
 <script src="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/jquery-ui.min.js"></script>
 <script src="/resources/external/event_emitter.min.js"></script>
+<script src="/resources/external/handlebars.runtime.js"></script>
+<script src="/resources/template/download.js"></script>
 <script src="/resources/external/lzma.js"></script>
 <script src="/resources/hash.js"></script>
 <script src="/resources/querystring.js"></script>
