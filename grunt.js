@@ -6,7 +6,6 @@ module.exports = function( grunt ) {
 "use strict";
 
 grunt.initConfig({
-	pkg: "<json:package.json>",
 	lint: {
 		files: [ "*.js", "lib/**/*.js", "app/resources/*.js" ]
 	},
@@ -27,10 +26,9 @@ grunt.initConfig({
 			trailing: true,
 			onevar: true
 		}
-	}
+	},
+	pkg: "<json:package.json>"
 });
-
-grunt.registerTask( "default", "lint" );
 
 function log( callback, successMsg, errorMsg ) {
 	return function( error, result, code ) {
@@ -321,18 +319,7 @@ function copy( ref ) {
 	};
 }
 
-// The ref parameter exists purely for local testing.
-// Production should always use the config values.
-grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified in config file", function() {
-	var done = this.async();
-	async.series([
-		setup,
-		cloneOrFetch,
-		buildAll
-	], function( err ) {
-		done( err ? false : true );
-	});
-});
+grunt.registerTask( "default", "lint" );
 
 grunt.registerTask( "build", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
@@ -373,6 +360,19 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 		});
 	}, function( err ) {
 		done( err );
+	});
+});
+
+// The ref parameter exists purely for local testing.
+// Production should always use the config values.
+grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified in config file", function() {
+	var done = this.async();
+	async.series([
+		setup,
+		cloneOrFetch,
+		buildAll
+	], function( err ) {
+		done( err ? false : true );
 	});
 });
 
