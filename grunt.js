@@ -10,10 +10,11 @@ grunt.loadNpmTasks('grunt-contrib-handlebars');
 grunt.initConfig({
 	handlebars: {
 		options: {
+			// Use basename as the key for the precompiled object.
 			processName: function( filepath ) {
-				// Use `basename( filepath )` as the key for the precompiled object.
 				return path.basename( filepath );
 			},
+			// Wrap preprocessed template functions in Handlebars.template function.
 			wrapped: true
 		},
 		compile: {
