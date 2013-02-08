@@ -1,12 +1,28 @@
-var async = require( "async" );
-var fs = require( "fs" );
+var async = require( "async" ),
+	fs = require( "fs" ),
+	path = require( "path" );
 
 module.exports = function( grunt ) {
 
 "use strict";
+grunt.loadNpmTasks('grunt-contrib-handlebars');
 
 grunt.initConfig({
-	pkg: "<json:package.json>",
+	handlebars: {
+		options: {
+			// Use basename as the key for the precompiled object.
+			processName: function( filepath ) {
+				return path.basename( filepath );
+			},
+			// Wrap preprocessed template functions in Handlebars.template function.
+			wrapped: true
+		},
+		compile: {
+			files: {
+				"app/resources/template/download.js": [ "template/download/components.html", "template/download/theme.html" ]
+			}
+		}
+	},
 	lint: {
 		files: [ "*.js", "lib/**/*.js", "app/resources/*.js" ]
 	},
@@ -27,10 +43,9 @@ grunt.initConfig({
 			trailing: true,
 			onevar: true
 		}
-	}
+	},
+	pkg: "<json:package.json>"
 });
-
-grunt.registerTask( "default", "lint" );
 
 function log( callback, successMsg, errorMsg ) {
 	return function( error, result, code ) {
@@ -41,13 +56,6 @@ function log( callback, successMsg, errorMsg ) {
 		}
 		callback( error, result, code );
 	};
-}
-
-function setup( callback ) {
-	if ( !fs.existsSync( "tmp" ) ) {
-		grunt.file.mkdir( "tmp" );
-	}
-	callback();
 }
 
 function cloneOrFetch( callback ) {
@@ -321,18 +329,7 @@ function copy( ref ) {
 	};
 }
 
-// The ref parameter exists purely for local testing.
-// Production should always use the config values.
-grunt.registerTask( "prepare", "Fetches and builds jQuery UI releases specified in config file", function() {
-	var done = this.async();
-	async.series([
-		setup,
-		cloneOrFetch,
-		buildAll
-	], function( err ) {
-		done( err ? false : true );
-	});
-});
+grunt.registerTask( "default", "lint" );
 
 grunt.registerTask( "build", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
@@ -373,6 +370,27 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 		});
 	}, function( err ) {
 		done( err );
+	});
+});
+
+grunt.registerTask( "mkdirs", "Create directories", function() {
+	if ( !fs.existsSync( "app/resources/template" ) ) {
+		grunt.file.mkdir( "app/resources/template" );
+	}
+	if ( !fs.existsSync( "tmp" ) ) {
+		grunt.file.mkdir( "tmp" );
+	}
+});
+
+grunt.registerTask( "prepare", [ "mkdirs", "handlebars", "prepare-release" ] );
+
+grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
+	var done = this.async();
+	async.series([
+		cloneOrFetch,
+		buildAll
+	], function( err ) {
+		done( err ? false : true );
 	});
 });
 
