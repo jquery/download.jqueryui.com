@@ -384,8 +384,6 @@ grunt.registerTask( "mkdirs", "Create directories", function() {
 
 grunt.registerTask( "prepare", [ "mkdirs", "handlebars", "prepare-release" ] );
 
-// The ref parameter exists purely for local testing.
-// Production should always use the config values.
 grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
 	async.series([
