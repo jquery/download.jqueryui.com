@@ -374,14 +374,12 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 });
 
 grunt.registerTask( "mkdirs", "Create directories", function() {
-	var done = this.async();
 	if ( !fs.existsSync( "app/resources/template" ) ) {
 		grunt.file.mkdir( "app/resources/template" );
 	}
 	if ( !fs.existsSync( "tmp" ) ) {
 		grunt.file.mkdir( "tmp" );
 	}
-	done();
 });
 
 grunt.registerTask( "prepare", [ "mkdirs", "handlebars", "prepare-release" ] );
