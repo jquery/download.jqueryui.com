@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global Hash: false, Model: false */
+/*global Hash: false, JST: false, Model: false */
 /*!
  * jQuery UI DownloadBuilder client-side JavaScript file
  * http://jqueryui.com/download/
@@ -8,14 +8,15 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, Model, undefined ) {
+(function( $, Hash, JST, Model, undefined ) {
 
 	var dependencies, dependents, model,
 		componentsLoad = $.Deferred(),
 		downloadBuilder = $( "#download-builder" ),
 		themesLoad = $.Deferred(),
 		baseVars = downloadBuilder.data( "base-vars" ),
-		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" );
+		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" ),
+		initialComponents = downloadBuilder.data( "initial-components" );
 
 	// Rewrite form action for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -176,12 +177,12 @@
 			);
 	}
 
-	function initComponents( html ) {
+	function initComponents( components ) {
 		var toggleAll;
 		dependencies = {};
 		dependents = {};
 
-		$( "#download-builder .components-area").html( html );
+		$( "#download-builder .components-area" ).html( JST[ "components.html" ]( components ) );
 
 		model.setOrderedComponents(
 			$( "#download-builder .components-area input[type=checkbox]" ).map(function() {
@@ -308,11 +309,11 @@
 		if ( "version" in changed ) {
 			$( "#download-builder [name=version][value=\"" + model.get( "version" ) + "\"]" ).trigger( "click" );
 			if ( created.version ) {
-				initComponents();
+				initComponents( initialComponents );
 			} else {
 				model.unsetOrderedComponents();
-				componentsFetch().done(function( html ) {
-					initComponents( html );
+				componentsFetch().done(function( components ) {
+					initComponents( components );
 				}).fail(function() {
 					if ( console && console.log ) {
 						console.log( "Failed loading components section", arguments );
@@ -348,8 +349,8 @@
 	$( "#content" ).attr( "id", "download-builder-content" );
 
 	// Loads theme section.
-	themeFetch().done(function( themeSection ) {
-		$( "#download-builder .theme-area" ).html( themeSection );
+	themeFetch().done(function( theme ) {
+		$( "#download-builder .theme-area" ).html( JST[ "theme.html" ]( theme ) );
 
 		if ( !model.has( "themeParams" ) && !model.has( "zThemeParams" ) ) {
 			model.defaults[ "themeParams" ] = $( "#theme option:nth-child(2)" ).val();
@@ -396,7 +397,6 @@
 					escapedVal = val.replace( /[ \.\#\/\\]/g, "-" );
 				$( this ).data( "edited", true );
 				$( "#theme-folder-name" ).removeData( "suggestedEdit" );
-				console.log("theme-folder-name change, setting folderName", escapedVal, val, model.get("folderName"));
 				if ( escapedVal !== val ) {
 					model.set({ folderName: escapedVal });
 				} else {
@@ -412,5 +412,4 @@
 		}
 	});
 
-window.model = model;
-}( jQuery, Hash, Model ) );
+}( jQuery, Hash, JST, Model ) );
