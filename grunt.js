@@ -123,7 +123,7 @@ function cloneOrFetch( callback ) {
 }
 
 function buildAll( callback ) {
-	var config = require( "./lib/config" );
+	var config = require( "./lib/config" )();
 
 	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
 		async.series([

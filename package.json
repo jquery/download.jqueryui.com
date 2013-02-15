@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"nodeunit": "~0.7.4"
 	},
-	"main": "frontend.js",
+	"main": "main.js",
 	"engine": {
 		"node": ">=0.8.x"
 	},

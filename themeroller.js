@@ -109,11 +109,6 @@ Frontend.prototype = {
 		return theme.css();
 	},
 
-	// used by jQuery UI release process to generate themes
-	gallery: function() {
-		return themeGallery;
-	},
-
 	icon: function( filename, response, error ) {
 		renderImage( filename, response, function( err ) {
 			if ( err ) {
