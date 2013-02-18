@@ -350,21 +350,19 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
 		if ( fs.existsSync( filename ) ) {
 			grunt.log.error( "Build: \"" + filename + "\" already exists" );
-			next( false );
-			return;
+			return next( true );
 		}
 		stream = fs.createWriteStream( filename );
 		builder.writeTo( stream, function( err, result ) {
 			if ( err ) {
 				grunt.log.error( "Build: " + err.message );
-				next( false );
-				return;
+				return next( err );
 			}
 			stream.on( "close", function() {
 				next();
 			});
 			stream.on( "error", function() {
-				next( false );
+				next( true );
 			});
 			stream.end();
 		});
