@@ -5,7 +5,7 @@ var async = require( "async" ),
 module.exports = function( grunt ) {
 
 "use strict";
-grunt.loadNpmTasks('grunt-contrib-handlebars');
+grunt.loadNpmTasks( "grunt-contrib-handlebars" );
 
 grunt.initConfig({
 	handlebars: {
