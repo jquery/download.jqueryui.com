@@ -369,7 +369,8 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 			stream.end();
 		});
 	}, function( err ) {
-		done( err );
+		// 1: true on success, false on error
+		done( !err /* 1 */ );
 	});
 });
 
@@ -390,7 +391,8 @@ grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases sp
 		cloneOrFetch,
 		buildAll
 	], function( err ) {
-		done( err ? false : true );
+		// 1: true on success, false on error
+		done( !err /* 1 */ );
 	});
 });
 
