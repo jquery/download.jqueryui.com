@@ -361,8 +361,9 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 			stream.on( "close", function() {
 				next();
 			});
-			stream.on( "error", function() {
-				next( true );
+			stream.on( "error", function( err ) {
+				grunt.log.error( err.message );
+				next( err );
 			});
 			stream.end();
 		});
