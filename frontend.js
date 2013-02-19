@@ -1,4 +1,5 @@
-var config = require( "./config" ),
+var _ = require( "underscore" ),
+	config = require( "./config" ),
 	Download = require( "./download" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
@@ -8,16 +9,19 @@ var config = require( "./config" ),
 var errorTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/500.html", "utf-8" ) ),
 	rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
 
-var Frontend = function( host ) {
-	var args = {
-		host: ( host || "" ),
-		resources: {
-			jqueryVersion: config.jquery,
-			jqueryuiVersion: Release.getStable().pkg.version
-		}
-	};
-	this.download = new Download( args );
-	this.themeroller = new ThemeRoller( args );
+var Frontend = function( options ) {
+	options = _.extend( {}, Frontend.defaults, options );
+	this.download = new Download( options );
+	this.themeroller = new ThemeRoller( options );
+};
+
+Frontend.defaults = {
+	env: "development",
+	host: "",
+	resources: {
+		jqueryVersion: config.jquery,
+		jqueryuiVersion: Release.getStable().pkg.version
+	}
 };
 
 Frontend.prototype = {

@@ -1,4 +1,5 @@
 var Main,
+	_ = require( "underscore" ),
 	Config = require( "./lib/config" );
 
 /**
@@ -6,8 +7,9 @@ var Main,
  * - options [ Object ]: key-value pairs detailed below.
  *
  * options
- * - host [ String ]: optional, specify the host where download.jqueryui.com server is running. Default: "" (empty string).
  * - config [ Object ]: optional, if present used instead of the `config.json` file;
+ * - env [ String ]: optional, specify whether in development or production environment. Default: "development".
+ * - host [ String ]: optional, specify the host where download.jqueryui.com server is running. Default: "" (empty string).
  *
  * attributes
  * - frontend [ Object ]: for more details see `frontend.js`.
@@ -18,13 +20,18 @@ module.exports = function( options ) {
 };
 
 Main = function( options ) {
-	options = options || {};
+	options = _.extend( {}, Main.defaults, options );
 	if ( options.config && typeof options.config === "object" ) {
 		Config.get = function() {
 			return options.config;
 		};
 	}
-	this.frontend = new ( require( "./frontend" ) )( options.host );
+	this.frontend = new ( require( "./frontend" ) )( options );
+};
+
+Main.defaults = {
+	env: "development",
+	host: ""
 };
 
 Main.prototype = {
