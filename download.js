@@ -72,30 +72,22 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, field, theme, version,
-				themeVars = null,
-				components = [];
+			var builder, components, theme,
+				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
 			}
-			// Override with fields if they exist
 			if ( themeVars !== null ) {
+				// Override with fields if they exist.
 				themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
 				themeVars.scope = fields.scope || themeVars.scope;
 			}
-			version = fields.version;
-			delete fields.scope;
-			delete fields.theme;
-			delete fields[ "theme-folder-name" ];
-			delete fields.version;
-			for ( field in fields ) {
-				components.push( field );
-			}
 			theme = new ThemeRoller({
 				vars: themeVars,
-				version: version
+				version: fields.version
 			});
-			builder = new Builder( Release.find( version ), components, theme );
+			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
+			builder = new Builder( Release.find( fields.version ), components, theme );
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 			builder.writeTo( response, function( err ) {
