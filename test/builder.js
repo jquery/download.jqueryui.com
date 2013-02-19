@@ -28,6 +28,10 @@ function build( release, components, theme, callback ) {
 	});
 }
 
+function flatten( flat, arr ) {
+	return flat.concat( arr );
+}
+
 function replace( variable, value ) {
 	return function( filepath ) {
 		if ( filepath instanceof RegExp ) {
@@ -38,10 +42,12 @@ function replace( variable, value ) {
 	};
 }
 
-function flatten( flat, arr ) {
-	return flat.concat( arr );
+function stripBanner( src ) {
+	if ( src instanceof Buffer ) {
+		src = src.toString( "utf-8" );
+	}
+	return src.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
 }
-
 
 var commonFiles = [
 	"index.html",
@@ -517,6 +523,31 @@ var tests = {
 			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
 		}
 		test.done();
+	},
+	"test: scope widget CSS": function( test ) {
+		var builder;
+			components = [ "core", "widget", "tabs" ],
+			filesToCheck = [
+				new RegExp( "development-bundle/themes/smoothness/jquery.ui.tabs.css" ),
+				/css\/smoothness\/jquery-ui-.*\.custom\.min\.css/
+			],
+			scope = "#wrapper";
+		test.expect( filesToCheck.length );
+		builder = new Builder( this.release, components, this.theme, { scope: scope } );
+		builder.build(function( err, build ) {
+			if ( err ) {
+				test.ok( false, err.message );
+			} else {
+				build.filter(function( file ) {
+					return filesToCheck.some(function( filepath ) {
+						return filepath.test( file.path );
+					});
+				}).forEach(function( file ) {
+					test.ok( (new RegExp( "^" + scope )).test( stripBanner( file.data ) ), "Builder should scope any other-than-theme CSS. But, failed to scope \"" + file.path + "\"." );
+				});
+			}
+			test.done();
+		});
 	}
 };
 

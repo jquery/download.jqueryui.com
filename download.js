@@ -87,7 +87,9 @@ Frontend.prototype = {
 				version: fields.version
 			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
-			builder = new Builder( Release.find( fields.version ), components, theme );
+			builder = new Builder( Release.find( fields.version ), components, theme, {
+				scope: fields.scope
+			});
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
 			builder.writeTo( response, function( err ) {
