@@ -5,6 +5,7 @@ var async = require( "async" ),
 module.exports = function( grunt ) {
 
 "use strict";
+grunt.loadNpmTasks( "grunt-check-modules" );
 grunt.loadNpmTasks( "grunt-contrib-handlebars" );
 grunt.loadNpmTasks( "grunt-contrib-jshint" );
 grunt.loadNpmTasks( "grunt-contrib-uglify" );
@@ -347,7 +348,7 @@ function copy( ref ) {
 	};
 }
 
-grunt.registerTask( "default", [ "jshint" ] );
+grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
@@ -403,7 +404,7 @@ grunt.registerTask( "mkdirs", "Create directories", function() {
 	}
 });
 
-grunt.registerTask( "prepare", [ "mkdirs", "prepare-release", "build-app" ] );
+grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-release", "build-app" ] );
 
 grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();

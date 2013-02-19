@@ -10,6 +10,7 @@
 		"glob-whatev": "0.1.7",
 		"gm": "1.8.1",
 		"grunt": "0.4.1",
+		"grunt-check-modules": "0.2.0",
 		"grunt-contrib-handlebars": "0.5.7",
 		"grunt-contrib-jshint": "0.2.0",
 		"grunt-contrib-uglify": "0.2.0",
