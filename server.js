@@ -60,41 +60,14 @@ function route( app ) {
 	app.post( routes.download, function( request, response ) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
-			try {
-				var builder, field, theme, version,
-					themeVars = null,
-					components = [];
-				if ( fields.theme !== "none" ) {
-					themeVars = querystring.parse( fields.theme );
-				}
-				// Override with fields if they exist
-				if ( themeVars !== null ) {
-					themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
-					themeVars.scope = fields.scope || themeVars.scope;
-				}
-				version = fields.version;
-				delete fields.scope;
-				delete fields.theme;
-				delete fields[ "theme-folder-name" ];
-				delete fields.version;
-				for ( field in fields ) {
-					components.push( field );
-				}
-				theme = new ThemeRoller({
-					vars: themeVars,
-					version: version
-				});
-				builder = new Builder( Release.find( version ), components, theme );
-				response.setHeader( "Content-Type", "application/zip" );
-				response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
-				builder.writeTo( response, function( err, result ) {
-					if ( err ) {
-						error( err, response );
-					}
-				});
-			} catch( err ) {
-				error( err, response );
+			if ( err ) {
+				return error( err, response );
 			}
+			frontend.download.create( fields, response, function( err ) {
+				if ( err ) {
+					return error( err, response );
+				}
+			});
 		});
 	});
 	app.get( routes.downloadComponents, function( request, response ) {

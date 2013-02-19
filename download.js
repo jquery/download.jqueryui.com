@@ -1,5 +1,6 @@
 var releases,
 	_ = require( "underscore" ),
+	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
@@ -67,6 +68,44 @@ Frontend.prototype = {
 			callback: params.callback,
 			data: JSON.stringify( data )
 		});
+	},
+
+	create: function( fields, response, callback ) {
+		try {
+			var builder, field, theme, version,
+				themeVars = null,
+				components = [];
+			if ( fields.theme !== "none" ) {
+				themeVars = querystring.parse( fields.theme );
+			}
+			// Override with fields if they exist
+			if ( themeVars !== null ) {
+				themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
+				themeVars.scope = fields.scope || themeVars.scope;
+			}
+			version = fields.version;
+			delete fields.scope;
+			delete fields.theme;
+			delete fields[ "theme-folder-name" ];
+			delete fields.version;
+			for ( field in fields ) {
+				components.push( field );
+			}
+			theme = new ThemeRoller({
+				vars: themeVars,
+				version: version
+			});
+			builder = new Builder( Release.find( version ), components, theme );
+			response.setHeader( "Content-Type", "application/zip" );
+			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
+			builder.writeTo( response, function( err ) {
+				if ( err ) {
+					return callback( err );
+				}
+			});
+		} catch( err ) {
+			return callback( err );
+		}
 	},
 
 	theme: function( params ) {
