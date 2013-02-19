@@ -29,7 +29,7 @@ var pkg = {
 
 module.exports = {
 	"test: case 1": function( test ) {
-		test.ok( output == banner( pkg, fileNames ), "Not expected output" );
+		test.ok( output === banner( pkg, fileNames ), "Not expected output" );
 		test.done();
 	}
 };

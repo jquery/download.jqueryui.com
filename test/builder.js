@@ -405,7 +405,7 @@ var tests = {
 					test.done();
 				}
 			});
-		},
+		}
 	},
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
@@ -468,7 +468,7 @@ var tests = {
 				}
 			});
 		},
-		"no theme": 
+		"no theme":
 		 function( test ) {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
@@ -484,7 +484,7 @@ var tests = {
 					test.done();
 				}
 			});
-		},
+		}
 	},
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
@@ -525,7 +525,7 @@ var tests = {
 		test.done();
 	},
 	"test: scope widget CSS": function( test ) {
-		var builder;
+		var builder,
 			components = [ "core", "widget", "tabs" ],
 			filesToCheck = [
 				new RegExp( "development-bundle/themes/smoothness/jquery.ui.tabs.css" ),
@@ -588,7 +588,7 @@ Release.all().filter(function( release ) {
 							return flat.concat( arr );
 						}, [] ).sort().filter(function( element, i, arr ) {
 							// unique
-							return i == arr.indexOf( element );
+							return i === arr.indexOf( element );
 						}),
 						allEffects: release.components().filter(function( component ) {
 							return (/effect/).test( component.name );

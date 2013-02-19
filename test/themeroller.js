@@ -7,7 +7,7 @@ module.exports = {
 			var customTheme = new ThemeRoller({
 				vars: { ffDefault: "MyCustomFont" }
 			});
-			test.ok( customTheme.folderName() == "custom-theme", "Default folder name \"" + customTheme.folderName() + "\" is different from \"custom-theme\"" );
+			test.ok( customTheme.folderName() === "custom-theme", "Default folder name \"" + customTheme.folderName() + "\" is different from \"custom-theme\"" );
 			test.done();
 		},
 
@@ -15,7 +15,7 @@ module.exports = {
 			var theme = new ThemeRoller({
 				vars: null
 			});
-			test.ok( theme.folderName() == "no-theme", "Default folder name \"" + theme.folderName() + "\" is different from \"no-theme\"" );
+			test.ok( theme.folderName() === "no-theme", "Default folder name \"" + theme.folderName() + "\" is different from \"no-theme\"" );
 			test.done();
 		},
 
@@ -23,7 +23,7 @@ module.exports = {
 			var theme = new ThemeRoller({
 				vars: { name: "My Name" }
 			});
-			test.ok( theme.folderName() == "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
+			test.ok( theme.folderName() === "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
 			test.done();
 		},
 
@@ -31,7 +31,7 @@ module.exports = {
 			var theme = new ThemeRoller({
 				vars: { folderName: "my-name" }
 			});
-			test.ok( theme.folderName() == "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
+			test.ok( theme.folderName() === "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
 			test.done();
 		}
 	}

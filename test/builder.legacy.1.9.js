@@ -394,7 +394,7 @@ var tests = {
 					test.done();
 				}
 			});
-		},
+		}
 	},
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
@@ -457,7 +457,7 @@ var tests = {
 				}
 			});
 		},
-		"no theme": 
+		"no theme":
 		 function( test ) {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
@@ -473,7 +473,7 @@ var tests = {
 					test.done();
 				}
 			});
-		},
+		}
 	},
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
@@ -552,7 +552,7 @@ Release.all().filter(function( release ) {
 							return flat.concat( arr );
 						}, [] ).sort().filter(function( element, i, arr ) {
 							// unique
-							return i == arr.indexOf( element );
+							return i === arr.indexOf( element );
 						}),
 						allEffects: release.components().filter(function( component ) {
 							return (/effect/).test( component.name );

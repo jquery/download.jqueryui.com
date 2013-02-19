@@ -24,7 +24,7 @@ grunt.initConfig({
 		}
 	},
 	lint: {
-		files: [ "*.js", "lib/**/*.js", "app/resources/*.js" ]
+		files: [ "*.js", "test/*js", "lib/**/*.js", "app/resources/*.js" ]
 	},
 	jshint: {
 		options: {
