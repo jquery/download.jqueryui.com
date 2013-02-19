@@ -368,6 +368,7 @@ grunt.registerTask( "build", "Builds zip package of each jQuery UI release speci
 			stream.end();
 		});
 	}, function( err ) {
+		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
 	});
@@ -390,6 +391,7 @@ grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases sp
 		cloneOrFetch,
 		buildAll
 	], function( err ) {
+		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
 	});
