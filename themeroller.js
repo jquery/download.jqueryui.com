@@ -8,19 +8,14 @@ var _ = require( "underscore" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
 function renderImage( filename, response, callback ) {
-	try {
-		new Image( filename ).get(function( err, filename, data ) {
-			if ( err ) {
-				callback( err );
-			} else {
-				response.setHeader( "Content-Type", "image/png" );
-				response.end( data );
-				callback();
-			}
-		});
-	} catch( err ) {
-		callback( err );
-	}
+	new Image( filename ).get(function( err, filename, data ) {
+		if ( err ) {
+			return callback( err );
+		}
+		response.setHeader( "Content-Type", "image/png" );
+		response.end( data );
+		callback();
+	});
 }
 
 // Returns 'selected="selected"' if param == value
