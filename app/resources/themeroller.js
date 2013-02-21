@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global Hash: false, Model: false, QueryString: false */
+/*global Hash: false, JST: false, Model: false, QueryString: false */
 /*!
  * jQuery UI ThemeRoller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -8,7 +8,7 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, Model, QueryString, undefined ) {
+(function( $, Hash, JST, Model, QueryString, undefined ) {
 	var model, reloadRollYourOwn, skipHashChange, theme, Theme,
 		focusedEl = null,
 		lastRollYourOwnLoad = 0,
@@ -16,7 +16,8 @@
 		textureVars = "bgTextureDefault bgTextureHover bgTextureActive bgTextureHeader bgTextureContent bgTextureHighlight bgTextureError bgTextureOverlay bgTextureShadow".split( " " ),
 		themeroller = $( "#themeroller" ),
 		baseVars = QueryString.decode( themeroller.data( "base-vars" ) ),
-		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" );
+		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
+		initialRollyourown = themeroller.data( "initial-rollyourown" );
 
 	// Rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -138,7 +139,8 @@
 		});
 	}
 
-	function rollYourOwnInit() {
+	function rollYourOwnInit( rollyourown ) {
+    $( "#rollYourOwn" ).html( JST[ "rollyourown.html" ]( rollyourown ) );
 		$( "#downloadTheme" ).on({
 			"click": function() {
 				var form = $( this ).parent().find( "form" );
@@ -425,8 +427,7 @@
 			if ( curr !== lastRollYourOwnLoad ) {
 				return;
 			}
-			$( "#rollYourOwn" ).html( response );
-			rollYourOwnInit();
+			rollYourOwnInit( response );
 			deferred.resolve();
 		}).fail(function() {
 			if ( console && console.log ) {
@@ -502,8 +503,8 @@
 	model.set( baseVars );
 
 	appInit();
-	rollYourOwnInit();
+	rollYourOwnInit( initialRollyourown );
 	demoInit();
 	Hash.init();
 
-}( jQuery, Hash, Model, QueryString ) );
+}( jQuery, Hash, JST, Model, QueryString ) );
