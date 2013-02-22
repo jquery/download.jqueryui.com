@@ -548,6 +548,25 @@ var tests = {
 			}
 			test.done();
 		});
+	},
+	"test: unique files": function( test ) {
+		var components = this.allComponents,
+			theme = this.theme;
+		test.expect( 1 );
+		build( this.release, components, theme, function( err, files ) {
+			var anyDuplicate,
+				duplicates = [],
+				marked = {};
+			files.forEach(function( filepath ) {
+				if( marked[ filepath ] ) {
+					duplicates.push( filepath );
+					anyDuplicate = true;
+				}
+				marked[ filepath ] = true;
+			});
+			test.ok( !anyDuplicate, "Duplicate files found:\n" + duplicates.join( ",\n" ) );
+			test.done();
+		});
 	}
 };
 
