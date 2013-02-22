@@ -6,8 +6,10 @@ module.exports = function( grunt ) {
 
 "use strict";
 grunt.loadNpmTasks( "grunt-contrib-handlebars" );
+grunt.loadNpmTasks( "grunt-contrib-jshint" );
 
 grunt.initConfig({
+	pkg: grunt.file.readJSON( "package.json" ),
 	handlebars: {
 		options: {
 			// Use basename as the key for the precompiled object.
@@ -23,28 +25,26 @@ grunt.initConfig({
 			}
 		}
 	},
-	lint: {
-		files: [ "*.js", "test/*js", "lib/**/*.js", "app/resources/*.js" ]
-	},
 	jshint: {
+		all: [ "*.js", "test/*js", "lib/**/*.js", "app/resources/*.js" ],
 		options: {
+			boss: true,
 			curly: true,
 			eqeqeq: true,
+			eqnull: true,
+			strict: false,
 			immed: true,
 			latedef: true,
 			newcap: true,
 			noarg: true,
-			sub: true,
-			undef: true,
-			boss: true,
-			eqnull: true,
 			node: true,
+			onevar: true,
 			smarttabs: true,
+			sub: true,
 			trailing: true,
-			onevar: true
+			undef: true
 		}
-	},
-	pkg: "<json:package.json>"
+	}
 });
 
 function log( callback, successMsg, errorMsg ) {
@@ -67,7 +67,7 @@ function cloneOrFetch( callback ) {
 
 					// Fetch branch heads (even if not referenced by tags), see c08cf67.
 					function( callback ) {
-						grunt.utils.spawn({
+						grunt.util.spawn({
 							cmd: "git",
 							args: [ "fetch" ],
 							opts: {
@@ -78,7 +78,7 @@ function cloneOrFetch( callback ) {
 
 					// Fetch tags not referenced by heads. Yes, we need both.
 					function( callback ) {
-						grunt.utils.spawn({
+						grunt.util.spawn({
 							cmd: "git",
 							args: [ "fetch", "-t" ],
 							opts: {
@@ -89,7 +89,7 @@ function cloneOrFetch( callback ) {
 				], log( callback, "Fetched repo", "Error fetching repo" ) );
 			} else {
 				grunt.log.writeln( "Cloning jquery-ui repo" );
-				grunt.utils.spawn({
+				grunt.util.spawn({
 					cmd: "git",
 					args: [ "clone", "git://github.com/jquery/jquery-ui.git", "jquery-ui" ],
 					opts: {
@@ -101,7 +101,7 @@ function cloneOrFetch( callback ) {
 		function() {
 			if ( fs.existsSync( "tmp/api.jqueryui.com" ) ) {
 				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
-				grunt.utils.spawn({
+				grunt.util.spawn({
 					cmd: "git",
 					args: [ "fetch" ],
 					opts: {
@@ -110,7 +110,7 @@ function cloneOrFetch( callback ) {
 				}, log( callback, "Fetched repo", "Error fetching repo" ) );
 			} else {
 				grunt.log.writeln( "Cloning api.jqueryui.com repo" );
-				grunt.utils.spawn({
+				grunt.util.spawn({
 					cmd: "git",
 					args: [ "clone", "git://github.com/jquery/api.jqueryui.com.git", "api.jqueryui.com" ],
 					opts: {
@@ -147,7 +147,7 @@ function checkout( ref ) {
 			// Check out jquery-ui
 			function( callback ) {
 				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
-				grunt.utils.spawn({
+				grunt.util.spawn({
 					cmd: "git",
 					args: [ "checkout", "-f", ref ],
 					opts: {
@@ -166,13 +166,14 @@ function checkout( ref ) {
 							return callback();
 						}
 						// If ref is a tag, then get its corresponding <major>-<minor> branch, if available or "master".
-						grunt.utils.spawn({
+						grunt.util.spawn({
 							cmd: "git",
 							args: [ "branch", "-a" ],
 							opts: {
 								cwd: "tmp/api.jqueryui.com"
 							}
 						}, function( error, docBranches ) {
+							docBranches = String( docBranches );
 							if ( error ) {
 								grunt.log.error( "Error listing branches: " + error.stderr );
 							} else {
@@ -191,7 +192,7 @@ function checkout( ref ) {
 					},
 					function() {
 						grunt.log.writeln( "Checking out api.jqueryui.com branch/tag: " + docRef );
-						grunt.utils.spawn({
+						grunt.util.spawn({
 							cmd: "git",
 							args: [ "checkout", "-f", docRef ],
 							opts: {
@@ -210,7 +211,7 @@ function install( callback ) {
 	async.series([
 		function( callback ) {
 			grunt.log.writeln( "Installing jquery-ui npm modules" );
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "npm",
 				args: [ "install" ],
 				opts: {
@@ -219,7 +220,7 @@ function install( callback ) {
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
 		},
 		function( callback ) {
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "npm",
 				args: [ "update" ],
 				opts: {
@@ -229,7 +230,7 @@ function install( callback ) {
 		},
 		function( callback ) {
 			grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "npm",
 				args: [ "install" ],
 				opts: {
@@ -238,7 +239,7 @@ function install( callback ) {
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
 		},
 		function() {
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "npm",
 				args: [ "update" ],
 				opts: {
@@ -253,7 +254,7 @@ function build( callback ) {
 	async.series([
 		function( callback ) {
 			grunt.log.writeln( "Building jQuery UI" );
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "grunt",
 				args: [ "manifest" ],
 				opts: {
@@ -262,7 +263,7 @@ function build( callback ) {
 			}, log( callback, "Done building manifest", "Error building manifest" ) );
 		},
 		function( callback ) {
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "grunt",
 				args: [ "release" ],
 				opts: {
@@ -276,7 +277,7 @@ function build( callback ) {
 				grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
 				grunt.log.writeln( "Copied config-sample.json to config.json" );
 			}
-			grunt.utils.spawn({
+			grunt.util.spawn({
 				cmd: "grunt",
 				args: [ "build-xml-entries" ],
 				opts: {
@@ -320,7 +321,7 @@ function copy( ref ) {
 			},
 			function() {
 				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
-				grunt.file.expandFiles( docs + "/**" ).forEach(function( file ) {
+				grunt.file.expand({ filter: "isFile" }, docs + "/**" ).forEach(function( file ) {
 					grunt.file.copy( file, file.replace( docs, "release/" + ref + "/docs/" ));
 				});
 				callback();
@@ -329,7 +330,7 @@ function copy( ref ) {
 	};
 }
 
-grunt.registerTask( "default", "lint" );
+grunt.registerTask( "default", [ "jshint", "handlebars" ] );
 
 grunt.registerTask( "build", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async(),
@@ -383,7 +384,7 @@ grunt.registerTask( "mkdirs", "Create directories", function() {
 	}
 });
 
-grunt.registerTask( "prepare", [ "mkdirs", "handlebars", "prepare-release" ] );
+grunt.registerTask( "prepare", [ "mkdirs", "prepare-release" ] );
 
 grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
