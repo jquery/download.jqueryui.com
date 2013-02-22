@@ -5,24 +5,12 @@ var async = require( "async" ),
 module.exports = function( grunt ) {
 
 "use strict";
-grunt.loadNpmTasks( "grunt-contrib-concat" );
 grunt.loadNpmTasks( "grunt-contrib-handlebars" );
 grunt.loadNpmTasks( "grunt-contrib-jshint" );
+grunt.loadNpmTasks( "grunt-contrib-uglify" );
 
 grunt.initConfig({
 	pkg: grunt.file.readJSON( "package.json" ),
-	concat: {
-		// DownloadBuilder frontend bundle
-		download: {
-			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/download.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
-			dest: "app/resources/download.all.js"
-		},
-		// ThemeRoller frontend bundle
-		themeroller: {
-			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/themeroller.js", "app/src/external/farbtastic.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
-			dest: "app/resources/themeroller.all.js"
-		}
-	},
 	handlebars: {
 		options: {
 			// Use basename as the key for the precompiled object.
@@ -57,6 +45,21 @@ grunt.initConfig({
 			sub: true,
 			trailing: true,
 			undef: true
+		}
+	},
+	uglify: {
+		options: {
+			preserveComments: "some"
+		},
+		// DownloadBuilder minified frontend bundle
+		download: {
+			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/download.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
+			dest: "app/resources/download.all.min.js"
+		},
+		// ThemeRoller minified frontend bundle
+		themeroller: {
+			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/themeroller.js", "app/src/external/farbtastic.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
+			dest: "app/resources/themeroller.all.min.js"
 		}
 	}
 });
@@ -389,7 +392,7 @@ grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI rele
 	});
 });
 
-grunt.registerTask( "build-app", [ "handlebars", "concat" ] );
+grunt.registerTask( "build-app", [ "handlebars", "uglify" ] );
 
 grunt.registerTask( "mkdirs", "Create directories", function() {
 	if ( !fs.existsSync( "app/resources/template" ) ) {
