@@ -66,6 +66,7 @@ Frontend.prototype = {
 			compGroupA: compGroupATemplate(),
 			compGroupB: compGroupBTemplate(),
 			host: this.host,
+			production: this.env.toLowerCase() === "production",
 			resources: this.resources,
 			textures: JSON.stringify( textures )
 		});
