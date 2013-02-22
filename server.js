@@ -26,7 +26,6 @@ var argv = require( "optimist" ).argv,
 		themeroller: "/themeroller",
 		themerollerIcon: /^\/themeroller\/images\/(ui-icons_.+)$/,
 		themerollerParseTheme: "/themeroller/parsetheme.css",
-		themerollerRollYourOwn: "/themeroller/rollyourown",
 		themerollerTexture: /^\/themeroller\/images\/(ui-bg_.+)$/
 	},
 	staticDir = "app";
@@ -89,10 +88,6 @@ function route( app ) {
 	app.get( routes.themerollerParseTheme, function( request, response ) {
 		response.setHeader( "Content-Type", "text/css" );
 		response.end( frontend.themeroller.css( params( request ) ) );
-	});
-	app.get( routes.themerollerRollYourOwn, function( request, response ) {
-		response.setHeader( "Content-Type", "application/json" );
-		response.end( frontend.themeroller.rollYourOwn( params( request ) ) );
 	});
 	app.get( routes.themerollerTexture, function( request, response ) {
 		frontend.themeroller.texture( request.params[ 0 ], response, error );
