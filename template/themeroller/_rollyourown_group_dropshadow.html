@@ -1,0 +1,40 @@
+<div class="theme-group clearfix" id="Shadow">
+	<div class="theme-group-header state-default">
+		<span class="arrow-icon icon-triangle-1-e">Collapse</span>
+		<a href="#">Drop Shadows</a>
+	</div><!-- /theme group Shadow -->
+	<div class="theme-group-content corner-bottom clearfix">
+		<div class="field-group field-group-background clearfix">
+			<label for="bgColorShadow" class="background">Background color &amp; texture</label>
+			<input type="text" name="bgColorShadow" id="bgColorShadow" class="hex" value="{{bgColorShadow}}" />
+			<select name="bgTextureShadow" class="texture">
+				{{#each bgTextureShadowOptions}}
+					<option value="{{type}}"{{selected}} data-texturewidth="{{width}}" data-textureheight="{{height}}">{{name}}</option>
+				{{/each}}
+			</select>
+			<input type="text" name="bgImgOpacityShadow" id="bgImgOpacityShadow" class="opacity" value="{{bgImgOpacityShadow}}" />
+			<span class="opacity-per">%</span>
+		</div>
+		<div class="field-group field-group-opacity clearfix">
+			<label for="opacityShadow">Shadow Opacity:</label>
+			<input type="text" name="opacityShadow" id="opacityShadow" class="opacity" value="{{opacityShadow}}" />
+			<span class="opacity-per">%</span>
+		</div>
+		<div class="field-group clearfix">
+			<label for="thicknessShadow">Shadow Thickness:</label>
+			<input type="text" name="thicknessShadow" id="thicknessShadow" class="offset" value="{{thicknessShadow}}" />
+		</div>
+		<div class="field-group clearfix">
+			<label for="offsetTopShadow">Top Offset:</label>
+			<input type="text" name="offsetTopShadow" id="offsetTopShadow" class="offset" value="{{offsetTopShadow}}" />
+		</div>
+		<div class="field-group clearfix">
+			<label for="offsetLeftShadow">Left Offset:</label>
+			<input type="text" name="offsetLeftShadow" id="offsetLeftShadow" class="offset" value="{{offsetLeftShadow}}" />
+		</div>
+		<div class="field-group field-group-corners clearfix">
+			<label for="cornerRadiusShadow">Corners:</label>
+			<input type="text" value="{{cornerRadiusShadow}}" name="cornerRadiusShadow" id="cornerRadiusShadow" class="cornerRadius" />
+		</div>
+	</div><!-- /theme group Shadow -->
+</div><!-- /theme group -->

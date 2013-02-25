@@ -1,0 +1,24 @@
+<div class="theme-group clearfix" id="global-font">
+	<div class="theme-group-header state-default">
+		<span class="arrow-icon icon-triangle-1-e">Collapse</span>
+		<a href="#">Font Settings</a>
+	</div><!-- /theme group header -->
+	<div class="theme-group-content corner-bottom clearfix">
+		<div class="field-group clearfix">
+			<label for="ffDefault">Family</label>
+			<input type="text" name="ffDefault" id="ffDefault" class="ffDefault" value="{{ffDefault}}" size="8" />
+		</div>
+		<div class="field-group clearfix">
+			<label for="fwDefault">Weight</label>
+			<select name="fwDefault" class="fwDefault" id="fwDefault">
+				{{#each options}}
+					<option value="{{type}}"{{selected}}>{{name}}</option>
+				{{/each}}
+			</select>
+		</div>
+		<div class="field-group clearfix">
+			<label for="fsDefault">Size</label>
+			<input type="text" name="fsDefault" id="fsDefault" class="fsDefault" value="{{fsDefault}}"  size="3" />
+		</div>
+	</div><!-- /theme group content -->
+</div><!-- /theme group -->

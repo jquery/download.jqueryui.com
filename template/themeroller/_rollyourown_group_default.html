@@ -1,0 +1,32 @@
+<div class="theme-group clearfix" id="{{name}}">
+	<div class="theme-group-header state-default">
+		<span class="arrow-icon icon-triangle-1-e">Collapse</span>
+		<div class="state-preview corner-all {{class}}">abc</div>
+		<a href="#">{{title}}</a>
+	</div>
+	<div class="theme-group-content corner-bottom clearfix">
+		<div class="field-group field-group-background clearfix">
+			<label for="{{bgColorName}}" class="background">Background color &amp; texture</label>
+			<input type="text" name="{{bgColorName}}" id="{{bgColorName}}" class="hex" value="{{bgColorValue}}" />
+			<select name="{{bgTextureName}}" class="texture">
+				{{#each bgTextureOptions}}
+					<option value="{{type}}"{{selected}} data-texturewidth="{{width}}" data-textureheight="{{height}}">{{name}}</option>
+				{{/each}}
+			</select>
+			<input type="text" name="{{bgImgOpacityName}}" class="opacity" value="{{bgImgOpacityValue}}" />
+			<span class="opacity-per">%</span>
+		</div>
+		<div class="field-group field-group-border clearfix">
+			<label for="{{borderColorName}}">Border</label>
+			<input type="text" name="{{borderColorName}}" id="{{borderColorName}}" class="hex" value="{{borderColorValue}}" size="6" />
+		</div>
+		<div class="field-group clearfix">
+			<label for="{{fcName}}">Text</label>
+			<input type="text" name="{{fcName}}" id="{{fcName}}" class="hex" value="{{fcValue}}" size="6" />
+		</div>
+		<div class="field-group clearfix">
+			<label for="{{iconColorName}}">Icon</label>
+			<input type="text" name="{{iconColorName}}" id="{{iconColorName}}" class="hex" value="{{iconColorValue}}" size="6" />
+		</div>
+	</div><!-- /theme group content -->
+</div><!-- /theme group -->

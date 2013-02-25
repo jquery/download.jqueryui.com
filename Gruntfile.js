@@ -21,7 +21,8 @@ grunt.initConfig({
 		},
 		compile: {
 			files: {
-				"app/resources/template/download.js": [ "template/download/components.html", "template/download/theme.html" ]
+				"app/resources/template/download.js": [ "template/download/components.html", "template/download/theme.html" ],
+				"app/resources/template/themeroller.js": [ "template/themeroller/rollyourown.html", "template/themeroller/_rollyourown_group_corner.html", "template/themeroller/_rollyourown_group_default.html", "template/themeroller/_rollyourown_group_dropshadow.html", "template/themeroller/_rollyourown_group_font.html", "template/themeroller/_rollyourown_group_modaloverlay.html" ]
 			}
 		}
 	},
