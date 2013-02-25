@@ -1,0 +1,24 @@
+<div class="theme-group clearfix" id="Overlay">
+	<div class="theme-group-header state-default">
+		<span class="arrow-icon icon-triangle-1-e">Collapse</span>
+		<a href="#">Modal Screen for Overlays </a>
+	</div><!-- /theme group Overlay -->
+	<div class="theme-group-content corner-bottom clearfix">
+		<div class="field-group field-group-background clearfix">
+			<label for="bgColorOverlay" class="background">Background color &amp; texture</label>
+			<input type="text" name="bgColorOverlay" id="bgColorOverlay" class="hex" value="{{bgColorOverlay}}" />
+			<select name="bgTextureOverlay" class="texture">
+				{{#each bgTextureOverlayOptions}}
+					<option value="{{type}}"{{selected}} data-texturewidth="{{width}}" data-textureheight="{{height}}">{{name}}</option>
+				{{/each}}
+			</select>
+			<input type="text" name="bgImgOpacityOverlay" class="opacity" value="{{bgImgOpacityOverlay}}" />
+			<span class="opacity-per">%</span>
+		</div>
+		<div class="field-group field-group-opacity clearfix">
+			<label for="opacityOverlay">Overlay Opacity:</label>
+			<input type="text" name="opacityOverlay" id="opacityOverlay" class="opacity" value="{{opacityOverlay}}" />
+			<span class="opacity-per">%</span>
+		</div>
+	</div><!-- /theme group Overlay -->
+</div><!-- /theme group -->

@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global Hash: false, Model: false, QueryString: false */
+/*global Hash: false, JST: false, Model: false, QueryString: false */
 /*!
  * jQuery UI ThemeRoller client-side JavaScript file
  * http://jqueryui.com/themeroller/
@@ -8,15 +8,15 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, Model, QueryString, undefined ) {
+(function( $, Hash, JST, Model, QueryString, undefined ) {
 	var model, reloadRollYourOwn, skipHashChange, theme, Theme,
 		focusedEl = null,
-		lastRollYourOwnLoad = 0,
 		openGroups = [],
 		textureVars = "bgTextureDefault bgTextureHover bgTextureActive bgTextureHeader bgTextureContent bgTextureHighlight bgTextureError bgTextureOverlay bgTextureShadow".split( " " ),
 		themeroller = $( "#themeroller" ),
 		baseVars = QueryString.decode( themeroller.data( "base-vars" ) ),
-		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" );
+		downloadJqueryuiHost = themeroller.data( "download-jqueryui-host" ),
+		textures = themeroller.data( "textures" );
 
 	// Rewrite host for testing on staging
 	if ( /^stage\./.test( location.host ) ) {
@@ -27,13 +27,6 @@
 	function textureUrl( type, width, height ) {
 		// ui-bg_<type>_<opacity>_<color>_<width>x<height>.png
 		return downloadJqueryuiHost + "/themeroller/images/ui-bg_" + type.replace( /_/g, "-" ) + "_100_555_" + width + "x" + height + ".png";
-	}
-
-	// Fetches rollYourOwn content
-	function rollYourOwnFetch() {
-		return $.ajax( model.rollYourOwnUrl(), {
-			dataType: "jsonp"
-		});
 	}
 
 	function isHexColor( value ) {
@@ -139,6 +132,10 @@
 	}
 
 	function rollYourOwnInit() {
+		$( "#rollYourOwn" ).html( JST[ "rollyourown.html" ]( rollYourOwnObject() ) );
+		model.downloadUrl(function( url ) {
+			$( "#downloadTheme" ).attr( "href", url );
+		});
 		$( "#downloadTheme" ).on({
 			"click": function() {
 				var form = $( this ).parent().find( "form" );
@@ -288,6 +285,213 @@
 		}
 	}
 
+	// TODO move this away into an external themeRoller helper.
+	function rollYourOwnObject() {
+		var augmentGroups, hashColor, textureOptions,
+			attributes = model.attributes;
+		augmentGroups = function( groups ) {
+			var fns = {
+				font: function( attributes ) {
+					return {
+						isFontType: true,
+						options: $.each([ "normal", "bold" ], function() {
+							var type = this;
+							return {
+								name: type,
+								type: type,
+								selected: type === attributes.fwDefault ? " selected" : ""
+							};
+						})
+					};
+				},
+				corner: function( attributes ) {
+					return {
+						isCornerType: true
+					};
+				},
+				"default": function( attributes ) {
+					var titles = {
+							Header: "Header/Toolbar",
+							Content: "Content",
+							Default: "Clickable: default state",
+							Hover: "Clickable: hover state",
+							Active: "Clickable: active state",
+							Highlight: "Highlight"
+						},
+						classes = {
+							Header: "ui-widget-header",
+							Content: "ui-widget-content",
+							Default: "ui-state-default",
+							Hover: "ui-state-hover",
+							Active: "ui-state-active",
+							Highlight: "ui-state-highlight"
+						},
+						extension = {
+							isDefaultType: true,
+							title: titles[ attributes.name ],
+							"class": classes[ attributes.name ]
+						};
+					$.each([ "bgColor", "bgImgOpacity", "borderColor", "fc", "iconColor" ], function() {
+						var attr = this;
+						extension[ attr + "Name" ] = attr + attributes.name;
+						extension[ attr + "Value" ] = attributes[ attr + attributes.name ];
+					});
+					$.each([ "bgColor", "borderColor", "fc", "iconColor" ], function() {
+						var attr = this;
+						extension[ attr + "Value" ] = hashColor( extension[ attr + "Value" ] );
+					});
+					extension.bgTextureOptions = textureOptions( attributes[ "bgTexture" + attributes.name ] );
+					return extension;
+				},
+				modaloverlay: function( attributes ) {
+					var bgColorOverlay = hashColor( attributes.bgColorOverlay );
+					return {
+						isModaloverlayType: true,
+						bgColorOverlay: bgColorOverlay,
+						bgTextureOverlayOptions: textureOptions( attributes.bgTextureOverlay, "true" )
+					};
+				},
+				dropshadow: function( attributes ) {
+					var bgColorShadow = hashColor( attributes.bgColorShadow );
+					return {
+						isDropshadowType: true,
+						bgColorShadow: bgColorShadow,
+						bgTextureShadowOptions: textureOptions( attributes.bgTextureShadow, "true" )
+					};
+				}
+			};
+			return $.map( groups, function( group ) {
+				return $.extend( group, fns[ group.type ]( group ) );
+			});
+		};
+
+		// Add '#' in the beginning of the colors if needed
+		hashColor = function( color ) {
+				if ( ( color.length === 3 || color.length === 6 ) && /^[0-9a-f]+$/i.test( color ) ) {
+					color = "#" + color;
+				}
+				return color;
+		};
+
+		// Returns select options with textures - configured to each theme group
+		textureOptions = function( select, panel ) {
+			var optSet = [];
+			$.each( textures, function() {
+				var texture = this,
+					name = texture.type,
+					selected = texture.type === select ? " selected=\"selected\"" : "";
+				// Large images need hard coded icon sizes to be useful
+				if ( texture.width * texture.height >= 360000 ) {
+					texture.width = texture.height = 16;
+				}
+				// Tall panel element (content, overlay, shadow, etc), don't allow glass texture
+				if ( panel === "true" ) {
+					if( texture.type !== "glass" ) {
+						optSet.push({
+							type: texture.type,
+							selected: selected,
+							width: texture.width,
+							height: texture.height,
+							name: name
+						});
+					}
+				} else {
+					optSet.push({
+						type: texture.type,
+						selected: selected,
+						width: texture.width,
+						height: texture.height,
+						name: name
+					});
+				}
+			});
+			return optSet;
+		};
+
+		return {
+			host: downloadJqueryuiHost,
+			groups: augmentGroups([{
+				type: "font",
+				ffDefault: attributes.ffDefault,
+				fsDefault: attributes.fsDefault,
+				fwDefault: attributes.fwDefault
+			}, {
+				type: "corner",
+				cornerRadius: attributes.cornerRadius
+			}, {
+				type: "default",
+				name: "Header",
+				bgColorHeader: attributes.bgColorHeader,
+				bgTextureHeader: attributes.bgTextureHeader,
+				bgImgOpacityHeader: attributes.bgImgOpacityHeader,
+				borderColorHeader: attributes.borderColorHeader,
+				fcHeader: attributes.fcHeader,
+				iconColorHeader: attributes.iconColorHeader
+			}, {
+				type: "default",
+				name: "Content",
+				bgColorContent: attributes.bgColorContent,
+				bgTextureContent: attributes.bgTextureContent,
+				bgImgOpacityContent: attributes.bgImgOpacityContent,
+				borderColorContent: attributes.borderColorContent,
+				fcContent: attributes.fcContent,
+				iconColorContent: attributes.iconColorContent
+			}, {
+				type: "default",
+				name: "Default",
+				bgColorDefault: attributes.bgColorDefault,
+				bgTextureDefault: attributes.bgTextureDefault,
+				bgImgOpacityDefault: attributes.bgImgOpacityDefault,
+				borderColorDefault: attributes.borderColorDefault,
+				fcDefault: attributes.fcDefault,
+				iconColorDefault: attributes.iconColorDefault
+			}, {
+				type: "default",
+				name: "Hover",
+				bgColorHover: attributes.bgColorHover,
+				bgTextureHover: attributes.bgTextureHover,
+				bgImgOpacityHover: attributes.bgImgOpacityHover,
+				borderColorHover: attributes.borderColorHover,
+				fcHover: attributes.fcHover,
+				iconColorHover: attributes.iconColorHover
+			}, {
+				type: "default",
+				name: "Active",
+				bgColorActive: attributes.bgColorActive,
+				bgTextureActive: attributes.bgTextureActive,
+				bgImgOpacityActive: attributes.bgImgOpacityActive,
+				borderColorActive: attributes.borderColorActive,
+				fcActive: attributes.fcActive,
+				iconColorActive: attributes.iconColorActive
+			}, {
+				type: "default",
+				name: "Highlight",
+				bgColorHighlight: attributes.bgColorHighlight,
+				bgTextureHighlight: attributes.bgTextureHighlight,
+				bgImgOpacityHighlight: attributes.bgImgOpacityHighlight,
+				borderColorHighlight: attributes.borderColorHighlight,
+				fcHighlight: attributes.fcHighlight,
+				iconColorHighlight: attributes.iconColorHighlight
+			}, {
+				type: "modaloverlay",
+				bgColorOverlay: attributes.bgColorOverlay,
+				bgTextureOverlay: attributes.bgTextureOverlay,
+				bgImgOpacityOverlay: attributes.bgImgOpacityOverlay,
+				opacityOverlay: attributes.opacityOverlay
+			}, {
+				type: "dropshadow",
+				bgTextureShadow: attributes.bgTextureShadow,
+				bgColorShadow: attributes.bgColorShadow,
+				bgImgOpacityShadow: attributes.bgImgOpacityShadow,
+				opacityShadow: attributes.opacityShadow,
+				thicknessShadow: attributes.thicknessShadow,
+				offsetTopShadow: attributes.offsetTopShadow,
+				offsetLeftShadow: attributes.offsetLeftShadow,
+				cornerRadiusShadow: attributes.cornerRadiusShadow
+			}])
+		};
+	}
+
 	function themeGalleryInit() {
 		// Loading and viewing gallery themes
 		$( "#themeGallery a" )
@@ -401,9 +605,6 @@
 	}
 
 	function rollYourOwnLoad() {
-		var curr = ++lastRollYourOwnLoad,
-			deferred = $.Deferred();
-
 		// Roll Your Own:
 		// Remember which groups are open
 		openGroups = [];
@@ -421,20 +622,7 @@
 			}
 		});
 
-		rollYourOwnFetch().done(function( response ) {
-			if ( curr !== lastRollYourOwnLoad ) {
-				return;
-			}
-			$( "#rollYourOwn" ).html( response );
-			rollYourOwnInit();
-			deferred.resolve();
-		}).fail(function() {
-			if ( console && console.log ) {
-				console.log( "Failed to reload rollYourOwn tab", arguments );
-			}
-		});
-		
-		return deferred;
+		rollYourOwnInit();
 	}
 
 	model = new Model.ThemeRoller({
@@ -472,10 +660,9 @@
 		}
 		if ( reloadRollYourOwn && !( "zThemeParams" in changed ) ) {
 			reloadRollYourOwn = false;
-			rollYourOwnLoad().done(function() {
-				model.downloadUrl(function( url ) {
-					$( "#downloadTheme" ).attr( "href", url );
-				});
+			rollYourOwnLoad();
+			model.downloadUrl(function( url ) {
+				$( "#downloadTheme" ).attr( "href", url );
 			});
 		}
 		model.downloadUrl(function( url ) {
@@ -506,4 +693,4 @@
 	demoInit();
 	Hash.init();
 
-}( jQuery, Hash, Model, QueryString ) );
+}( jQuery, Hash, JST, Model, QueryString ) );
