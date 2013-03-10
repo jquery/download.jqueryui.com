@@ -10,8 +10,7 @@
  */
 (function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
 	var Model, DownloadBuilderModel, ThemeRollerModel, lzmaInterval,
-		lzma = new LZMA( "/resources/external/lzma_worker.min.js" ),
-		lzmaLoad = $.Deferred();
+		lzma = new LZMA( "/resources/external/lzma_worker.min.js" );
 
 	// Encodes an Array of booleans [ true, false, ... ] into a string sequence "10...".
 	function booleansEncode( array ) {
@@ -70,10 +69,8 @@
 		}
 		data = data.reverse();
 
-		lzmaLoad.done(function() {
-			lzma.decompress( $.map( data, intoDec ), function( unzipped ) {
-				callback( JSON.parse( unzipped ) );
-			});
+		lzma.decompress( $.map( data, intoDec ), function( unzipped ) {
+			callback( JSON.parse( unzipped ) );
 		});
 	}
 
@@ -95,10 +92,8 @@
 
 				return hex;
 			};
-		lzmaLoad.done(function() {
-			lzma.compress( data, 0, function( zipped ) {
-				callback( $.map( zipped, intoHex ).join( "" ) );
-			});
+		lzma.compress( data, 0, function( zipped ) {
+			callback( $.map( zipped, intoHex ).join( "" ) );
 		});
 	}
 
@@ -482,14 +477,6 @@
 			return this.host + "/themeroller/rollyourown" + ( attributes == null ? "" : "?" + QueryString.encode( attributes ) );
 		}
 	});
-
-	// Workaround to handle asynchronous worker load lzma-bug.
-	lzmaInterval = setInterval(function() {
-		if ( ( ( typeof Worker === "function" || typeof Worker === "object" ) && Worker.prototype.postMessage != null ) || window.onmessage != null ) {
-			lzmaLoad.resolve();
-			clearInterval( lzmaInterval );
-		}
-	}, 200 );
 
 	exports.Model = {
 		DownloadBuilder: DownloadBuilderModel,
