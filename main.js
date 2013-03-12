@@ -87,23 +87,7 @@ Main.prototype = {
 
 				callback( null, files );
 			});
-		}, function( err, builds ) {
-			if ( !err ) {
-				// Add base.
-				builds[0]
-					// Pick only the base files we need on the bundle.
-					.filter(function( file ) {
-						return (/development-bundle\/themes\/base/).test( file.path );
-					})
-					// Convert paths the way bundle needs and add it into bundleFiles.
-					.forEach(function( file ) {
-						// 1: Remove initial package name eg. "jquery-ui-1.10.0.custom".
-						file.path = file.path
-							.split( "/" ).slice( 1 ).join( "/" ) /* 1 */
-							.replace( /development-bundle\/themes/, "themes" );
-						bundleFiles.push( file );
-					});
-			}
+		}, function( err ) {
 			callback( err, bundleFiles );
 		});
 	}
