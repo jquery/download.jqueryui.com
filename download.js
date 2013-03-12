@@ -48,6 +48,7 @@ Frontend.prototype = {
 				categories: Release.getStable().categories()
 			}),
 			host: this.host,
+			production: this.env.toLowerCase() === "production",
 			resources: this.resources,
 			releases: releases
 		});

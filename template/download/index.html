@@ -35,11 +35,15 @@
 </div>
 
 <script src="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/jquery-ui.min.js"></script>
-<script src="/resources/external/event_emitter.min.js"></script>
-<script src="/resources/external/handlebars.runtime.js"></script>
-<script src="/resources/template/download.js"></script>
-<script src="/resources/external/lzma.js"></script>
-<script src="/resources/hash.js"></script>
-<script src="/resources/querystring.js"></script>
-<script src="/resources/model.js"></script>
-<script src="/resources/download.js"></script>
+{{#if production}}
+	<script src="/resources/download.all.min.js"></script>
+{{else}}
+	<script src="/src/external/event_emitter.min.js"></script>
+	<script src="/src/external/handlebars.runtime.js"></script>
+	<script src="/src/template/download.js"></script>
+	<script src="/src/external/lzma.js"></script>
+	<script src="/src/hash.js"></script>
+	<script src="/src/querystring.js"></script>
+	<script src="/src/model.js"></script>
+	<script src="/src/download.js"></script>
+{{/if}}

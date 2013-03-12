@@ -30,8 +30,7 @@ Main = function( options ) {
 };
 
 Main.defaults = {
-	env: "development",
-	host: ""
+	// Empty, check frontend.js's.
 };
 
 Main.prototype = {

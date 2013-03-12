@@ -1,4 +1,6 @@
-app/resources/template
+app/resources/download.all.min.js
+app/resources/themeroller.all.min.js
+app/src/template
 log/downloads.log
 node_modules
 release
