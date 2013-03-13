@@ -340,6 +340,7 @@
 						var attr = this;
 						extension[ attr + "Value" ] = hashColor( extension[ attr + "Value" ] );
 					});
+					extension.bgTextureName = "bgTexture" + attributes.name;
 					extension.bgTextureOptions = textureOptions( attributes[ "bgTexture" + attributes.name ] );
 					return extension;
 				},
