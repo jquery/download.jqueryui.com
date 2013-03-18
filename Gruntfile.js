@@ -224,46 +224,45 @@ function checkout( ref ) {
 	};
 }
 
-// TODO: Is there a way to clean up the install/update duplication?
 function install( callback ) {
 	async.series([
 		function( callback ) {
 			grunt.log.writeln( "Installing jquery-ui npm modules" );
 			grunt.util.spawn({
 				cmd: "npm",
+				args: [ "prune" ],
+				opts: {
+					cwd: "tmp/jquery-ui"
+				}
+			}, log( callback, null, "Error pruning npm modules" ) );
+		},
+		function( callback ) {
+			grunt.util.spawn({
+				cmd: "npm",
 				args: [ "install" ],
 				opts: {
 					cwd: "tmp/jquery-ui"
 				}
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "npm",
-				args: [ "update" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, "Updated npm modules", "Error updating npm modules" ) );
 		},
 		function( callback ) {
 			grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
 			grunt.util.spawn({
 				cmd: "npm",
+				args: [ "prune" ],
+				opts: {
+					cwd: "tmp/api.jqueryui.com"
+				}
+			}, log( callback, null, "Error pruning npm modules" ) );
+		},
+		function() {
+			grunt.util.spawn({
+				cmd: "npm",
 				args: [ "install" ],
 				opts: {
 					cwd: "tmp/api.jqueryui.com"
 				}
 			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
-		},
-		function() {
-			grunt.util.spawn({
-				cmd: "npm",
-				args: [ "update" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, "Updated npm modules", "Error updating npm modules" ) );
 		}
 	]);
 }
