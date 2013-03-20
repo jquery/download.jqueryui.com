@@ -1,8 +1,7 @@
 /// This code is licensed under the MIT License.  See LICENSE for more details.
 
 /// Does the environment support web workers?  If not, let's fake it.
-///NOTE: Since web workers don't work when a page is loaded from the local system, we have to fake it there too. (Take that security measures!)
-if (!Worker || (location && location.protocol === "file:")) {
+if (!Worker) {
     ///NOTE: IE8 and IE9 needs onmessage to be created first, IE7- do not care.
     ///NOTE: Because IE9 implements part of the Web Worker's spec, postMessage() must be overwritten.
     /*@cc_on
@@ -29,7 +28,7 @@ if (!Worker || (location && location.protocol === "file:")) {
                 var script_tag  = document.createElement("script");
                 script_tag.type ="text/javascript";
                 script_tag.src  = path;
-                document.getElementsByTagName("head")[0].appendChild(script_tag);
+                document.getElementsByTagName('head')[0].appendChild(script_tag);
             };
         }
         
@@ -38,17 +37,12 @@ if (!Worker || (location && location.protocol === "file:")) {
         
         /// This is the function that the main script calls to post a message to the "worker."
         return_object.postMessage = function (message) {
-            /// Has the worker script loaded yet?
-            if (global_var.onmessage) {
+            /// Delay the call just in case the "worker" script has not had time to load.
+            setTimeout(function () {
                 /// Call the global onmessage() created by the "worker."
                 ///NOTE: Wrap the message in an object.
                 global_var.onmessage({data: message});
-            } else {
-                /// Since the script has not yet loaded, wait a moment, and then retry.
-                setTimeout(function () {
-                    return_object.postMessage(message);
-                }, 50);
-            }
+            }, 10);
         };
         
         /// Create a global postMessage() function for the "worker" to call.
