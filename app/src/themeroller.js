@@ -294,8 +294,7 @@
 				font: function( attributes ) {
 					return {
 						isFontType: true,
-						options: $.each([ "normal", "bold" ], function() {
-							var type = this;
+						options: $.map([ "normal", "bold" ], function( type ) {
 							return {
 								name: type,
 								type: type,
