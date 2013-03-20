@@ -316,7 +316,8 @@
 							Default: "Clickable: default state",
 							Hover: "Clickable: hover state",
 							Active: "Clickable: active state",
-							Highlight: "Highlight"
+							Highlight: "Highlight",
+							Error: "Error"
 						},
 						classes = {
 							Header: "ui-widget-header",
@@ -324,7 +325,8 @@
 							Default: "ui-state-default",
 							Hover: "ui-state-hover",
 							Active: "ui-state-active",
-							Highlight: "ui-state-highlight"
+							Highlight: "ui-state-highlight",
+							Error: "ui-state-error"
 						},
 						extension = {
 							isDefaultType: true,
@@ -473,6 +475,15 @@
 				borderColorHighlight: attributes.borderColorHighlight,
 				fcHighlight: attributes.fcHighlight,
 				iconColorHighlight: attributes.iconColorHighlight
+			}, {
+				type: "default",
+				name: "Error",
+				bgColorError: attributes.bgColorError,
+				bgTextureError: attributes.bgTextureError,
+				bgImgOpacityError: attributes.bgImgOpacityError,
+				borderColorError: attributes.borderColorError,
+				fcError: attributes.fcError,
+				iconColorError: attributes.iconColorError
 			}, {
 				type: "modaloverlay",
 				bgColorOverlay: attributes.bgColorOverlay,
