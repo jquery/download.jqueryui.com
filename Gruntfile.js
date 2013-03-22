@@ -347,11 +347,8 @@ function copy( ref ) {
 	};
 }
 
-grunt.registerTask( "default", [ "check-modules", "jshint" ] );
-
-grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
-	var done = this.async(),
-		Builder = require( "./lib/builder" ),
+function buildPackages( folder, callback ) {
+	var Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
 		path = require( "path" ),
 		Release = require( "./lib/release" ),
@@ -385,11 +382,18 @@ grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI rele
 			});
 			stream.end();
 		});
-	}, function( err ) {
+	}, callback );
+}
+
+grunt.registerTask( "default", [ "check-modules", "jshint" ] );
+
+grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
+	var done = this.async();
+  buildPackages( folder, function( err ) {
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
-	});
+  });
 });
 
 grunt.registerTask( "build-app", [ "handlebars", "uglify" ] );
