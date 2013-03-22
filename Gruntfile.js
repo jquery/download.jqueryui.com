@@ -387,6 +387,8 @@ function buildPackages( folder, callback ) {
 
 grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 
+grunt.registerTask( "build-app", [ "handlebars", "uglify" ] );
+
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
 	var done = this.async();
   buildPackages( folder, function( err ) {
@@ -395,8 +397,6 @@ grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI rele
 		done( !err /* 1 */ );
   });
 });
-
-grunt.registerTask( "build-app", [ "handlebars", "uglify" ] );
 
 grunt.registerTask( "mkdirs", "Create directories", function() {
 	if ( !fs.existsSync( "app/resources/template" ) ) {
