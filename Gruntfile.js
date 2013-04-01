@@ -273,20 +273,21 @@ function build( callback ) {
 			grunt.log.writeln( "Building jQuery UI" );
 			grunt.util.spawn({
 				cmd: "grunt",
+				args: [ "build" ],
+				opts: {
+					cwd: "tmp/jquery-ui"
+				}
+			}, log( callback, "Done building jQuery UI", "Error building jQuery UI" ) );
+		},
+		function( callback ) {
+			grunt.log.writeln( "Building manifest for jQuery UI" );
+			grunt.util.spawn({
+				cmd: "grunt",
 				args: [ "manifest" ],
 				opts: {
 					cwd: "tmp/jquery-ui"
 				}
 			}, log( callback, "Done building manifest", "Error building manifest" ) );
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "release" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, "Done building release", "Error building release" ) );
 		},
 		function() {
 			grunt.log.writeln( "Building API documentation for jQuery UI" );
@@ -322,7 +323,7 @@ function copy( ref ) {
 				}
 			},
 			function( callback ) {
-				var from = "tmp/jquery-ui/dist/" + dir,
+				var from = "tmp/jquery-ui",
 					to = "release/" + ref;
 				grunt.log.writeln( "Copying jQuery UI " + version + " over to release/" + ref );
 				try {
@@ -336,12 +337,17 @@ function copy( ref ) {
 				grunt.log.ok( "Done copying" );
 				callback();
 			},
-			function() {
+			function( callback ) {
 				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
 				grunt.file.expand({ filter: "isFile" }, docs + "/**" ).forEach(function( file ) {
 					grunt.file.copy( file, file.replace( docs, "release/" + ref + "/docs/" ));
 				});
 				callback();
+			},
+			function() {
+				var removePath = ref + "/node_modules";
+				grunt.log.writeln( "Cleaning up copied jQuery UI" );
+				rimraf( "release/" + removePath, log( callback, "Removed release/" + removePath, "Error removing release/" + removePath ) );
 			}
 		]);
 	};
