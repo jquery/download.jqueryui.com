@@ -14,7 +14,7 @@ var argv = require( "optimist" ).argv,
 	Frontend = require( "./frontend" ),
 	Image = require( "./lib/themeroller.image" ),
 	querystring = require( "querystring" ),
-	Release = require( "./lib/release" ),
+	JqueryUi = require( "./lib/jquery-ui" ),
 	ThemeRoller = require( "./lib/themeroller" ),
 	httpHost = argv.host || "localhost",
 	httpPort = argv.port || 8088,
@@ -32,7 +32,7 @@ var argv = require( "optimist" ).argv,
 
 var frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
-	Builder.cacheReleases();
+	Builder.cacheJqueryUi();
 	Builder.cacheThemeImages();
 	Image.setCacheExpires( 60000 * 60 );
 }

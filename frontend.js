@@ -3,7 +3,7 @@ var _ = require( "underscore" ),
 	Download = require( "./download" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
-	Release = require( "./lib/release" ),
+	JqueryUi = require( "./lib/jquery-ui" ),
 	ThemeRoller = require( "./themeroller" );
 
 var errorTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/500.html", "utf-8" ) ),
@@ -20,7 +20,7 @@ Frontend.defaults = {
 	host: "",
 	resources: {
 		jqueryVersion: config.jquery,
-		jqueryuiVersion: Release.getStable().pkg.version
+		jqueryuiVersion: JqueryUi.getStable().pkg.version
 	}
 };
 

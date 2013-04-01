@@ -1,5 +1,5 @@
 var Builder = require( "../lib/builder" ),
-	Release = require( "../lib/release" ),
+	JqueryUi = require( "../lib/jquery-ui" ),
 	semver = require( "semver" ),
 	ThemeRoller = require( "../lib/themeroller" ),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
@@ -15,8 +15,8 @@ function filePresent( build, filepath ) {
 	}).length > 0;
 }
 
-function build( release, components, theme, callback ) {
-	var builder = new Builder( release, components, theme );
+function build( jqueryUi, components, theme, callback ) {
+	var builder = new Builder( jqueryUi, components, theme );
 	builder.build(function( err, build ) {
 		if ( err ) {
 			callback( err, null );
@@ -362,7 +362,7 @@ var tests = {
 			var components = this.allComponents,
 				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, theme, function( err, build ) {
+			build( this.jqueryUi, components, theme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -378,7 +378,7 @@ var tests = {
 			var components = this.allComponents,
 				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, namedTheme, function( err, build ) {
+			build( this.jqueryUi, components, namedTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -394,7 +394,7 @@ var tests = {
 			var components = this.allComponents,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, noTheme, function( err, build ) {
+			build( this.jqueryUi, components, noTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -410,7 +410,7 @@ var tests = {
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		build( this.jqueryUi, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -424,7 +424,7 @@ var tests = {
 	"test: select all effects": function( test ) {
 		var components = this.allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		build( this.jqueryUi, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -440,7 +440,7 @@ var tests = {
 			var components = someWidgets1,
 				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, theme, function( err, build ) {
+			build( this.jqueryUi, components, theme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -456,7 +456,7 @@ var tests = {
 			var components = someWidgets1,
 				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, namedTheme, function( err, build ) {
+			build( this.jqueryUi, components, namedTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -473,7 +473,7 @@ var tests = {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, noTheme, function( err, build ) {
+			build( this.jqueryUi, components, noTheme, function( err, build ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
@@ -489,7 +489,7 @@ var tests = {
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		build( this.jqueryUi, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -503,7 +503,7 @@ var tests = {
 	"test: select no components": function( test ) {
 		var components = noComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		build( this.jqueryUi, components, this.theme, function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
@@ -518,7 +518,7 @@ var tests = {
 		var theme = this.theme;
 		test.expect( 1 );
 		try {
-			new Builder( this.release, [ invalidComponent ], theme );
+			new Builder( this.jqueryUi, [ invalidComponent ], theme );
 		} catch( err ) {
 			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
 		}
@@ -533,7 +533,7 @@ var tests = {
 			],
 			scope = "#wrapper";
 		test.expect( filesToCheck.length );
-		builder = new Builder( this.release, components, this.theme, { scope: scope } );
+		builder = new Builder( this.jqueryUi, components, this.theme, { scope: scope } );
 		builder.build(function( err, build ) {
 			if ( err ) {
 				test.ok( false, err.message );
@@ -553,7 +553,7 @@ var tests = {
 		var components = this.allComponents,
 			theme = this.theme;
 		test.expect( 1 );
-		build( this.release, components, theme, function( err, files ) {
+		build( this.jqueryUi, components, theme, function( err, files ) {
 			var anyDuplicate,
 				duplicates = [],
 				marked = {};
@@ -574,10 +574,10 @@ var tests = {
 module.exports = {};
 
 // Build tests for each jqueryUi release
-Release.all().filter(function( release ) {
+JqueryUi.all().filter(function( jqueryUi ) {
 	// Filter supported releases only
-	return semver.gte( release.pkg.version, "1.10.0" );
-}).forEach(function( release ) {
+	return semver.gte( jqueryUi.pkg.version, "1.10.0" );
+}).forEach(function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
 			if ( typeof tests[ i ] === "object" ) {
@@ -586,20 +586,20 @@ Release.all().filter(function( release ) {
 			} else {
 				obj[ i ] = function( test ) {
 					tests[ i ].call({
-						release: release,
-						theme: new ThemeRoller({ version: release.pkg.version }),
+						jqueryUi: jqueryUi,
+						theme: new ThemeRoller({ version: jqueryUi.pkg.version }),
 						namedTheme: new ThemeRoller({
 							vars: { folderName: "mytheme" },
-							version: release.pkg.version
+							version: jqueryUi.pkg.version
 						}),
 						noTheme: new ThemeRoller({
 							vars: null,
-							version: release.pkg.version
+							version: jqueryUi.pkg.version
 						}),
-						allComponents: release.components().map(function( component ) {
+						allComponents: jqueryUi.components().map(function( component ) {
 							return component.name;
 						}),
-						allWidgets: release.components().filter(function( component ) {
+						allWidgets: jqueryUi.components().filter(function( component ) {
 							return component.category === "widget";
 						}).map(function( component ) {
 							return [ component.name ].concat( component.dependencies );
@@ -609,7 +609,7 @@ Release.all().filter(function( release ) {
 							// unique
 							return i === arr.indexOf( element );
 						}),
-						allEffects: release.components().filter(function( component ) {
+						allEffects: jqueryUi.components().filter(function( component ) {
 							return (/effect/).test( component.name );
 						}).map(function( component ) {
 							return component.name;
@@ -619,6 +619,6 @@ Release.all().filter(function( release ) {
 			}
 		});
 	}
-	module.exports[ release.pkg.version ] = {};
-	deepTestBuild( module.exports[ release.pkg.version ], tests );
+	module.exports[ jqueryUi.pkg.version ] = {};
+	deepTestBuild( module.exports[ jqueryUi.pkg.version ], tests );
 });

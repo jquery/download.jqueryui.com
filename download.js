@@ -1,18 +1,18 @@
-var releases,
+var jqueryUis,
 	_ = require( "underscore" ),
 	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
 	querystring = require( "querystring" ),
-	Release = require( "./lib/release" ),
+	JqueryUi = require( "./lib/jquery-ui" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
-releases = Release.all();
+jqueryUis = JqueryUi.all();
 
-Handlebars.registerHelper( "isVersionChecked", function( release ) {
-	return Release.getStable().pkg.version === release.pkg.version ? " checked=\"checked\"" : "";
+Handlebars.registerHelper( "isVersionChecked", function( jqueryUi ) {
+	return JqueryUi.getStable().pkg.version === jqueryUi.pkg.version ? " checked=\"checked\"" : "";
 });
 
 Handlebars.registerHelper( "join", function( array, sep, options ) {
@@ -45,25 +45,25 @@ Frontend.prototype = {
 		return indexTemplate({
 			baseVars: themeGallery[ 2 ].serializedVars,
 			components: JSON.stringify({
-				categories: Release.getStable().categories()
+				categories: JqueryUi.getStable().categories()
 			}),
 			host: this.host,
 			production: this.env.toLowerCase() === "production",
 			resources: this.resources,
-			releases: releases
+			jqueryUis: jqueryUis
 		});
 	},
 
 	components: function( params ) {
-		var data, release;
+		var data, jqueryUi;
 		if ( params.version ) {
-			release = Release.find( params.version );
+			jqueryUi = JqueryUi.find( params.version );
 		}
-		if ( release == null ) {
+		if ( jqueryUi == null ) {
 			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
 			data = { error : "invalid version" };
 		} else {
-			data = { categories: release.categories() };
+			data = { categories: jqueryUi.categories() };
 		}
 		return jsonpTemplate({
 			callback: params.callback,
@@ -88,7 +88,7 @@ Frontend.prototype = {
 				version: fields.version
 			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
-			builder = new Builder( Release.find( fields.version ), components, theme, {
+			builder = new Builder( JqueryUi.find( fields.version ), components, theme, {
 				scope: fields.scope
 			});
 			response.setHeader( "Content-Type", "application/zip" );
