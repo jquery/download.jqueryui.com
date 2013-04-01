@@ -1,4 +1,4 @@
-var jqueryUis,
+var downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
 	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
@@ -7,7 +7,17 @@ var jqueryUis,
 	querystring = require( "querystring" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
 	themeGallery = require( "./lib/themeroller.themegallery" ),
-	ThemeRoller = require( "./lib/themeroller" );
+	ThemeRoller = require( "./lib/themeroller" ),
+	winston = require( "winston" );
+
+downloadLogger = new winston.Logger({
+	transports: [
+		new winston.transports.File({
+			filename: __dirname + "/log/downloads.log",
+			json: false
+		})
+	]
+});
 
 jqueryUis = JqueryUi.all();
 
@@ -93,10 +103,20 @@ Frontend.prototype = {
 			});
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
-			builder.writeTo( response, function( err ) {
-				if ( err ) {
-					return callback( err );
+			builder.zipTo( response, function( err, written, elapsedTime ) {
+				if ( !err ) {
+					// Log statistics
+					downloadLogger.info(
+						JSON.stringify({
+							build_size: written,
+							build_time: elapsedTime,
+							components: builder.components,
+							theme_name: builder.theme.name,
+							version: builder.jqueryUi.pkg.version
+						})
+					);
 				}
+				return callback( err );
 			});
 		} catch( err ) {
 			return callback( err );
