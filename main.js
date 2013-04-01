@@ -42,20 +42,20 @@ Main.prototype = {
 	 * Generates the theme bundle with base and all themes from themegallery.
 	 */
 	buildThemesBundle: function( callback ) {
-		var allComponents, release, success,
+		var allComponents, jqueryUi, success,
 			async = require( "async" ),
 			Builder = require( "./lib/builder" ),
 			bundleFiles = [],
-			Release = require( "./lib/release" ),
+			JqueryUi = require( "./lib/jquery-ui" ),
 			themeGallery = require( "./lib/themeroller.themegallery" );
 
-		release = Release.getStable();
-		allComponents = release.components().map(function( component ) {
+		jqueryUi = JqueryUi.getStable();
+		allComponents = jqueryUi.components().map(function( component ) {
 			return component.name;
 		});
 
 		async.mapSeries( themeGallery, function( theme, callback ) {
-			var builder = new Builder( release, allComponents, theme ),
+			var builder = new Builder( jqueryUi, allComponents, theme ),
 				folderName = theme.folderName();
 			builder.build(function( err, files ) {
 				if ( err ) {

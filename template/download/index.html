@@ -3,7 +3,7 @@
 <div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}" data-initial-components="{{components}}">
 	<p class="bundle-links">
 		<strong>Quick downloads:</strong>  
-		{{#join releases " | "}}
+		{{#join jqueryUis " | "}}
 			<a class="download-link" href="/resources/download/jquery-ui-{{this.pkg.version}}.zip">{{this.label}}</a> (<a href="/resources/download/jquery-ui-themes-{{this.pkg.version}}.zip">Themes</a>) ({{this.pkg.version}}: <em>for {{this.dependsOn}}</em>)
 		{{/join}}
 		<br>
@@ -12,7 +12,7 @@
 	<form action="{{host}}/download" method="POST">
 		<div class="download-builder-header version-area">
 			<h2>Version</h2>
-			{{#each releases}}
+			{{#each jqueryUis}}
 				<div class="field-pair">
 					<label class="clearfix">
 						<input type="radio" id="version-{{this.pkg.version}}" value="{{this.pkg.version}}" name="version"{{{isVersionChecked this}}}>

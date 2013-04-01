@@ -312,20 +312,20 @@ function copy( ref ) {
 			rimraf = require( "rimraf" ),
 			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
 			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
-		grunt.file.mkdir( "release" );
+		grunt.file.mkdir( "jquery-ui" );
 		async.series([
 			function( callback ) {
-				if ( fs.existsSync( "release/" + ref ) ) {
-					grunt.log.writeln( "Cleaning up existing release/" + ref );
-					rimraf( "release/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
+				if ( fs.existsSync( "jquery-ui/" + ref ) ) {
+					grunt.log.writeln( "Cleaning up existing jquery-ui/" + ref );
+					rimraf( "jquery-ui/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
 				} else {
 					callback();
 				}
 			},
 			function( callback ) {
 				var from = "tmp/jquery-ui",
-					to = "release/" + ref;
-				grunt.log.writeln( "Copying jQuery UI " + version + " over to release/" + ref );
+					to = "jquery-ui/" + ref;
+				grunt.log.writeln( "Copying jQuery UI " + version + " over to jquery-ui/" + ref );
 				try {
 					grunt.file.recurse( from, function( filepath ) {
 							grunt.file.copy( filepath, filepath.replace( new RegExp( "^" + from ), to ) );
@@ -338,16 +338,16 @@ function copy( ref ) {
 				callback();
 			},
 			function( callback ) {
-				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
+				grunt.log.writeln( "Copying API documentation for jQuery UI over to jquery-ui/" + ref + "/docs/" );
 				grunt.file.expand({ filter: "isFile" }, docs + "/**" ).forEach(function( file ) {
-					grunt.file.copy( file, file.replace( docs, "release/" + ref + "/docs/" ));
+					grunt.file.copy( file, file.replace( docs, "jquery-ui/" + ref + "/docs/" ));
 				});
 				callback();
 			},
 			function() {
 				var removePath = ref + "/node_modules";
 				grunt.log.writeln( "Cleaning up copied jQuery UI" );
-				rimraf( "release/" + removePath, log( callback, "Removed release/" + removePath, "Error removing release/" + removePath ) );
+				rimraf( "jquery-ui/" + removePath, log( callback, "Removed jquery-ui/" + removePath, "Error removing jquery-ui/" + removePath ) );
 			}
 		]);
 	};
@@ -357,15 +357,15 @@ function buildPackages( folder, callback ) {
 	var Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
 		path = require( "path" ),
-		Release = require( "./lib/release" ),
+		JqueryUi = require( "./lib/jquery-ui" ),
 		ThemeRoller = require( "./lib/themeroller" );
 
-	async.forEachSeries( Release.all(), function( release, next ) {
-		var allComponents = release.components().map(function( component ) {
+	async.forEachSeries( JqueryUi.all(), function( jqueryUi, next ) {
+		var allComponents = jqueryUi.components().map(function( component ) {
 			return component.name;
 		}),
-			theme = new ThemeRoller({ version: release.pkg.version }),
-			builder = new Builder( release, allComponents, theme ),
+			theme = new ThemeRoller({ version: jqueryUi.pkg.version }),
+			builder = new Builder( jqueryUi, allComponents, theme ),
 			filename = path.join( folder, builder.filename() ),
 			stream;
 		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
@@ -413,9 +413,9 @@ grunt.registerTask( "mkdirs", "Create directories", function() {
 	}
 });
 
-grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-release", "build-app" ] );
+grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-jquery-ui", "build-app" ] );
 
-grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
+grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
 	async.series([
 		cloneOrFetch,
