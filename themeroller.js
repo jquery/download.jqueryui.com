@@ -4,7 +4,7 @@ var _ = require( "underscore" ),
 	Image = require( "./lib/themeroller.image" ),
 	querystring = require( "querystring" ),
 	textures = require( "./lib/themeroller.textures" ),
-	themeGallery = require( "./lib/themeroller.themegallery" ),
+	themeGallery = require( "./lib/themeroller.themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" );
 
 function renderImage( filename, response, callback ) {
