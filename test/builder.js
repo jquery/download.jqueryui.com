@@ -234,7 +234,15 @@ var componentFiles = {
 		"development-bundle/themes/base/minified/jquery.ui.tooltip.min.css"
 	],
 	"effect": [
-		"development-bundle/demos/effect/*"
+		"development-bundle/demos/effect/*",
+		"development-bundle/demos/addClass/*",
+		"development-bundle/demos/animate/*",
+		"development-bundle/demos/hide/*",
+		"development-bundle/demos/removeClass/*",
+		"development-bundle/demos/show/*",
+		"development-bundle/demos/switchClass/*",
+		"development-bundle/demos/toggle/*",
+		"development-bundle/demos/toggleClass/*"
 	],
 	"effect-blind": [
 		"development-bundle/docs/blind-effect.html"
