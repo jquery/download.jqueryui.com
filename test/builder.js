@@ -52,7 +52,10 @@ function stripBanner( src ) {
 var commonFiles = [
 	"index.html",
 	"development-bundle/AUTHORS.txt",
+	"development-bundle/Gruntfile.js",
 	"development-bundle/MIT-LICENSE.txt",
+	"development-bundle/package.json",
+	"development-bundle/README.md",
 	/development-bundle\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
 	"development-bundle/package.json",
 	"development-bundle/demos/demos.css",

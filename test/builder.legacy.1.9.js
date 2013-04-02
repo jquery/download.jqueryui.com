@@ -46,7 +46,10 @@ function flatten( flat, arr ) {
 var commonFiles = [
 	"index.html",
 	"development-bundle/AUTHORS.txt",
+	"development-bundle/grunt.js",
 	"development-bundle/MIT-LICENSE.txt",
+	"development-bundle/package.json",
+	"development-bundle/README.md",
 	/development-bundle\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
 	"development-bundle/package.json",
 	"development-bundle/demos/demos.css",
