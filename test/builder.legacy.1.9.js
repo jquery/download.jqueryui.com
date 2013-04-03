@@ -105,7 +105,6 @@ var commonFiles = [
 	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/
 ];
 var skipFiles = [
-	"development-bundle/demos/index.html",
 	"development-bundle/MANIFEST"
 ];
 var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
