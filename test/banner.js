@@ -25,7 +25,7 @@ var pkg = {
 	output = "/*! jQuery UI - v1.9.0 - " + today( "isoDate" ) + "\n" +
 		"* http://jqueryui.com\n" +
 		"* Includes: jquery.ui.autocomplete.js, jquery.ui.accordion.js\n" +
-		"* Copyright " + today( "yyyy" ) + " authors.txt Licensed MIT, GPL */";
+		"* Copyright " + today( "yyyy" ) + " authors.txt; Licensed MIT, GPL */\n\n";
 
 module.exports = {
 	"test: case 1": function( test ) {
