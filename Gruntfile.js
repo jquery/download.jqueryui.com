@@ -140,14 +140,14 @@ function cloneOrFetch( callback ) {
 	]);
 }
 
-function buildAll( callback ) {
+function prepareAll( callback ) {
 	var config = require( "./lib/config" )();
 
 	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
 		async.series([
 			checkout( jqueryUi.ref ),
 			install,
-			build,
+			prepare,
 			copy( jqueryUi.ref )
 		], function( err ) {
 			// Go to next ref
@@ -267,18 +267,8 @@ function install( callback ) {
 	]);
 }
 
-function build( callback ) {
+function prepare( callback ) {
 	async.series([
-		function( callback ) {
-			grunt.log.writeln( "Building jQuery UI" );
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "build" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, "Done building jQuery UI", "Error building jQuery UI" ) );
-		},
 		function( callback ) {
 			grunt.log.writeln( "Building manifest for jQuery UI" );
 			grunt.util.spawn({
@@ -419,7 +409,7 @@ grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases 
 	var done = this.async();
 	async.series([
 		cloneOrFetch,
-		buildAll
+		prepareAll
 	], function( err ) {
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
