@@ -1,37 +1,37 @@
 {
-	"name": "download.jqueryui.com",
-	"version": "1.10.2-4",
-	"dependencies": {
-		"archiver": "0.1.1",
-		"async": "0.1.22",
-		"connect": "1.8.5",
-		"dateformat": "1.0.2-1.2.3",
-		"formidable": "1.0.9",
-		"glob-whatev": "0.1.7",
-		"gm": "1.8.1",
-		"grunt": "0.4.1",
-		"grunt-check-modules": "0.2.0",
-		"grunt-contrib-handlebars": "0.5.7",
-		"grunt-contrib-jshint": "0.2.0",
-		"grunt-contrib-uglify": "0.2.0",
-		"handlebars": "1.0.10",
-		"lzma": "1.2.1",
-		"optimist": "0.3.4",
-		"rimraf": "2.0.2",
-		"semver": "1.1.0",
-		"simple-log": "1.0.0",
-		"sqwish": "0.2.0",
-		"underscore": "1.4.4",
-		"winston": "0.6.2"
-	},
-	"devDependencies": {
-		"nodeunit": "0.7.4"
-	},
-	"main": "main.js",
-	"engine": {
-		"node": ">=0.8.x"
-	},
-	"scripts": {
-		"test": "nodeunit test"
-	}
+  "name": "download.jqueryui.com",
+  "version": "1.10.2-5",
+  "dependencies": {
+    "archiver": "0.1.1",
+    "async": "0.1.22",
+    "connect": "1.8.5",
+    "dateformat": "1.0.2-1.2.3",
+    "formidable": "1.0.9",
+    "glob-whatev": "0.1.7",
+    "gm": "1.8.1",
+    "grunt": "0.4.1",
+    "grunt-check-modules": "0.2.0",
+    "grunt-contrib-handlebars": "0.5.7",
+    "grunt-contrib-jshint": "0.2.0",
+    "grunt-contrib-uglify": "0.2.0",
+    "handlebars": "1.0.10",
+    "lzma": "1.2.1",
+    "optimist": "0.3.4",
+    "rimraf": "2.0.2",
+    "semver": "1.1.0",
+    "simple-log": "1.0.0",
+    "sqwish": "0.2.0",
+    "underscore": "1.4.4",
+    "winston": "0.6.2"
+  },
+  "devDependencies": {
+    "nodeunit": "0.7.4"
+  },
+  "main": "main.js",
+  "engine": {
+    "node": ">=0.8.x"
+  },
+  "scripts": {
+    "test": "nodeunit test"
+  }
 }
