@@ -1,5 +1,6 @@
 var Builder = require( "../lib/builder" ),
 	JqueryUi = require( "../lib/jquery-ui" ),
+	Packer = require( "../lib/packer" ),
 	semver = require( "semver" ),
 	ThemeRoller = require( "../lib/themeroller" ),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
@@ -8,20 +9,21 @@ var Builder = require( "../lib/builder" ),
 	invalidComponent = "invalid_widget";
 
 
-function filePresent( build, filepath ) {
+function filePresent( files, filepath ) {
 	var filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
-	return build.filter(function( build_filepath ) {
+	return files.filter(function( build_filepath ) {
 		return filepathRe.test( build_filepath );
 	}).length > 0;
 }
 
-function build( jqueryUi, components, theme, callback ) {
-	var builder = new Builder( jqueryUi, components, theme );
-	builder.build(function( err, build ) {
+function pack( jqueryUi, components, theme, callback ) {
+	var build = new Builder( jqueryUi, components ),
+		packer = new Packer( build, theme );
+	packer.pack(function( err, files ) {
 		if ( err ) {
 			callback( err, null );
 		} else {
-			callback( null, build.map(function( build_item ) {
+			callback( null, files.map(function( build_item ) {
 				return build_item.path.split( "/" ).slice( 1 ).join( "/" );
 			}));
 		}
@@ -116,12 +118,12 @@ var skipFiles = [
 	"development-bundle/MANIFEST"
 ];
 var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
-function commonFilesCheck( test, build ) {
+function commonFilesCheck( test, files ) {
 	commonFiles.forEach(function( filepath ) {
-		test.ok( filePresent( build, filepath ), "Missing a common file \"" + filepath + "\"." );
+		test.ok( filePresent( files, filepath ), "Missing a common file \"" + filepath + "\"." );
 	});
 	skipFiles.forEach(function( filepath ) {
-		test.ok( !filePresent( build, filepath ), "Should not include \"" + filepath + "\"." );
+		test.ok( !filePresent( files, filepath ), "Should not include \"" + filepath + "\"." );
 	});
 }
 
@@ -291,15 +293,15 @@ var componentFiles = {
 var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce(function( sum, component ) {
 	return sum + componentFiles.all.length + componentFiles[ component ].length;
 }, 0 );
-function componentFilesCheck( test, build, components ) {
+function componentFilesCheck( test, files, components ) {
 	Object.keys( componentFiles ).forEach(function( component ) {
 		if ( components.indexOf( component ) >= 0 ) {
 			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( filePresent( build, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
+				test.ok( filePresent( files, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		} else {
 			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( !filePresent( build, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
+				test.ok( !filePresent( files, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		}
 	});
@@ -343,7 +345,7 @@ var THEME_FILES_TESTCASES = function( components ) {
 		}, 0);
 	}, 0 );
 };
-function themeFilesCheck( test, build, components, theme ) {
+function themeFilesCheck( test, files, components, theme ) {
 	var expandComponents = function( themeFile ) {
 		// For every themeFile that has a {component} variable, replicate themeFile for each component (expanding each component).
 		if ( (/\{component\}/).test( themeFile.toString() ) ) {
@@ -354,13 +356,13 @@ function themeFilesCheck( test, build, components, theme ) {
 		return themeFile;
 	};
 	themeFiles.all.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
-			test.ok( filePresent( build, filepath ), "Missing a theme file \"" + filepath + "\"." );
+			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 	});
 	themeFiles.anyTheme.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
 		if ( theme.isNull ) {
-			test.ok( !filePresent( build, filepath ), "Should not include the theme file \"" + filepath + "\"." );
+			test.ok( !filePresent( files, filepath ), "Should not include the theme file \"" + filepath + "\"." );
 		} else {
-			test.ok( filePresent( build, filepath ), "Missing a theme file \"" + filepath + "\"." );
+			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 		}
 	});
 }
@@ -372,14 +374,14 @@ var tests = {
 			var components = this.allComponents,
 				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.jqueryUi, components, theme, function( err, build ) {
+			pack( this.jqueryUi, components, theme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, theme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
 			});
@@ -388,14 +390,14 @@ var tests = {
 			var components = this.allComponents,
 				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.jqueryUi, components, namedTheme, function( err, build ) {
+			pack( this.jqueryUi, components, namedTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, namedTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
 			});
@@ -404,14 +406,14 @@ var tests = {
 			var components = this.allComponents,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.jqueryUi, components, noTheme, function( err, build ) {
+			pack( this.jqueryUi, components, noTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, noTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
 			});
@@ -420,13 +422,13 @@ var tests = {
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.jqueryUi, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -434,13 +436,13 @@ var tests = {
 	"test: select all effects": function( test ) {
 		var components = this.allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.jqueryUi, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -450,14 +452,14 @@ var tests = {
 			var components = someWidgets1,
 				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.jqueryUi, components, theme, function( err, build ) {
+			pack( this.jqueryUi, components, theme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, theme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
 			});
@@ -466,14 +468,14 @@ var tests = {
 			var components = someWidgets1,
 				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.jqueryUi, components, namedTheme, function( err, build ) {
+			pack( this.jqueryUi, components, namedTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, namedTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
 			});
@@ -483,14 +485,14 @@ var tests = {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.jqueryUi, components, noTheme, function( err, build ) {
+			pack( this.jqueryUi, components, noTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, noTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
 			});
@@ -499,13 +501,13 @@ var tests = {
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.jqueryUi, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -513,29 +515,19 @@ var tests = {
 	"test: select no components": function( test ) {
 		var components = noComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.jqueryUi, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
 	},
-	"test: throw error when selecting invalid component": function( test ) {
-		var theme = this.theme;
-		test.expect( 1 );
-		try {
-			new Builder( this.jqueryUi, [ invalidComponent ], theme );
-		} catch( err ) {
-			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
-		}
-		test.done();
-	},
 	"test: scope widget CSS": function( test ) {
-		var builder,
+		var build, packer,
 			components = [ "core", "widget", "tabs" ],
 			filesToCheck = [
 				new RegExp( "development-bundle/themes/smoothness/jquery.ui.tabs.css" ),
@@ -543,12 +535,13 @@ var tests = {
 			],
 			scope = "#wrapper";
 		test.expect( filesToCheck.length );
-		builder = new Builder( this.jqueryUi, components, this.theme, { scope: scope } );
-		builder.build(function( err, build ) {
+		build = new Builder( this.jqueryUi, components, { scope: scope } );
+		packer = new Packer( build, this.theme, { scope: scope } );
+		packer.pack(function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 			} else {
-				build.filter(function( file ) {
+				files.filter(function( file ) {
 					return filesToCheck.some(function( filepath ) {
 						return filepath.test( file.path );
 					});
@@ -563,7 +556,7 @@ var tests = {
 		var components = this.allComponents,
 			theme = this.theme;
 		test.expect( 1 );
-		build( this.jqueryUi, components, theme, function( err, files ) {
+		pack( this.jqueryUi, components, theme, function( err, files ) {
 			var anyDuplicate,
 				duplicates = [],
 				marked = {};
