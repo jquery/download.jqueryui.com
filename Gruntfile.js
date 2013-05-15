@@ -35,14 +35,15 @@ grunt.initConfig({
 			curly: true,
 			eqeqeq: true,
 			eqnull: true,
-			strict: false,
 			immed: true,
 			latedef: true,
 			newcap: true,
 			noarg: true,
 			node: true,
 			onevar: true,
+			proto: true,
 			smarttabs: true,
+			strict: false,
 			sub: true,
 			trailing: true,
 			undef: true
@@ -348,23 +349,22 @@ function buildPackages( folder, callback ) {
 		fs = require( "fs" ),
 		path = require( "path" ),
 		JqueryUi = require( "./lib/jquery-ui" ),
+		Packer = require( "./lib/packer" ),
 		ThemeRoller = require( "./lib/themeroller" );
 
 	async.forEachSeries( JqueryUi.all(), function( jqueryUi, next ) {
-		var allComponents = jqueryUi.components().map(function( component ) {
-			return component.name;
-		}),
+		var stream,
 			theme = new ThemeRoller({ version: jqueryUi.pkg.version }),
-			builder = new Builder( jqueryUi, allComponents, theme ),
-			filename = path.join( folder, builder.filename() ),
-			stream;
+			build = new Builder( jqueryUi, ":all:" ),
+			packer = new Packer( build, theme ),
+			filename = path.join( folder, packer.filename() );
 		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
 		if ( fs.existsSync( filename ) ) {
 			grunt.log.error( "Build: \"" + filename + "\" already exists" );
 			return next( true );
 		}
 		stream = fs.createWriteStream( filename );
-		builder.writeTo( stream, function( err, result ) {
+		packer.zipTo( stream, function( err, result ) {
 			if ( err ) {
 				grunt.log.error( "Build: " + err.message );
 				return next( err );
@@ -411,8 +411,6 @@ grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases 
 		cloneOrFetch,
 		prepareAll
 	], function( err ) {
-		// Make grunt to quit properly. Here, a proper error message should have been printed already.
-		// 1: true on success, false on error
 		done( !err /* 1 */ );
 	});
 });

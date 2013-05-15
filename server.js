@@ -12,11 +12,12 @@ var argv = require( "optimist" ).argv,
 	connect = require( "connect" ),
 	formidable = require( "formidable" ),
 	Frontend = require( "./frontend" ),
-	Image = require( "./lib/themeroller.image" ),
-	querystring = require( "querystring" ),
-	JqueryUi = require( "./lib/jquery-ui" ),
-	ThemeRoller = require( "./lib/themeroller" ),
 	httpHost = argv.host || "localhost",
+	Image = require( "./lib/themeroller.image" ),
+	JqueryUi = require( "./lib/jquery-ui" ),
+	Packer = require( "./lib/packer" ),
+	querystring = require( "querystring" ),
+	ThemeRoller = require( "./lib/themeroller" ),
 	httpPort = argv.port || 8088,
 	routes = {
 		home: "/",
@@ -32,9 +33,8 @@ var argv = require( "optimist" ).argv,
 
 var frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
-	Builder.cacheJqueryUi();
-	Builder.cacheThemeImages();
 	Image.setCacheExpires( 60000 * 60 );
+	Packer.cacheThemeGalleryImages();
 }
 
 // OBS: We are using an older version of connect, which lacks a descent way to centralize requests error handling.

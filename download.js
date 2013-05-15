@@ -3,9 +3,10 @@ var downloadLogger, jqueryUis,
 	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
-	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
-	querystring = require( "querystring" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
+	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
+	Packer = require( "./lib/packer" ),
+	querystring = require( "querystring" ),
 	themeGallery = require( "./lib/themeroller.themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
 	winston = require( "winston" );
@@ -83,7 +84,7 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, theme,
+			var build, components, packer, start, theme,
 				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
@@ -98,21 +99,25 @@ Frontend.prototype = {
 				version: fields.version
 			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
-			builder = new Builder( JqueryUi.find( fields.version ), components, theme, {
+			start = new Date();
+			build = new Builder( JqueryUi.find( fields.version ), components, {
+				scope: fields.scope
+			});
+			packer = new Packer( build, theme, {
 				scope: fields.scope
 			});
 			response.setHeader( "Content-Type", "application/zip" );
-			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
-			builder.zipTo( response, function( err, written, elapsedTime ) {
+			response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
+			packer.zipTo( response, function( err, written, elapsedTime ) {
 				if ( !err ) {
 					// Log statistics
 					downloadLogger.info(
 						JSON.stringify({
 							build_size: written,
-							build_time: elapsedTime,
-							components: builder.components,
-							theme_name: builder.theme.name,
-							version: builder.jqueryUi.pkg.version
+							build_time: new Date() - start,
+							components: build.components,
+							theme_name: theme.name,
+							version: build.pkg.version
 						})
 					);
 				}

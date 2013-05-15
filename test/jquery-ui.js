@@ -43,10 +43,10 @@ var tests = {
 		});
 		test.done();
 	},
-	"test: theme files present": function( test ) {
+	"test: base theme files present": function( test ) {
 		var files = this.jqueryUi.files();
-		test.expect( files.themeFiles.length );
-		files.themeFiles.forEach(function( file ) {
+		test.expect( files.baseThemeFiles.length );
+		files.baseThemeFiles.forEach(function( file ) {
 			test.ok( notNull( file.data ), "Null file \"" + file.path + "\"." );
 		});
 		test.done();
