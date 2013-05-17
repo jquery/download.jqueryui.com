@@ -100,7 +100,7 @@ Frontend.prototype = {
 			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
 			start = new Date();
-			build = new Builder( JqueryUi.find( fields.version ), components, {
+			build = JqueryUi.find( fields.version ).build( components, {
 				scope: fields.scope
 			});
 			packer = new Packer( build, theme, {
