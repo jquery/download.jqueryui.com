@@ -37,7 +37,6 @@ grunt.initConfig({
 			eqnull: true,
 			immed: true,
 			latedef: true,
-			newcap: true,
 			noarg: true,
 			node: true,
 			onevar: true,
