@@ -45,9 +45,10 @@ Main.prototype = {
 		var allComponents, jqueryUi, success,
 			async = require( "async" ),
 			Builder = require( "./lib/builder" ),
+			Packer = require( "./lib/packer" ),
 			bundleFiles = [],
 			JqueryUi = require( "./lib/jquery-ui" ),
-			themeGallery = require( "./lib/themeroller.themegallery" );
+			themeGallery = require( "./lib/themeroller.themegallery" )();
 
 		jqueryUi = JqueryUi.getStable();
 		allComponents = jqueryUi.components().map(function( component ) {
@@ -55,9 +56,10 @@ Main.prototype = {
 		});
 
 		async.mapSeries( themeGallery, function( theme, callback ) {
-			var builder = new Builder( jqueryUi, allComponents, theme ),
+			var build = new Builder( jqueryUi, allComponents ),
+				packer = new Packer( build, theme, { skipDocs: true } ),
 				folderName = theme.folderName();
-			builder.build(function( err, files ) {
+			packer.pack(function( err, files ) {
 				if ( err ) {
 					return callback( err );
 				}
