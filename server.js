@@ -9,6 +9,7 @@ process.on( "uncaughtException", function ( err ) {
 
 var argv = require( "optimist" ).argv,
 	Builder = require( "./lib/builder" ),
+	Cache = require( "./lib/cache" ),
 	connect = require( "connect" ),
 	formidable = require( "formidable" ),
 	Frontend = require( "./frontend" ),
@@ -33,7 +34,7 @@ var argv = require( "optimist" ).argv,
 
 var frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
-	Image.setCacheExpires( 60000 * 60 );
+	Cache.on( 60000 * 60 );
 	Packer.cacheThemeGalleryImages();
 }
 
