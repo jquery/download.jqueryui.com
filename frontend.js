@@ -9,8 +9,23 @@ var _ = require( "underscore" ),
 var errorTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/500.html", "utf-8" ) ),
 	rootTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/root.html", "utf-8" ) );
 
+/**
+ * Frontend( options )
+ * - options [ Object ]: key-value pairs detailed below.
+ *
+ * options
+ * - config [ Object ]: optional, if present used instead of the `config.json` file;
+ * - env [ String ]: optional, specify whether in development or production environment. Default: "development".
+ * - host [ String ]: optional, specify the host where download.jqueryui.com server is running. Default: "" (empty string).
+ *
+ */
 var Frontend = function( options ) {
 	options = _.extend( {}, Frontend.defaults, options );
+	if ( options.config && typeof options.config === "object" ) {
+		require( "./lib/config" ).get = function() {
+			return options.config;
+		};
+	}
 	this.download = new Download( options );
 	this.themeroller = new ThemeRoller( options );
 };
