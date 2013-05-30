@@ -1,96 +1,41 @@
-var Main,
-	_ = require( "underscore" ),
-	Config = require( "./lib/config" );
-
-/**
- * Main( options ) -- or require( "download.jqueryui.com" )( options )
- * - options [ Object ]: key-value pairs detailed below.
- *
- * options
- * - config [ Object ]: optional, if present used instead of the `config.json` file;
- * - env [ String ]: optional, specify whether in development or production environment. Default: "development".
- * - host [ String ]: optional, specify the host where download.jqueryui.com server is running. Default: "" (empty string).
- *
- * attributes
- * - frontend [ Object ]: for more details see `frontend.js`.
- *
- */
-module.exports = function( options ) {
-	return new Main( options );
-};
-
-Main = function( options ) {
-	options = _.extend( {}, Main.defaults, options );
-	if ( options.config && typeof options.config === "object" ) {
-		Config.get = function() {
-			return options.config;
-		};
-	}
-	this.frontend = new ( require( "./frontend" ) )( options );
-};
-
-Main.defaults = {
-	// Empty, check frontend.js's.
-};
-
-Main.prototype = {
+module.exports = {
+	/**
+	 * The Builder class.
+	 */
+	Builder: require( "./lib/builder" ),
 
 	/**
-	 * Main#buildThemesBundle( callback )
-	 * - callback( err, bundleFiles ): bundleFiles is an Array of { path:<path>, data:<data> }'s.
-	 *
-	 * Generates the theme bundle with base and all themes from themegallery.
+	 * The JqueryUi class.
 	 */
-	buildThemesBundle: function( callback ) {
-		var allComponents, jqueryUi, success,
-			async = require( "async" ),
-			Builder = require( "./lib/builder" ),
-			Packer = require( "./lib/packer" ),
-			bundleFiles = [],
-			JqueryUi = require( "./lib/jquery-ui" ),
-			themeGallery = require( "./lib/themeroller.themegallery" )();
+	JqueryUi: require( "./lib/jquery-ui" ),
 
-		jqueryUi = JqueryUi.getStable();
-		allComponents = jqueryUi.components().map(function( component ) {
-			return component.name;
-		});
+	/**
+	 * The JqueryUi class.
+	 */
+	Packer: require( "./lib/packer" ),
 
-		async.mapSeries( themeGallery, function( theme, callback ) {
-			var build = new Builder( jqueryUi, allComponents ),
-				packer = new Packer( build, theme, { skipDocs: true } ),
-				folderName = theme.folderName();
-			packer.pack(function( err, files ) {
-				if ( err ) {
-					return callback( err );
-				}
-				// Add theme files.
-				files
-					// Pick only theme files we need on the bundle.
-					.filter(function( file ) {
-						var themeCssOnlyRe = new RegExp( "development-bundle/themes/" + folderName + "/jquery.ui.theme.css" ),
-							themeDirRe = new RegExp( "css/" + folderName );
-						if ( themeCssOnlyRe.test( file.path ) || themeDirRe.test( file.path ) ) {
-							return true;
-						}
-						return false;
-					})
-					// Convert paths the way bundle needs and add it into bundleFiles.
-					.forEach(function( file ) {
-						// 1: Remove initial package name eg. "jquery-ui-1.10.0.custom".
-						// 2: Make jquery-ui-1.10.0.custom.css into jquery-ui.css, or jquery-ui-1.10.0.custom.min.css into jquery-ui.min.css
-						file.path = file.path
-							.split( "/" ).slice( 1 ).join( "/" ) /* 1 */
-							.replace( /development-bundle\/themes/, "css" )
-							.replace( /css/, "themes" )
-							.replace( /jquery-ui-.*?(\.min)*\.css/, "jquery-ui$1.css" ); /* 2 */
-						bundleFiles.push( file );
-					});
+	/**
+	 * The Util object.
+	 */
+	util: require( "./lib/util" ),
 
-				callback( null, files );
-			});
-		}, function( err ) {
-			callback( err, bundleFiles );
-		});
+  /**
+	 * frontend( options )
+	 * - options [ Object ]: see `frontend.js` for more details.
+	 *
+	 * Returns a frontend instance.
+	 */
+	frontend: function( options ) {
+		return new ( require( "./frontend" ) )( options );
+	},
+
+	/**
+	 * themeGallery( jqueryUi )
+	 * - jqueryUi [ instanceof JqueryUi ]: see `frontend.js` for more details.
+	 *
+	 * Returns themeGallery using jqueryUi's version.
+	 */
+	themeGallery: function( jqueryUi ) {
+		return require( "./lib/themeroller.themegallery" )( jqueryUi );
 	}
 };
-

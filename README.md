@@ -82,7 +82,7 @@ $ npm link download.jqueryui.com
 
 Temporarily change its `grunt.js` to use localhost instead of http://download.jqueryui.com.
 ```diff
-                var downloadBuilder = require( "download.jqueryui.com" )({
+                var frontend = require( "download.jqueryui.com" ).frontend({
 -                               host: "http://download.jqueryui.com"
 +                               host: "http://localhost:8088",
                                 env: "production"
