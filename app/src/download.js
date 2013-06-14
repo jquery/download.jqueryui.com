@@ -1,5 +1,5 @@
 /*jshint jquery: true, browser: true */
-/*global Hash: false, JST: false, Model: false */
+/*global DownloadBuilder: false, Hash: false, JST: false, Model: false */
 /*!
  * jQuery UI DownloadBuilder client-side JavaScript file
  * http://jqueryui.com/download/
@@ -8,11 +8,11 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, JST, Model, undefined ) {
+(function( $, DownloadBuilder, Hash, JST, Model, undefined ) {
 
-	var dependencies, dependents, model,
+	var allComponents, dependencies, dependents, model,
 		componentsLoad = $.Deferred(),
-		downloadBuilder = $( "#download-builder" ),
+		downloadBuilder =  $( "#download-builder" ),
 		themesLoad = $.Deferred(),
 		baseVars = downloadBuilder.data( "base-vars" ),
 		downloadJqueryuiHost = downloadBuilder.data( "download-jqueryui-host" ),
@@ -45,203 +45,76 @@
 		return dfd;
 	}
 
-	function allComponents() {
-		return $( "#download-builder .component-group-list input[type=checkbox]" );
-	}
-
-	function allGroup( referenceElement ) {
-		return $( referenceElement ).closest( ".component-group" ).find( ".component-group-list input[type=checkbox]" );
-	}
-
-	function _check( elem, value, options ) {
-		var modelUpdates = {},
-			depElem = $();
-		options = options || {};
-
-		elem.each(function() {
-			var elem = $( this ),
-				name = elem.attr( "name" );
-
-			// Handle dependencies
-			if ( value && !options.skipDependencies ) {
-				if ( dependencies[ name ] ) {
-					// Whenever a checkbox is activated, also activate all dependencies
-					depElem = depElem.add( dependencies[ name ] );
-				}
-			} else if ( dependents[ name ] && !options.skipDependencies ) {
-				// Whenever a checkbox is deactivated, also deactivate all dependents
-				depElem = depElem.add( dependents[ name ] );
-			}
-
-			elem.prop( "checked", value );
-
-			modelUpdates[ name ] = value;
-		});
-
-		// Update dependencies
-		if ( depElem.length ) {
-			_check( depElem, value );
-		}
-
-		// Update toggle all
-		if ( value ) {
-			// Set group toggle all if all components of its group are checked
-			if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
-				$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
-			}
-			// Set toggle all if all components are checked
-			if ( !allComponents().filter( ":not(:checked)" ).length ) {
-				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
-			}
-		} else {
-			// Unset group toggle all if no components of its group are checked
-			if ( !allGroup( elem ).filter( ":checked" ).length ) {
-				$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
-			}
-			// Unset toggle all if no components are checked
-			if ( !allComponents().filter( ":checked" ).length ) {
-				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
-			}
-		}
-
-		model.set( modelUpdates );
-		downloadOnOff();
-	}
-
-	function check( event, elem, value, options ) {
-		var consolidatedDependents, consolidatedNames;
-
-		// Uncheck validations
-		if ( !value ) {
-			consolidatedDependents = $();
-			consolidatedNames = [];
-			elem.each(function() {
-				var name = $( this ).attr( "name" );
-				if ( dependents[ name ] && dependents[ name ].filter( ":checked" ).not( elem ).length > 0 ) {
-					consolidatedNames.push( name );
-					consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ).not( elem ) );
-				}
-			});
-
-			// Validate if uncheck is allowed when it has dependents
-			if ( consolidatedDependents.length > 0 ) {
-				event.preventDefault();
-				$( "<div>" )
-					.attr( "title", "Remove " + consolidatedNames.join( ", " ) + "?" )
-					.append(
-						$( "<p>" ).html(
-							"Are you sure you want to remove <b>" + consolidatedNames.join( ", " ) + "</b>? The following " + pluralize( consolidatedDependents.length, "component", "components" ) + " " + pluralize( consolidatedDependents.length, "depends", "depend" ) + " on it and will be removed: " + consolidatedDependents.map(function() {
-								return "<b>" + this.name + "</b>";
-							}).toArray().join( ", " ) + "."
-						)
-					)
-					.dialog({
-						modal: true,
-						buttons: {
-							"Remove": function() {
-								_check( elem, value, options );
-								$( this ).remove();
-							},
-							"Cancel": function() {
-								$( this ).remove();
-							}
-						}
-					})
-					.dialog( "widget" ).addClass( "download-builder-dialog" );
-			} else {
-				_check( elem, value, options );
-			}
-
-		// Check validations (none)
-		} else {
-			_check( elem, value, options );
-		}
-	}
-
 	function downloadOnOff() {
-		if ( !allComponents().filter( ":checked" ).length && $( "#theme" ).val() === "none" ) {
+		if ( !$( "input[type=checkbox][data-dependencies]" ).filter( ":checked" ).length && $( "#theme" ).val() === "none" ) {
 			$( "#download-builder input[type=submit]" ).prop( "disabled", true ).addClass( "ui-state-disabled" );
 		} else {
 			$( "#download-builder input[type=submit]" ).prop( "disabled", false ).removeClass( "ui-state-disabled" );
 		}
 	}
 
-	function drawToggleAll( className ) {
-		return $( "<label>" )
-			.addClass( className )
-			.text( " Toggle All" )
-			.prepend(
-				$( "<input type=checkbox>" )
-					.prop( "checked", true )
-					.addClass( "ui-widget-content" )
-			);
-	}
-
 	function initComponents( components ) {
-		var toggleAll;
-		dependencies = {};
-		dependents = {};
-
 		$( "#download-builder .components-area" ).html( JST[ "components.html" ]( components ) );
-
-		model.setOrderedComponents(
-			$( "#download-builder .components-area input[type=checkbox]" ).map(function() {
-				return this.name;
-			})
-		);
-
-		// Initializes dependencies and dependents auxiliary variables.
-		$( "#download-builder input[type=checkbox]" ).each(function() {
-			var checkbox = $( this ),
-				thisDependencies = checkbox.data( "dependencies" ),
-				thisName = checkbox.attr( "name" );
-
-			if ( !thisName || !thisDependencies ) {
-				return;
-			}
-			thisDependencies = thisDependencies.split( "," );
-			dependencies[ thisName ] = $();
-			$.each( thisDependencies, function() {
-				var dependecy = this,
-					dependecyElem = $( "[name=" + this + "]" );
-				dependencies[ thisName ] = dependencies[ thisName ].add( dependecyElem );
-				if ( !dependents[ dependecy ] ) {
-					dependents[ dependecy ] = $();
+		downloadBuilder = new DownloadBuilder( "#download-builder" ).on({
+			"check": function( event, components, value, extra ) {
+				if ( extra.affectedDependents && extra.affectedDependents.length ) {
+					event.preventDefault();
+					$( "<div>" )
+						.attr( "title", "Remove " + extra.affectedComponentNames.join( ", " ) + "?" )
+						.append(
+							$( "<p>" ).html(
+								"Are you sure you want to remove <b>" + extra.affectedComponentNames.join( ", " ) + "</b>? The following " + pluralize( extra.affectedDependents.length, "component", "components" ) + " " + pluralize( extra.affectedDependents.length, "depends", "depend" ) + " on it and will be removed: " + extra.affectedDependents.map(function() {
+									return "<b>" + this.name + "</b>";
+								}).toArray().join( ", " ) + "."
+							)
+						)
+						.dialog({
+							modal: true,
+							buttons: {
+								"Remove": function() {
+									event.defaultAction();
+									$( this ).remove();
+								},
+								"Cancel": function() {
+									$( this ).remove();
+								}
+							}
+						})
+						.dialog( "widget" ).addClass( "download-builder-dialog" );
 				}
-				dependents[ dependecy ] = dependents[ dependecy ].add( checkbox );
-			});
+			},
+			"accumulated-change": function( event, components, value ) {
+				var changes = {};
+				components.each(function() {
+					var component = $( this );
+					changes[ component.attr( "name" ) ] = value;
+				});
+				model.set( changes );
+				downloadOnOff();
+			}
 		});
 
-		// Generating toggle all checkboxes
-		if ( !( toggleAll = $( "#download-builder .toggleAll" ) ).length ) {
-			toggleAll = drawToggleAll( "toggleAll" ).insertAfter( $( "#download-builder .components-area" ).prev().find( "h2" ) );
-		}
-		$( "#download-builder .component-group h3" ).after( drawToggleAll( "toggle" ) );
+		// Zip categories' components.
+		allComponents = $.map( components.categories, function( category ) {
+			return category.components;
+		});
+
+		// Flatten it and return name only.
+		allComponents = $.map( allComponents, function( component ) {
+			return component.name;
+		});
+
+		model.setOrderedComponents( allComponents );
 
 		/* Remember components check/uncheck selection
 			- If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
 			- If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
 		*/
-		allComponents().each(function() {
-			var elem = $( this ),
-				name = elem.attr( "name" );
+		$.each( allComponents, function() {
+			var name = this,
+				elem = $( "input[name=\"" + name + "\"]" );
 			if ( model.has( name ) && model.get( name ) === false ) {
-				_check( elem, false );
-			}
-		});
-
-		// Binds click handlers on components checkboxes
-		toggleAll.find( "input[type=checkbox]" ).on( "click", function( event ) {
-			check( event, allComponents(), $( this ).prop( "checked" ), {
-				skipDependencies: true
-			});
-		});
-		$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
-			var target = $( event.target );
-			if ( target.parent().is( ".toggle" ) ) {
-				check( event, allGroup( this ), $( this ).prop( "checked" ) );
-			} else {
-				check( event, $( this ), $( this ).prop( "checked" ) );
+				downloadBuilder.set( elem, false );
 			}
 		});
 
@@ -296,7 +169,7 @@
 						model.attributes[ attribute ] = value = false;
 					}
 					if ( value === false && $( this ).prop( "checked" ) !== value ) {
-						_check( $( this ), false );
+						downloadBuilder.set( $( this ), false );
 					}
 					// Ignore checked-components in the model
 					if ( value ) {
@@ -412,4 +285,4 @@
 		}
 	});
 
-}( jQuery, Hash, JST, Model ) );
+}( jQuery, DownloadBuilder, Hash, JST, Model ) );
