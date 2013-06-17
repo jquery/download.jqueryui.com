@@ -410,6 +410,8 @@ grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases 
 		cloneOrFetch,
 		prepareAll
 	], function( err ) {
+		// Make grunt to quit properly. Here, a proper error message should have been printed already.
+		// 1: true on success, false on error
 		done( !err /* 1 */ );
 	});
 });
