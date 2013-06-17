@@ -109,19 +109,20 @@ Frontend.prototype = {
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
 			packer.zipTo( response, function( err, written, elapsedTime ) {
-				if ( !err ) {
-					// Log statistics
-					downloadLogger.info(
-						JSON.stringify({
-							build_size: written,
-							build_time: new Date() - start,
-							components: build.components,
-							theme_name: theme.name,
-							version: build.pkg.version
-						})
-					);
+				if ( err ) {
+					return callback( err );
 				}
-				return callback( err );
+				// Log statistics
+				downloadLogger.info(
+					JSON.stringify({
+						build_size: written,
+						build_time: new Date() - start,
+						components: build.components,
+						theme_name: theme.name,
+						version: build.pkg.version
+					})
+				);
+				return callback();
 			});
 		} catch( err ) {
 			return callback( err );
