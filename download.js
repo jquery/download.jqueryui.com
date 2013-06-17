@@ -1,18 +1,29 @@
-var releases,
+var downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
 	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
+	JqueryUi = require( "./lib/jquery-ui" ),
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
+	Packer = require( "./lib/packer" ),
 	querystring = require( "querystring" ),
-	Release = require( "./lib/release" ),
-	themeGallery = require( "./lib/themeroller.themegallery" ),
-	ThemeRoller = require( "./lib/themeroller" );
+	themeGallery = require( "./lib/themeroller.themegallery" )(),
+	ThemeRoller = require( "./lib/themeroller" ),
+	winston = require( "winston" );
 
-releases = Release.all();
+downloadLogger = new winston.Logger({
+	transports: [
+		new winston.transports.File({
+			filename: __dirname + "/log/downloads.log",
+			json: false
+		})
+	]
+});
 
-Handlebars.registerHelper( "isVersionChecked", function( release ) {
-	return Release.getStable().pkg.version === release.pkg.version ? " checked=\"checked\"" : "";
+jqueryUis = JqueryUi.all();
+
+Handlebars.registerHelper( "isVersionChecked", function( jqueryUi ) {
+	return JqueryUi.getStable().pkg.version === jqueryUi.pkg.version ? " checked=\"checked\"" : "";
 });
 
 Handlebars.registerHelper( "join", function( array, sep, options ) {
@@ -45,25 +56,25 @@ Frontend.prototype = {
 		return indexTemplate({
 			baseVars: themeGallery[ 2 ].serializedVars,
 			components: JSON.stringify({
-				categories: Release.getStable().categories()
+				categories: JqueryUi.getStable().categories()
 			}),
 			host: this.host,
 			production: this.env.toLowerCase() === "production",
 			resources: this.resources,
-			releases: releases
+			jqueryUis: jqueryUis
 		});
 	},
 
 	components: function( params ) {
-		var data, release;
+		var data, jqueryUi;
 		if ( params.version ) {
-			release = Release.find( params.version );
+			jqueryUi = JqueryUi.find( params.version );
 		}
-		if ( release == null ) {
+		if ( jqueryUi == null ) {
 			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
 			data = { error : "invalid version" };
 		} else {
-			data = { categories: release.categories() };
+			data = { categories: jqueryUi.categories() };
 		}
 		return jsonpTemplate({
 			callback: params.callback,
@@ -73,7 +84,7 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, theme,
+			var build, components, packer, start, theme,
 				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
@@ -88,15 +99,30 @@ Frontend.prototype = {
 				version: fields.version
 			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
-			builder = new Builder( Release.find( fields.version ), components, theme, {
+			start = new Date();
+			build = JqueryUi.find( fields.version ).build( components, {
+				scope: fields.scope
+			});
+			packer = new Packer( build, theme, {
 				scope: fields.scope
 			});
 			response.setHeader( "Content-Type", "application/zip" );
-			response.setHeader( "Content-Disposition", "attachment; filename=" + builder.filename() );
-			builder.writeTo( response, function( err ) {
+			response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
+			packer.zipTo( response, function( err, written, elapsedTime ) {
 				if ( err ) {
 					return callback( err );
 				}
+				// Log statistics
+				downloadLogger.info(
+					JSON.stringify({
+						build_size: written,
+						build_time: new Date() - start,
+						components: build.components,
+						theme_name: theme.name,
+						version: build.pkg.version
+					})
+				);
+				return callback();
 			});
 		} catch( err ) {
 			return callback( err );

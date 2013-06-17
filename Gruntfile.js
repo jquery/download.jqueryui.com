@@ -35,14 +35,14 @@ grunt.initConfig({
 			curly: true,
 			eqeqeq: true,
 			eqnull: true,
-			strict: false,
 			immed: true,
 			latedef: true,
-			newcap: true,
 			noarg: true,
 			node: true,
 			onevar: true,
+			proto: true,
 			smarttabs: true,
+			strict: false,
 			sub: true,
 			trailing: true,
 			undef: true
@@ -140,14 +140,14 @@ function cloneOrFetch( callback ) {
 	]);
 }
 
-function buildAll( callback ) {
+function prepareAll( callback ) {
 	var config = require( "./lib/config" )();
 
 	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
 		async.series([
 			checkout( jqueryUi.ref ),
 			install,
-			build,
+			prepare,
 			copy( jqueryUi.ref )
 		], function( err ) {
 			// Go to next ref
@@ -267,10 +267,10 @@ function install( callback ) {
 	]);
 }
 
-function build( callback ) {
+function prepare( callback ) {
 	async.series([
 		function( callback ) {
-			grunt.log.writeln( "Building jQuery UI" );
+			grunt.log.writeln( "Building manifest for jQuery UI" );
 			grunt.util.spawn({
 				cmd: "grunt",
 				args: [ "manifest" ],
@@ -278,15 +278,6 @@ function build( callback ) {
 					cwd: "tmp/jquery-ui"
 				}
 			}, log( callback, "Done building manifest", "Error building manifest" ) );
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "release" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, "Done building release", "Error building release" ) );
 		},
 		function() {
 			grunt.log.writeln( "Building API documentation for jQuery UI" );
@@ -311,20 +302,20 @@ function copy( ref ) {
 			rimraf = require( "rimraf" ),
 			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
 			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
-		grunt.file.mkdir( "release" );
+		grunt.file.mkdir( "jquery-ui" );
 		async.series([
 			function( callback ) {
-				if ( fs.existsSync( "release/" + ref ) ) {
-					grunt.log.writeln( "Cleaning up existing release/" + ref );
-					rimraf( "release/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
+				if ( fs.existsSync( "jquery-ui/" + ref ) ) {
+					grunt.log.writeln( "Cleaning up existing jquery-ui/" + ref );
+					rimraf( "jquery-ui/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
 				} else {
 					callback();
 				}
 			},
 			function( callback ) {
-				var from = "tmp/jquery-ui/dist/" + dir,
-					to = "release/" + ref;
-				grunt.log.writeln( "Copying jQuery UI " + version + " over to release/" + ref );
+				var from = "tmp/jquery-ui",
+					to = "jquery-ui/" + ref;
+				grunt.log.writeln( "Copying jQuery UI " + version + " over to jquery-ui/" + ref );
 				try {
 					grunt.file.recurse( from, function( filepath ) {
 							grunt.file.copy( filepath, filepath.replace( new RegExp( "^" + from ), to ) );
@@ -336,12 +327,17 @@ function copy( ref ) {
 				grunt.log.ok( "Done copying" );
 				callback();
 			},
-			function() {
-				grunt.log.writeln( "Copying API documentation for jQuery UI over to release/" + ref + "/docs/" );
+			function( callback ) {
+				grunt.log.writeln( "Copying API documentation for jQuery UI over to jquery-ui/" + ref + "/docs/" );
 				grunt.file.expand({ filter: "isFile" }, docs + "/**" ).forEach(function( file ) {
-					grunt.file.copy( file, file.replace( docs, "release/" + ref + "/docs/" ));
+					grunt.file.copy( file, file.replace( docs, "jquery-ui/" + ref + "/docs/" ));
 				});
 				callback();
+			},
+			function() {
+				var removePath = ref + "/node_modules";
+				grunt.log.writeln( "Cleaning up copied jQuery UI" );
+				rimraf( "jquery-ui/" + removePath, log( callback, "Removed jquery-ui/" + removePath, "Error removing jquery-ui/" + removePath ) );
 			}
 		]);
 	};
@@ -351,24 +347,23 @@ function buildPackages( folder, callback ) {
 	var Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
 		path = require( "path" ),
-		Release = require( "./lib/release" ),
+		JqueryUi = require( "./lib/jquery-ui" ),
+		Packer = require( "./lib/packer" ),
 		ThemeRoller = require( "./lib/themeroller" );
 
-	async.forEachSeries( Release.all(), function( release, next ) {
-		var allComponents = release.components().map(function( component ) {
-			return component.name;
-		}),
-			theme = new ThemeRoller({ version: release.pkg.version }),
-			builder = new Builder( release, allComponents, theme ),
-			filename = path.join( folder, builder.filename() ),
-			stream;
+	async.forEachSeries( JqueryUi.all(), function( jqueryUi, next ) {
+		var stream,
+			theme = new ThemeRoller({ version: jqueryUi.pkg.version }),
+			build = new Builder( jqueryUi, ":all:" ),
+			packer = new Packer( build, theme ),
+			filename = path.join( folder, packer.filename() );
 		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
 		if ( fs.existsSync( filename ) ) {
 			grunt.log.error( "Build: \"" + filename + "\" already exists" );
 			return next( true );
 		}
 		stream = fs.createWriteStream( filename );
-		builder.writeTo( stream, function( err, result ) {
+		packer.zipTo( stream, function( err, result ) {
 			if ( err ) {
 				grunt.log.error( "Build: " + err.message );
 				return next( err );
@@ -407,13 +402,13 @@ grunt.registerTask( "mkdirs", "Create directories", function() {
 	}
 });
 
-grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-release", "build-app" ] );
+grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-jquery-ui", "build-app" ] );
 
-grunt.registerTask( "prepare-release", "Fetches and builds jQuery UI releases specified in config file", function() {
+grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
 	async.series([
 		cloneOrFetch,
-		buildAll
+		prepareAll
 	], function( err ) {
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error

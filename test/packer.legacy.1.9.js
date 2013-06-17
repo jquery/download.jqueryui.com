@@ -1,5 +1,6 @@
 var Builder = require( "../lib/builder" ),
-	Release = require( "../lib/release" ),
+	JqueryUi = require( "../lib/jquery-ui" ),
+	Packer = require( "../lib/packer" ),
 	semver = require( "semver" ),
 	ThemeRoller = require( "../lib/themeroller" ),
 	someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " ),
@@ -8,28 +9,25 @@ var Builder = require( "../lib/builder" ),
 	invalidComponent = "invalid_widget";
 
 
-function filePresent( build, filepath ) {
+function filePresent( files, filepath ) {
 	var filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
-	return build.filter(function( build_filepath ) {
+	return files.filter(function( build_filepath ) {
 		return filepathRe.test( build_filepath );
 	}).length > 0;
 }
 
-function build( release, components, theme, callback ) {
-	var builder = new Builder( release, components, theme );
-	builder.build(function( err, build ) {
+function pack( jqueryUi, components, theme, callback ) {
+	var build = new Builder( jqueryUi, components ),
+		packer = new Packer( build, theme );
+	packer.pack(function( err, files ) {
 		if ( err ) {
 			callback( err, null );
 		} else {
-			callback( null, build.map(function( build_item ) {
+			callback( null, files.map(function( build_item ) {
 				return build_item.path.split( "/" ).slice( 1 ).join( "/" );
 			}));
 		}
 	});
-}
-
-function flatten( flat, arr ) {
-	return flat.concat( arr );
 }
 
 function replace( variable, value ) {
@@ -42,17 +40,18 @@ function replace( variable, value ) {
 	};
 }
 
-function stripBanner( src ) {
-	if ( src instanceof Buffer ) {
-		src = src.toString( "utf-8" );
-	}
-	return src.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
+function flatten( flat, arr ) {
+	return flat.concat( arr );
 }
+
 
 var commonFiles = [
 	"index.html",
 	"development-bundle/AUTHORS.txt",
+	"development-bundle/grunt.js",
 	"development-bundle/MIT-LICENSE.txt",
+	"development-bundle/package.json",
+	"development-bundle/README.md",
 	/development-bundle\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
 	"development-bundle/package.json",
 	"development-bundle/demos/demos.css",
@@ -66,6 +65,9 @@ var commonFiles = [
 	"development-bundle/external/globalize.culture.de-DE.js",
 	"development-bundle/external/globalize.culture.ja-JP.js",
 	"development-bundle/external/globalize.js",
+	"development-bundle/external/jquery.bgiframe-2.1.2.js",
+	"development-bundle/external/jquery.cookie.js",
+	"development-bundle/external/jquery.metadata.js",
 	"development-bundle/external/jquery.mousewheel.js",
 	"development-bundle/external/jshint.js",
 	"development-bundle/external/qunit.css",
@@ -73,7 +75,6 @@ var commonFiles = [
 	"development-bundle/themes/base/jquery.ui.base.css",
 	"development-bundle/themes/base/jquery.ui.theme.css",
 	"development-bundle/themes/base/jquery-ui.css",
-	"development-bundle/themes/base/images/animated-overlay.gif",
 	"development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png",
 	"development-bundle/themes/base/images/ui-bg_flat_75_ffffff_40x100.png",
 	"development-bundle/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png",
@@ -89,7 +90,6 @@ var commonFiles = [
 	"development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png",
 	"development-bundle/themes/base/minified/jquery.ui.theme.min.css",
 	"development-bundle/themes/base/minified/jquery-ui.min.css",
-	"development-bundle/themes/base/minified/images/animated-overlay.gif",
 	"development-bundle/themes/base/minified/images/ui-bg_flat_0_aaaaaa_40x100.png",
 	"development-bundle/themes/base/minified/images/ui-bg_flat_75_ffffff_40x100.png",
 	"development-bundle/themes/base/minified/images/ui-bg_glass_55_fbf9ee_1x400.png",
@@ -110,16 +110,15 @@ var commonFiles = [
 	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/
 ];
 var skipFiles = [
-	"development-bundle/demos/index.html",
 	"development-bundle/MANIFEST"
 ];
 var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
-function commonFilesCheck( test, build ) {
+function commonFilesCheck( test, files ) {
 	commonFiles.forEach(function( filepath ) {
-		test.ok( filePresent( build, filepath ), "Missing a common file \"" + filepath + "\"." );
+		test.ok( filePresent( files, filepath ), "Missing a common file \"" + filepath + "\"." );
 	});
 	skipFiles.forEach(function( filepath ) {
-		test.ok( !filePresent( build, filepath ), "Should not include \"" + filepath + "\"." );
+		test.ok( !filePresent( files, filepath ), "Should not include \"" + filepath + "\"." );
 	});
 }
 
@@ -234,7 +233,15 @@ var componentFiles = {
 		"development-bundle/themes/base/minified/jquery.ui.tooltip.min.css"
 	],
 	"effect": [
-		"development-bundle/demos/effect/*"
+		"development-bundle/demos/effect/*",
+		"development-bundle/demos/addClass/*",
+		"development-bundle/demos/animate/*",
+		"development-bundle/demos/hide/*",
+		"development-bundle/demos/removeClass/*",
+		"development-bundle/demos/show/*",
+		"development-bundle/demos/switchClass/*",
+		"development-bundle/demos/toggle/*",
+		"development-bundle/demos/toggleClass/*"
 	],
 	"effect-blind": [
 		"development-bundle/docs/blind-effect.html"
@@ -281,15 +288,15 @@ var componentFiles = {
 var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce(function( sum, component ) {
 	return sum + componentFiles.all.length + componentFiles[ component ].length;
 }, 0 );
-function componentFilesCheck( test, build, components ) {
+function componentFilesCheck( test, files, components ) {
 	Object.keys( componentFiles ).forEach(function( component ) {
 		if ( components.indexOf( component ) >= 0 ) {
 			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( filePresent( build, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
+				test.ok( filePresent( files, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		} else {
 			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( !filePresent( build, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
+				test.ok( !filePresent( files, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
 			});
 		}
 	});
@@ -308,17 +315,11 @@ var themeFiles = {
 		"development-bundle/themes/{folder_name}/minified/jquery-ui.min.css"
 	],
 	"anyTheme": [
-		"css/{folder_name}/images/animated-overlay.gif",
-		"css/{folder_name}/images/ui-icons*png",
-		"css/{folder_name}/images/ui-bg*png",
+		"css/{folder_name}/images/*",
 		"development-bundle/themes/{folder_name}/jquery.ui.theme.css",
-		"development-bundle/themes/{folder_name}/images/animated-overlay.gif",
-		"development-bundle/themes/{folder_name}/images/ui-icons*png",
-		"development-bundle/themes/{folder_name}/images/ui-bg*png",
+		"development-bundle/themes/{folder_name}/images/*",
 		"development-bundle/themes/{folder_name}/minified/jquery.ui.theme.min.css",
-		"development-bundle/themes/{folder_name}/minified/images/animated-overlay.gif",
-		"development-bundle/themes/{folder_name}/minified/images/ui-icons*png",
-		"development-bundle/themes/{folder_name}/minified/images/ui-bg*png"
+		"development-bundle/themes/{folder_name}/minified/images/*"
 	]
 };
 var themeComponents = "accordion autocomplete button core datepicker dialog menu progressbar resizable selectable slider spinner tabs tooltip".split( " " ),
@@ -333,7 +334,7 @@ var THEME_FILES_TESTCASES = function( components ) {
 		}, 0);
 	}, 0 );
 };
-function themeFilesCheck( test, build, components, theme ) {
+function themeFilesCheck( test, files, components, theme ) {
 	var expandComponents = function( themeFile ) {
 		// For every themeFile that has a {component} variable, replicate themeFile for each component (expanding each component).
 		if ( (/\{component\}/).test( themeFile.toString() ) ) {
@@ -344,13 +345,13 @@ function themeFilesCheck( test, build, components, theme ) {
 		return themeFile;
 	};
 	themeFiles.all.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
-			test.ok( filePresent( build, filepath ), "Missing a theme file \"" + filepath + "\"." );
+			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 	});
 	themeFiles.anyTheme.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
 		if ( theme.isNull ) {
-			test.ok( !filePresent( build, filepath ), "Should not include the theme file \"" + filepath + "\"." );
+			test.ok( !filePresent( files, filepath ), "Should not include the theme file \"" + filepath + "\"." );
 		} else {
-			test.ok( filePresent( build, filepath ), "Missing a theme file \"" + filepath + "\"." );
+			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 		}
 	});
 }
@@ -362,14 +363,14 @@ var tests = {
 			var components = this.allComponents,
 				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, theme, function( err, build ) {
+			pack( this.jqueryUi, components, theme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, theme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
 			});
@@ -378,14 +379,14 @@ var tests = {
 			var components = this.allComponents,
 				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, namedTheme, function( err, build ) {
+			pack( this.jqueryUi, components, namedTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, namedTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
 			});
@@ -394,14 +395,14 @@ var tests = {
 			var components = this.allComponents,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, noTheme, function( err, build ) {
+			pack( this.jqueryUi, components, noTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, noTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
 			});
@@ -410,13 +411,13 @@ var tests = {
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -424,13 +425,13 @@ var tests = {
 	"test: select all effects": function( test ) {
 		var components = this.allEffects;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -440,14 +441,14 @@ var tests = {
 			var components = someWidgets1,
 				theme = this.theme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, theme, function( err, build ) {
+			pack( this.jqueryUi, components, theme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, theme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
 			});
@@ -456,14 +457,14 @@ var tests = {
 			var components = someWidgets1,
 				namedTheme = this.namedTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, namedTheme, function( err, build ) {
+			pack( this.jqueryUi, components, namedTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, namedTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
 			});
@@ -473,14 +474,14 @@ var tests = {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
-			build( this.release, components, noTheme, function( err, build ) {
+			pack( this.jqueryUi, components, noTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
-					commonFilesCheck( test, build );
-					componentFilesCheck( test, build, components );
-					themeFilesCheck( test, build, components, noTheme );
+					commonFilesCheck( test, files );
+					componentFilesCheck( test, files, components );
+					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
 			});
@@ -489,13 +490,13 @@ var tests = {
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -503,57 +504,22 @@ var tests = {
 	"test: select no components": function( test ) {
 		var components = noComponents;
 		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
-		build( this.release, components, this.theme, function( err, build ) {
+		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
-				commonFilesCheck( test, build );
-				componentFilesCheck( test, build, components );
+				commonFilesCheck( test, files );
+				componentFilesCheck( test, files, components );
 				test.done();
 			}
-		});
-	},
-	"test: throw error when selecting invalid component": function( test ) {
-		var theme = this.theme;
-		test.expect( 1 );
-		try {
-			new Builder( this.release, [ invalidComponent ], theme );
-		} catch( err ) {
-			test.equal( err.message, "Builder: invalid components [ \"invalid_widget\" ]", "Should check \"" + invalidComponent + "\" component and throw error" );
-		}
-		test.done();
-	},
-	"test: scope widget CSS": function( test ) {
-		var builder,
-			components = [ "core", "widget", "tabs" ],
-			filesToCheck = [
-				new RegExp( "development-bundle/themes/smoothness/jquery.ui.tabs.css" ),
-				/css\/smoothness\/jquery-ui-.*\.custom\.min\.css/
-			],
-			scope = "#wrapper";
-		test.expect( filesToCheck.length );
-		builder = new Builder( this.release, components, this.theme, { scope: scope } );
-		builder.build(function( err, build ) {
-			if ( err ) {
-				test.ok( false, err.message );
-			} else {
-				build.filter(function( file ) {
-					return filesToCheck.some(function( filepath ) {
-						return filepath.test( file.path );
-					});
-				}).forEach(function( file ) {
-					test.ok( (new RegExp( "^" + scope )).test( stripBanner( file.data ) ), "Builder should scope any other-than-theme CSS. But, failed to scope \"" + file.path + "\"." );
-				});
-			}
-			test.done();
 		});
 	},
 	"test: unique files": function( test ) {
 		var components = this.allComponents,
 			theme = this.theme;
 		test.expect( 1 );
-		build( this.release, components, theme, function( err, files ) {
+		pack( this.jqueryUi, components, theme, function( err, files ) {
 			var anyDuplicate,
 				duplicates = [],
 				marked = {};
@@ -574,10 +540,10 @@ var tests = {
 module.exports = {};
 
 // Build tests for each jqueryUi release
-Release.all().filter(function( release ) {
+JqueryUi.all().filter(function( jqueryUi ) {
 	// Filter supported releases only
-	return semver.gte( release.pkg.version, "1.10.0" );
-}).forEach(function( release ) {
+	return semver.lt( jqueryUi.pkg.version, "1.10.0" );
+}).forEach(function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
 			if ( typeof tests[ i ] === "object" ) {
@@ -586,20 +552,20 @@ Release.all().filter(function( release ) {
 			} else {
 				obj[ i ] = function( test ) {
 					tests[ i ].call({
-						release: release,
-						theme: new ThemeRoller({ version: release.pkg.version }),
+						jqueryUi: jqueryUi,
+						theme: new ThemeRoller({ version: jqueryUi.pkg.version }),
 						namedTheme: new ThemeRoller({
 							vars: { folderName: "mytheme" },
-							version: release.pkg.version
+							version: jqueryUi.pkg.version
 						}),
 						noTheme: new ThemeRoller({
 							vars: null,
-							version: release.pkg.version
+							version: jqueryUi.pkg.version
 						}),
-						allComponents: release.components().map(function( component ) {
+						allComponents: jqueryUi.components().map(function( component ) {
 							return component.name;
 						}),
-						allWidgets: release.components().filter(function( component ) {
+						allWidgets: jqueryUi.components().filter(function( component ) {
 							return component.category === "widget";
 						}).map(function( component ) {
 							return [ component.name ].concat( component.dependencies );
@@ -609,7 +575,7 @@ Release.all().filter(function( release ) {
 							// unique
 							return i === arr.indexOf( element );
 						}),
-						allEffects: release.components().filter(function( component ) {
+						allEffects: jqueryUi.components().filter(function( component ) {
 							return (/effect/).test( component.name );
 						}).map(function( component ) {
 							return component.name;
@@ -619,6 +585,6 @@ Release.all().filter(function( release ) {
 			}
 		});
 	}
-	module.exports[ release.pkg.version ] = {};
-	deepTestBuild( module.exports[ release.pkg.version ], tests );
+	module.exports[ jqueryUi.pkg.version] = {};
+	deepTestBuild( module.exports[ jqueryUi.pkg.version], tests );
 });
