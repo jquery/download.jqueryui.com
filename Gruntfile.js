@@ -394,12 +394,11 @@ grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI rele
 });
 
 grunt.registerTask( "mkdirs", "Create directories", function() {
-	if ( !fs.existsSync( "app/resources/template" ) ) {
-		grunt.file.mkdir( "app/resources/template" );
-	}
-	if ( !fs.existsSync( "tmp" ) ) {
-		grunt.file.mkdir( "tmp" );
-	}
+	[ "app/resources/template", "log", "tmp" ].forEach(function( dir ) {
+		if ( !fs.existsSync( dir ) ) {
+			grunt.file.mkdir( dir );
+		}
+	});
 });
 
 grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-jquery-ui", "build-app" ] );
