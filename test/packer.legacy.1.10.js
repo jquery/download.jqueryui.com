@@ -115,15 +115,7 @@ var commonFiles = [
 	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/
 ];
 var skipFiles = [
-	"development-bundle/MANIFEST",
-	"development-bundle/demos/addClass/*",
-	"development-bundle/demos/animate/*",
-	"development-bundle/demos/hide/*",
-	"development-bundle/demos/removeClass/*",
-	"development-bundle/demos/show/*",
-	"development-bundle/demos/switchClass/*",
-	"development-bundle/demos/toggle/*",
-	"development-bundle/demos/toggleClass/*"
+	"development-bundle/MANIFEST"
 ];
 var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
 function commonFilesCheck( test, files ) {
@@ -146,19 +138,7 @@ var componentFiles = {
 		"development-bundle/demos/widget/*",
 		"development-bundle/docs/jQuery.widget.html"
 	],
-	"core": [
-		"development-bundle/docs/data-selector.html",
-		"development-bundle/docs/disableSelection.html",
-		"development-bundle/docs/enableSelection.html",
-		"development-bundle/docs/focus.html",
-		"development-bundle/docs/focusable-selector.html",
-		"development-bundle/docs/jQuery.ui.keyCode.html",
-		"development-bundle/docs/removeUniqueId.html",
-		"development-bundle/docs/scrollParent.html",
-		"development-bundle/docs/tabbable-selector.html",
-		"development-bundle/docs/uniqueId.html",
-		"development-bundle/docs/zIndex.html"
-	],
+	"core": [],
 	"mouse": [],
 	"position": [
 		"development-bundle/demos/position/*",
@@ -259,15 +239,14 @@ var componentFiles = {
 	],
 	"effect": [
 		"development-bundle/demos/effect/*",
-		"development-bundle/docs/addClass.html",
-		"development-bundle/docs/color-animation.html",
-		"development-bundle/docs/effect.html",
-		"development-bundle/docs/hide.html",
-		"development-bundle/docs/removeClass.html",
-		"development-bundle/docs/show.html",
-		"development-bundle/docs/switchClass.html",
-		"development-bundle/docs/toggle.html",
-		"development-bundle/docs/toggleClass.html"
+		"development-bundle/demos/addClass/*",
+		"development-bundle/demos/animate/*",
+		"development-bundle/demos/hide/*",
+		"development-bundle/demos/removeClass/*",
+		"development-bundle/demos/show/*",
+		"development-bundle/demos/switchClass/*",
+		"development-bundle/demos/toggle/*",
+		"development-bundle/demos/toggleClass/*"
 	],
 	"effect-blind": [
 		"development-bundle/docs/blind-effect.html"
@@ -293,16 +272,12 @@ var componentFiles = {
 	"effect-highlight": [
 		"development-bundle/docs/highlight-effect.html"
 	],
-	"effect-puff": [
-		"development-bundle/docs/puff-effect.html"
-	],
 	"effect-pulsate": [
 		"development-bundle/docs/pulsate-effect.html"
 	],
 	"effect-scale": [
-		"development-bundle/docs/scale-effect.html"
-	],
-	"effect-size": [
+		"development-bundle/docs/puff-effect.html",
+		"development-bundle/docs/scale-effect.html",
 		"development-bundle/docs/size-effect.html"
 	],
 	"effect-shake": [
@@ -605,7 +580,7 @@ module.exports = {};
 JqueryUi.all().filter(function( jqueryUi ) {
 	// Filter supported releases only
 	// 1: FIXME s/1.11.0pre/1.11.0
-	return semver.gte( jqueryUi.pkg.version, "1.11.0pre" /* 1 */ );
+	return semver.lt( jqueryUi.pkg.version, "1.11.0pre" /* 1 */ ) && semver.gte( jqueryUi.pkg.version, "1.10.0" );
 }).forEach(function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
