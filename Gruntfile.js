@@ -279,7 +279,7 @@ function prepare( callback ) {
 				}
 			}, log( callback, "Done building manifest", "Error building manifest" ) );
 		},
-		function() {
+		function( callback ) {
 			grunt.log.writeln( "Building API documentation for jQuery UI" );
 			if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
 				grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
@@ -287,19 +287,46 @@ function prepare( callback ) {
 			}
 			grunt.util.spawn({
 				cmd: "grunt",
+				args: [ "build-pages" ],
+				opts: {
+					cwd: "tmp/api.jqueryui.com"
+				}
+			}, log( callback, null, "Error building documentation" ) );
+		},
+		function( callback ) {
+			grunt.util.spawn({
+				cmd: "grunt",
 				args: [ "build-xml-entries" ],
 				opts: {
 					cwd: "tmp/api.jqueryui.com"
 				}
+			}, log( callback, null, "Error building documentation" ) );
+		},
+		function( callback ) {
+			grunt.util.spawn({
+				cmd: "grunt",
+				args: [ "build-xml-categories" ],
+				opts: {
+					cwd: "tmp/api.jqueryui.com"
+				}
 			}, log( callback, "Done building documentation", "Error building documentation" ) );
+		},
+		function() {
+			grunt.log.writeln( "Building manifest for API documentation for jQuery UI" );
+			grunt.util.spawn({
+				cmd: "grunt",
+				args: [ "manifest" ],
+				opts: {
+					cwd: "tmp/api.jqueryui.com"
+				}
+			}, log( callback, "Done building manifest", "Error building manifest" ) );
 		}
 	]);
 }
 
 function copy( ref ) {
 	return function( callback ) {
-		var docs = "tmp/api.jqueryui.com/dist/wordpress/posts/post",
-			rimraf = require( "rimraf" ),
+		var rimraf = require( "rimraf" ),
 			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
 			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
 		grunt.file.mkdir( "jquery-ui" );
@@ -328,9 +355,15 @@ function copy( ref ) {
 				callback();
 			},
 			function( callback ) {
-				grunt.log.writeln( "Copying API documentation for jQuery UI over to jquery-ui/" + ref + "/docs/" );
-				grunt.file.expand({ filter: "isFile" }, docs + "/**" ).forEach(function( file ) {
-					grunt.file.copy( file, file.replace( docs, "jquery-ui/" + ref + "/docs/" ));
+				var srcpath = "tmp/api.jqueryui.com/dist/wordpress",
+					destpath = "jquery-ui/" + ref + "/docs/";
+				grunt.log.writeln( "Copying API documentation for jQuery UI over to " + destpath );
+				grunt.file.copy( srcpath + "/categories.json", destpath + "/categories.json" );
+				[ srcpath + "/posts/post", srcpath + "/posts/page" ].forEach(function( srcpath ) {
+					grunt.file.expand({ filter: "isFile" }, srcpath + "/**" ).forEach(function( file ) {
+						// OBS: No overwrite check is needed, because the posts/pages basenames must be unique among themselves.
+						grunt.file.copy( file, file.replace( srcpath, destpath ));
+					});
 				});
 				callback();
 			},
