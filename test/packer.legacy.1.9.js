@@ -18,7 +18,7 @@ function filePresent( files, filepath ) {
 
 function pack( jqueryUi, components, theme, callback ) {
 	var builder = new Builder( jqueryUi, components ),
-		packer = new Packer( builder.build(), theme );
+		packer = new Packer( builder, theme );
 	packer.pack(function( err, files ) {
 		if ( err ) {
 			callback( err, null );

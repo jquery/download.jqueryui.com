@@ -18,7 +18,7 @@ function filePresent( files, filepath ) {
 
 function pack( jqueryUi, components, theme, callback ) {
 	var builder = new Builder( jqueryUi, components ),
-		packer = new Packer( builder.build(), theme );
+		packer = new Packer( builder, theme );
 	packer.pack(function( err, files ) {
 		if ( err ) {
 			callback( err, null );
@@ -536,7 +536,7 @@ var tests = {
 			scope = "#wrapper";
 		test.expect( filesToCheck.length );
 		builder = new Builder( this.jqueryUi, components, { scope: scope } );
-		packer = new Packer( builder.build(), this.theme, { scope: scope } );
+		packer = new Packer( builder, this.theme, { scope: scope } );
 		packer.pack(function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );

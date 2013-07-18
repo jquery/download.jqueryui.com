@@ -1,5 +1,6 @@
 var downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
+	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
@@ -83,7 +84,7 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var build, components, packer, start, theme,
+			var builder, components, jqueryUi, packer, start, theme,
 				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
@@ -99,10 +100,11 @@ Frontend.prototype = {
 			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
 			start = new Date();
-			build = JqueryUi.find( fields.version ).build( components, {
+			jqueryUi = JqueryUi.find( fields.version );
+			builder = new Builder( jqueryUi, components, {
 				scope: fields.scope
 			});
-			packer = new Packer( build, theme, {
+			packer = new Packer( builder, theme, {
 				scope: fields.scope
 			});
 			response.setHeader( "Content-Type", "application/zip" );
@@ -116,9 +118,9 @@ Frontend.prototype = {
 					JSON.stringify({
 						build_size: written,
 						build_time: new Date() - start,
-						components: build.components,
+						components: builder.components,
 						theme_name: theme.name,
-						version: build.pkg.version
+						version: jqueryUi.pkg.version
 					})
 				);
 				return callback();
