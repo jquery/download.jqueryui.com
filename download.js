@@ -1,6 +1,5 @@
 var downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
-	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),

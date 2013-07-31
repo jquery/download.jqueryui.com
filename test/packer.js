@@ -17,8 +17,8 @@ function filePresent( files, filepath ) {
 }
 
 function pack( jqueryUi, components, theme, callback ) {
-	var build = new Builder( jqueryUi, components ),
-		packer = new Packer( build, theme );
+	var builder = new Builder( jqueryUi, components ),
+		packer = new Packer( builder.build(), theme );
 	packer.pack(function( err, files ) {
 		if ( err ) {
 			callback( err, null );
@@ -552,7 +552,7 @@ var tests = {
 		});
 	},
 	"test: scope widget CSS": function( test ) {
-		var build, packer,
+		var builder, packer,
 			components = [ "core", "widget", "tabs" ],
 			filesToCheck = [
 				new RegExp( "development-bundle/themes/smoothness/jquery.ui.tabs.css" ),
@@ -560,8 +560,8 @@ var tests = {
 			],
 			scope = "#wrapper";
 		test.expect( filesToCheck.length );
-		build = new Builder( this.jqueryUi, components, { scope: scope } );
-		packer = new Packer( build, this.theme, { scope: scope } );
+		builder = new Builder( this.jqueryUi, components, { scope: scope } );
+		packer = new Packer( builder.build(), this.theme, { scope: scope } );
 		packer.pack(function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
