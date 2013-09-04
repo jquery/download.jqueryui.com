@@ -14,7 +14,7 @@
     "grunt-contrib-handlebars": "0.5.7",
     "grunt-contrib-jshint": "0.2.0",
     "grunt-contrib-uglify": "0.2.0",
-    "handlebars": "1.0.10",
+    "handlebars": "1.0.12",
     "lzma": "1.2.1",
     "optimist": "0.3.4",
     "rimraf": "2.0.2",
