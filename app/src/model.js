@@ -143,6 +143,7 @@
 				}
 			});
 			if ( changed ) {
+				this.emitter.trigger( "change:before", [ changedAttributes, createdAttributes ] );
 				this.emitter.trigger( "change", [ changedAttributes, createdAttributes ] );
 			}
 			return this;
@@ -207,7 +208,7 @@
 		this.host = obj.host;
 		this.orderedComponentsDfd = $.Deferred();
 		this.themeParamsUnzipping = $.Deferred().resolve();
-		this.on( "change", $.proxy( this._change, this ) );
+		this.on( "change:before", $.proxy( this._change, this ) );
 	};
 
 	$.extend( DownloadBuilderModel.prototype, Model.prototype, {
@@ -381,7 +382,7 @@
 		Model.call( this );
 		this.baseVars = obj.baseVars;
 		this.host = obj.host;
-		this.on( "change", $.proxy( this._change, this ) );
+		this.on( "change:before", $.proxy( this._change, this ) );
 	};
 
 	$.extend( ThemeRollerModel.prototype, Model.prototype, {
