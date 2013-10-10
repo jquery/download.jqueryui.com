@@ -35,12 +35,26 @@
 		});
 	}
 
+	function renderServiceStatus( xhr ) {
+		var element = $( JST[ "service_status.html" ]({
+			status: xhr.status,
+			statusText: xhr.statusText,
+			responseText: xhr.responseText
+		}));
+		element.find( ".detail" ).hide();
+		element.find( ".summary a, .detail a" ).click(function( event ) {
+			event.preventDefault();
+			$( ".summary, .detail" ).toggle();
+		});
+		$( "#service-status" ).html( element );
+	}
+
 	function themeFetch() {
 		var dfd = $.Deferred();
 		model.themeUrl(function( url ) {
 			$.ajax( url, {
 				dataType: "jsonp"
-			}).done( dfd.resolve ).fail( dfd.fail );
+			}).done( dfd.resolve ).fail( dfd.reject );
 		});
 		return dfd;
 	}
@@ -314,11 +328,7 @@
 				model.unsetOrderedComponents();
 				componentsFetch().done(function( components ) {
 					initComponents( components );
-				}).fail(function() {
-					if ( console && console.log ) {
-						console.log( "Failed loading components section", arguments );
-					}
-				});
+				}).fail( renderServiceStatus );
 				componentsLoad = $.Deferred();
 			}
 		}
@@ -406,10 +416,6 @@
 		});
 
 		themesLoad.resolve();
-	}).fail(function() {
-		if ( console && console.log ) {
-			console.log( "Failed loading theme section", arguments );
-		}
-	});
+	}).fail( renderServiceStatus );
 
 }( jQuery, Hash, JST, Model ) );
