@@ -465,7 +465,7 @@
 		},
 
 		parsethemeUrl: function() {
-			var attributes = omit( this.attributes, [ "downloadParams" ] ),
+			var attributes = omit( this.attributes, [ "downloadParams", "zThemeParams" ] ),
 				downloadParams = ( "downloadParams" in this.attributes ? QueryString.decode( this.attributes.downloadParams ) : {} );
 			if ( downloadParams.version ) {
 				attributes.version = downloadParams.version;
