@@ -42,6 +42,9 @@ var Frontend = function( args ) {
 
 Frontend.prototype = {
 	index: function( vars, options ) {
+		if ( vars && "zThemeParams" in vars ) {
+			delete vars.zThemeParams;
+		}
 		var theme = new ThemeRoller({
 			vars: vars
 		});
