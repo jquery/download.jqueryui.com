@@ -41,11 +41,6 @@
 			statusText: xhr.statusText,
 			responseText: xhr.responseText
 		}));
-		element.find( ".detail" ).hide();
-		element.find( ".summary a, .detail a" ).click(function( event ) {
-			event.preventDefault();
-			$( ".summary, .detail" ).toggle();
-		});
 		$( "#service-status" ).html( element );
 	}
 
