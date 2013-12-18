@@ -231,6 +231,9 @@
 				this.themeParamsUnzipping = $.Deferred();
 				delete changed.zThemeParams;
 				unzip( this.get( "zThemeParams" ), function( unzipped ) {
+					// Make sure there's no zThemeParams attribute in unzipped object, due to former bug #171 fixed by 1633bad.
+					delete unzipped.zThemeParams;
+
 					delete self.attributes.zThemeParams;
 					self.set.call( self, {
 						themeParams: QueryString.encode( unzipped )
