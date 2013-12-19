@@ -74,9 +74,9 @@ var commonFiles = [
 	"development-bundle/external/jquery.mousewheel.js",
 	"development-bundle/external/jshint.js",
 	"development-bundle/external/qunit.css",
-	"development-bundle/themes/base/jquery.ui.all.css",
-	"development-bundle/themes/base/jquery.ui.base.css",
-	"development-bundle/themes/base/jquery.ui.theme.css",
+	"development-bundle/themes/base/all.css",
+	"development-bundle/themes/base/base.css",
+	"development-bundle/themes/base/theme.css",
 	"development-bundle/themes/base/jquery-ui.css",
 	"development-bundle/themes/base/images/animated-overlay.gif",
 	"development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png",
@@ -92,7 +92,7 @@ var commonFiles = [
 	"development-bundle/themes/base/images/ui-icons_454545_256x240.png",
 	"development-bundle/themes/base/images/ui-icons_888888_256x240.png",
 	"development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png",
-	"development-bundle/themes/base/minified/jquery.ui.theme.min.css",
+	"development-bundle/themes/base/minified/theme.min.css",
 	"development-bundle/themes/base/minified/jquery-ui.min.css",
 	"development-bundle/themes/base/minified/images/animated-overlay.gif",
 	"development-bundle/themes/base/minified/images/ui-bg_flat_0_aaaaaa_40x100.png",
@@ -139,8 +139,8 @@ function commonFilesCheck( test, files ) {
 var componentFiles = {
 	"all": [
 		"development-bundle/ui.{component}.jquery.json",
-		"development-bundle/ui/jquery.ui.{component}.js",
-		"development-bundle/ui/minified/jquery.ui.{component}.min.js"
+		"development-bundle/ui/{component}.js",
+		"development-bundle/ui/minified/{component}.min.js"
 	],
 	"widget": [
 		"development-bundle/demos/widget/*",
@@ -175,14 +175,14 @@ var componentFiles = {
 	"resizable": [
 		"development-bundle/demos/resizable/*",
 		"development-bundle/docs/resizable.html",
-		"development-bundle/themes/base/jquery.ui.resizable.css",
-		"development-bundle/themes/base/minified/jquery.ui.resizable.min.css"
+		"development-bundle/themes/base/resizable.css",
+		"development-bundle/themes/base/minified/resizable.min.css"
 	],
 	"selectable": [
 		"development-bundle/demos/selectable/*",
 		"development-bundle/docs/selectable.html",
-		"development-bundle/themes/base/jquery.ui.selectable.css",
-		"development-bundle/themes/base/minified/jquery.ui.selectable.min.css"
+		"development-bundle/themes/base/selectable.css",
+		"development-bundle/themes/base/minified/selectable.min.css"
 	],
 	"sortable": [
 		"development-bundle/demos/sortable/*",
@@ -191,71 +191,71 @@ var componentFiles = {
 	"accordion": [
 		"development-bundle/demos/accordion/*",
 		"development-bundle/docs/accordion.html",
-		"development-bundle/themes/base/jquery.ui.accordion.css",
-		"development-bundle/themes/base/minified/jquery.ui.accordion.min.css"
+		"development-bundle/themes/base/accordion.css",
+		"development-bundle/themes/base/minified/accordion.min.css"
 	],
 	"autocomplete": [
 		"development-bundle/demos/autocomplete/*",
 		"development-bundle/docs/autocomplete.html",
-		"development-bundle/themes/base/jquery.ui.autocomplete.css",
-		"development-bundle/themes/base/minified/jquery.ui.autocomplete.min.css"
+		"development-bundle/themes/base/autocomplete.css",
+		"development-bundle/themes/base/minified/autocomplete.min.css"
 	],
 	"button": [
 		"development-bundle/demos/button/*",
 		"development-bundle/docs/button.html",
-		"development-bundle/themes/base/jquery.ui.button.css",
-		"development-bundle/themes/base/minified/jquery.ui.button.min.css"
+		"development-bundle/themes/base/button.css",
+		"development-bundle/themes/base/minified/button.min.css"
 	],
 	"datepicker": [
 		"development-bundle/demos/datepicker/*",
 		"development-bundle/docs/datepicker.html",
-		"development-bundle/themes/base/jquery.ui.datepicker.css",
-		"development-bundle/themes/base/minified/jquery.ui.datepicker.min.css",
+		"development-bundle/themes/base/datepicker.css",
+		"development-bundle/themes/base/minified/datepicker.min.css",
 		"development-bundle/ui/i18n/*",
-		"development-bundle/ui/i18n/jquery.ui.datepicker-*.js",
+		"development-bundle/ui/i18n/datepicker-*.js",
 		"development-bundle/ui/i18n/jquery-ui-i18n.js"
 	],
 	"dialog": [
 		"development-bundle/demos/dialog/*",
 		"development-bundle/docs/dialog.html",
-		"development-bundle/themes/base/jquery.ui.dialog.css",
-		"development-bundle/themes/base/minified/jquery.ui.dialog.min.css"
+		"development-bundle/themes/base/dialog.css",
+		"development-bundle/themes/base/minified/dialog.min.css"
 	],
 	"menu": [
 		"development-bundle/demos/menu/*",
 		"development-bundle/docs/menu.html",
-		"development-bundle/themes/base/jquery.ui.menu.css",
-		"development-bundle/themes/base/minified/jquery.ui.menu.min.css"
+		"development-bundle/themes/base/menu.css",
+		"development-bundle/themes/base/minified/menu.min.css"
 	],
 	"progressbar": [
 		"development-bundle/demos/progressbar/*",
 		"development-bundle/docs/progressbar.html",
-		"development-bundle/themes/base/jquery.ui.progressbar.css",
-		"development-bundle/themes/base/minified/jquery.ui.progressbar.min.css"
+		"development-bundle/themes/base/progressbar.css",
+		"development-bundle/themes/base/minified/progressbar.min.css"
 	],
 	"slider": [
 		"development-bundle/demos/slider/*",
 		"development-bundle/docs/slider.html",
-		"development-bundle/themes/base/jquery.ui.slider.css",
-		"development-bundle/themes/base/minified/jquery.ui.slider.min.css"
+		"development-bundle/themes/base/slider.css",
+		"development-bundle/themes/base/minified/slider.min.css"
 	],
 	"spinner": [
 		"development-bundle/demos/spinner/*",
 		"development-bundle/docs/spinner.html",
-		"development-bundle/themes/base/jquery.ui.spinner.css",
-		"development-bundle/themes/base/minified/jquery.ui.spinner.min.css"
+		"development-bundle/themes/base/spinner.css",
+		"development-bundle/themes/base/minified/spinner.min.css"
 	],
 	"tabs": [
 		"development-bundle/demos/tabs/*",
 		"development-bundle/docs/tabs.html",
-		"development-bundle/themes/base/jquery.ui.tabs.css",
-		"development-bundle/themes/base/minified/jquery.ui.tabs.min.css"
+		"development-bundle/themes/base/tabs.css",
+		"development-bundle/themes/base/minified/tabs.min.css"
 	],
 	"tooltip": [
 		"development-bundle/demos/tooltip/*",
 		"development-bundle/docs/tooltip.html",
-		"development-bundle/themes/base/jquery.ui.tooltip.css",
-		"development-bundle/themes/base/minified/jquery.ui.tooltip.min.css"
+		"development-bundle/themes/base/tooltip.css",
+		"development-bundle/themes/base/minified/tooltip.min.css"
 	],
 	"effect": [
 		"development-bundle/demos/effect/*",
@@ -337,22 +337,22 @@ var themeFiles = {
 	"all": [
 		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.css/,
 		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.css/,
-		"development-bundle/themes/{folder_name}/jquery.ui.all.css",
-		"development-bundle/themes/{folder_name}/jquery.ui.base.css",
-		"development-bundle/themes/{folder_name}/jquery.ui.{component}.css",
+		"development-bundle/themes/{folder_name}/all.css",
+		"development-bundle/themes/{folder_name}/base.css",
+		"development-bundle/themes/{folder_name}/{component}.css",
 		"development-bundle/themes/{folder_name}/jquery-ui.css",
-		"development-bundle/themes/{folder_name}/minified/jquery.ui.{component}.min.css",
+		"development-bundle/themes/{folder_name}/minified/{component}.min.css",
 		"development-bundle/themes/{folder_name}/minified/jquery-ui.min.css"
 	],
 	"anyTheme": [
 		"css/{folder_name}/images/animated-overlay.gif",
 		"css/{folder_name}/images/ui-icons*png",
 		"css/{folder_name}/images/ui-bg*png",
-		"development-bundle/themes/{folder_name}/jquery.ui.theme.css",
+		"development-bundle/themes/{folder_name}/theme.css",
 		"development-bundle/themes/{folder_name}/images/animated-overlay.gif",
 		"development-bundle/themes/{folder_name}/images/ui-icons*png",
 		"development-bundle/themes/{folder_name}/images/ui-bg*png",
-		"development-bundle/themes/{folder_name}/minified/jquery.ui.theme.min.css",
+		"development-bundle/themes/{folder_name}/minified/theme.min.css",
 		"development-bundle/themes/{folder_name}/minified/images/animated-overlay.gif",
 		"development-bundle/themes/{folder_name}/minified/images/ui-icons*png",
 		"development-bundle/themes/{folder_name}/minified/images/ui-bg*png"
@@ -555,7 +555,7 @@ var tests = {
 		var builder, packer,
 			components = [ "core", "widget", "tabs" ],
 			filesToCheck = [
-				new RegExp( "development-bundle/themes/smoothness/jquery.ui.tabs.css" ),
+				new RegExp( "development-bundle/themes/smoothness/tabs.css" ),
 				/css\/smoothness\/jquery-ui-.*\.custom\.min\.css/
 			],
 			scope = "#wrapper";
