@@ -1,13 +1,14 @@
 {
-	"jqueryUi": {
-		"stable": {
+	"jqueryUi": [
+		{
 			"version": "1.10.3",
-			"dependsOn": "jQuery1.6+"
+			"dependsOn": "jQuery1.6+",
+			"stable": true
 		},
-		"legacy": {
+		{
 			"version": "1.9.2",
 			"dependsOn": "jQuery1.6+"
 		}
-	},
+	],
 	"jquery": "1.9.1"
 }
