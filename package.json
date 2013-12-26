@@ -4,7 +4,7 @@
   "dependencies": {
     "archiver": "0.4.1",
     "async": "0.1.22",
-    "connect": "1.8.5",
+    "connect": "1.9.2",
     "dateformat": "1.0.2-1.2.3",
     "formidable": "1.0.9",
     "glob-whatev": "0.1.7",
