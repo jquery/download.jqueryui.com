@@ -2,7 +2,7 @@
   "name": "download.jqueryui.com",
   "version": "1.11.0pre",
   "dependencies": {
-    "archiver": "0.4.1",
+    "archiver": "0.5.1",
     "async": "0.1.22",
     "connect": "1.9.2",
     "dateformat": "1.0.2-1.2.3",
