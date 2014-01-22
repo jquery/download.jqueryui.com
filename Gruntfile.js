@@ -287,25 +287,7 @@ function prepare( callback ) {
 			}
 			grunt.util.spawn({
 				cmd: "grunt",
-				args: [ "build-pages" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, null, "Error building documentation" ) );
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "build-xml-entries" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, null, "Error building documentation" ) );
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "build-xml-categories" ],
+				args: [ "clean", "build" ],
 				opts: {
 					cwd: "tmp/api.jqueryui.com"
 				}
