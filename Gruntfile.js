@@ -271,6 +271,12 @@ function prepare( callback ) {
 	async.series([
 		function( callback ) {
 			grunt.log.writeln( "Building manifest for jQuery UI" );
+			grunt.file.expand( "tmp/jquery-ui/*.jquery.json" ).forEach(function( file ) {
+				grunt.file.delete( file );
+			});
+			callback();
+		},
+		function( callback ) {
 			grunt.util.spawn({
 				cmd: "grunt",
 				args: [ "manifest" ],
