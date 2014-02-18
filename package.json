@@ -17,6 +17,7 @@
     "handlebars": "1.0.12",
     "lzma": "1.2.1",
     "optimist": "0.3.4",
+    "requirejs": "2.1.8",
     "rimraf": "2.0.2",
     "semver": "1.1.0",
     "simple-log": "1.1.0",
