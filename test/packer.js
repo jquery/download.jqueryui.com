@@ -58,7 +58,7 @@ var commonFiles = [
 	"development-bundle/MIT-LICENSE.txt",
 	"development-bundle/package.json",
 	"development-bundle/README.md",
-	/development-bundle\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
+	/development-bundle\/jquery.js/,
 	"development-bundle/package.json",
 	"development-bundle/demos/demos.css",
 	"development-bundle/demos/images/demo-spindown-open.gif",
@@ -110,7 +110,7 @@ var commonFiles = [
 	"development-bundle/themes/base/minified/images/ui-icons_cd0a0a_256x240.png",
 	"development-bundle/ui/jquery-ui.custom.js",
 	"development-bundle/ui/minified/jquery-ui.custom.min.js",
-	/js\/jquery-[^\.]*\.[^\.]*\.[^\.]*\.js/,
+	/js\/jquery.js/,
 	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.js/,
 	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/
 ];
