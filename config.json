@@ -6,7 +6,7 @@
 			"stable": true
 		},
 		{
-			"version": "origin/master",
+			"version": "1.9.2",
 			"dependsOn": "jQuery1.6+"
 		}
 	],
