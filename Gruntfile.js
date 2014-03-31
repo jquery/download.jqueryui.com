@@ -370,33 +370,151 @@ function buildPackages( folder, callback ) {
 		path = require( "path" ),
 		JqueryUi = require( "./lib/jquery-ui" ),
 		Packer = require( "./lib/packer" ),
-		ThemeRoller = require( "./lib/themeroller" );
+		ThemeGallery = require( "./lib/themeroller.themegallery" );
 
-	async.forEachSeries( JqueryUi.all(), function( jqueryUi, next ) {
-		var stream,
-			theme = new ThemeRoller({ version: jqueryUi.pkg.version }),
-			build = new Builder( jqueryUi, ":all:" ),
-			packer = new Packer( build, theme ),
-			filename = path.join( folder, packer.filename() );
-		grunt.log.ok( "Building \"" + filename + "\" with all components selected and base theme" );
-		if ( fs.existsSync( filename ) ) {
-			grunt.log.error( "Build: \"" + filename + "\" already exists" );
-			return next( true );
-		}
-		stream = fs.createWriteStream( filename );
-		packer.zipTo( stream, function( err, result ) {
-			if ( err ) {
-				grunt.log.error( "Build: " + err.message );
-				return next( err );
+	// For each jQuery UI release specified in the config file:
+	async.forEachSeries( JqueryUi.all(), function( jqueryUi, callback ) {
+		var builder = new Builder( jqueryUi, ":all:" ),
+			themeGallery = new ThemeGallery( jqueryUi );
+
+		async.series([
+
+			// (a) Build jquery-ui-[VERSION].zip;
+			function( callback ) {
+				var stream,
+					theme = themeGallery[ 0 ],
+					packer = new Packer( builder, theme, { bundleSuffix: "" }),
+					filename = path.join( folder, packer.filename() );
+				grunt.log.ok( "Building \"" + filename + "\"" );
+				if ( fs.existsSync( filename ) ) {
+					grunt.log.warn( filename + "\" already exists. Skipping..." );
+					return callback();
+				}
+				stream = fs.createWriteStream( filename );
+				packer.zipTo( stream, function( error, result ) {
+					if ( error ) {
+						return callback( error );
+					}
+					return callback();
+				});
+			},
+
+			// (b) Build themes package jquery-ui-themes-[VERSION].zip;
+			// TODO: Review jQuery UI release script and avoid duplicate code.
+			function( callback ) {
+				var basedir, filename, output,
+					add = function( file ) {
+						output.push({
+							path: path.join( basedir, file.path ),
+							data: file.data
+						});
+					};
+
+				async.series([
+
+					// Include "AUTHORS.txt", "MIT-LICENSE.txt", "package.json".
+					function( callback ) {
+						builder.build(function( error, build ) {
+							if ( error ) {
+								return callback( error );
+							}
+							output = [];
+							basedir = path.join( folder, "jquery-ui-themes-" + builder.jqueryUi.pkg.version );
+							filename = basedir + ".zip";
+							grunt.log.ok( "Building \"" + filename + "\"" );
+
+							[ "AUTHORS.txt", "MIT-LICENSE.txt", "package.json" ].map(function( name ) {
+								return build.get( name );
+							}).forEach( add );
+							return callback();
+						});
+					},
+
+					// Include css/<theme>.
+					function( callback ) {
+						async.mapSeries( themeGallery, function( theme, callback ) {
+							var themeCssOnlyRe, themeDirRe,
+								folderName = theme.folderName(),
+								packer = new Packer( builder, theme, {
+									skipDocs: true
+								});
+
+							// TODO improve code by using custom packer instead of download packer (Packer)
+							themeCssOnlyRe = new RegExp( "development-bundle/themes/" + folderName + "/theme.css" );
+							themeDirRe = new RegExp( "css/" + folderName );
+							packer.pack(function( error, files ) {
+								if ( error ) {
+									return callback( error );
+								}
+
+								// Add theme files.
+								files
+
+									// Pick only theme files we need on the bundle.
+									.filter(function( file ) {
+										if ( themeCssOnlyRe.test( file.path ) || themeDirRe.test( file.path ) ) {
+											return true;
+										}
+										return false;
+									})
+
+									// Convert paths the way bundle needs
+									.map(function( file ) {
+										file.path = file.path
+
+											// Remove initial package name eg. "jquery-ui-1.10.0.custom"
+											.split( "/" ).slice( 1 ).join( "/" )
+
+											.replace( /development-bundle\/themes/, "css" )
+											.replace( /css/, "themes" )
+
+											// Make jquery-ui-1.10.0.custom.css into jquery-ui.css, or jquery-ui-1.10.0.custom.min.css into jquery-ui.min.css
+											.replace( /jquery-ui-.*?(\.min)*\.css/, "jquery-ui$1.css" );
+
+										return file;
+									}).forEach( add );
+
+								return callback();
+							});
+						}, callback );
+					},
+
+					// Create and include MD5 manifest.
+					function( callback ) {
+						var crypto = require( "crypto" );
+						add({
+							path: "MANIFEST",
+							data: output.sort(function( a, b ) {
+								return a.path.localeCompare( b.path );
+							}).map(function( file ) {
+								var md5 = crypto.createHash( "md5" );
+								md5.update( file.data );
+								return file.path + " " + md5.digest( "hex" );
+							}).join( "\n" )
+						});
+						return callback();
+					}
+				], function( error ) {
+					if ( error ) {
+						return callback( error );
+					}
+					if ( fs.existsSync( filename ) ) {
+						grunt.log.warn( filename + "\" already exists. Skipping..." );
+						return callback();
+					}
+					require( "./lib/util" ).createZip( output, filename, function( error ) {
+						if ( error ) {
+							return callback( error );
+						}
+						return callback();
+					});
+				});
 			}
-			stream.on( "close", function() {
-				next();
-			});
-			stream.on( "error", function( err ) {
-				grunt.log.error( err.message );
-				next( err );
-			});
-			stream.end();
+		], function( error ) {
+			if ( error ) {
+				grunt.log.error( error.message );
+			}
+			return callback();
 		});
 	}, callback );
 }
@@ -405,7 +523,7 @@ grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 
 grunt.registerTask( "build-app", [ "handlebars", "uglify" ] );
 
-grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and base theme, inside the given folder", function( folder ) {
+grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();
   buildPackages( folder, function( err ) {
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
