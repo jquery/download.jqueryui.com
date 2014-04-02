@@ -10,9 +10,14 @@ module.exports = {
 	JqueryUi: require( "./lib/jquery-ui" ),
 
 	/**
-	 * The JqueryUi class.
+	 * The jQuery UI Packer class.
 	 */
 	Packer: require( "./lib/packer" ),
+
+	/**
+	 * The jQuery UI Themes Packer class.
+	 */
+	ThemesPacker: require( "./lib/themes-packer" ),
 
 	/**
 	 * The Util object.

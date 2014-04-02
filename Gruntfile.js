@@ -375,15 +375,14 @@ function buildPackages( folder, callback ) {
 
 	// For each jQuery UI release specified in the config file:
 	async.forEachSeries( JqueryUi.all(), function( jqueryUi, callback ) {
-		var builder = new Builder( jqueryUi, ":all:" ),
-			themeGallery = new ThemeGallery( jqueryUi );
+		var builder = new Builder( jqueryUi, ":all:" );
 
 		async.series([
 
 			// (a) Build jquery-ui-[VERSION].zip;
 			function( callback ) {
 				var stream,
-					theme = themeGallery[ 0 ],
+					theme = new ThemeGallery( jqueryUi )[ 0 ],
 					packer = new Packer( builder, theme, { bundleSuffix: "" }),
 					filename = path.join( folder, packer.filename() );
 				grunt.log.ok( "Building \"" + filename + "\"" );
