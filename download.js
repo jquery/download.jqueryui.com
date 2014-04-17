@@ -1,16 +1,20 @@
-var downloadLogger, jqueryUis,
+var cache, downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
-	Builder = require( "./lib/builder" ),
+	Cache = require( "./lib/cache" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
-	Packer = require( "./lib/packer" ),
+	Packager = require( "node-packager" ),
 	querystring = require( "querystring" ),
 	semver = require( "semver" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
+	ToBeDeprecatedBuilder = require( "./lib/builder" ),
+	ToBeDeprecatedPacker = require( "./lib/packer" ),
 	winston = require( "winston" );
+
+cache = new Cache( "Built Packages Cache" );
 
 downloadLogger = new winston.Logger({
 	transports: [
@@ -91,7 +95,7 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, jqueryUi, packer, start, theme,
+			var builder, components, files, jqueryUi, Package, packer, start, theme,
 				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
@@ -101,37 +105,69 @@ Frontend.prototype = {
 				themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
 				themeVars.scope = fields.scope || themeVars.scope;
 			}
-			theme = new ThemeRoller({
-				vars: themeVars,
-				version: fields.version
-			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
-			start = new Date();
 			jqueryUi = JqueryUi.find( fields.version );
-			builder = new Builder( jqueryUi, components, {
-				scope: fields.scope
-			});
-			packer = new Packer( builder, theme, {
-				scope: fields.scope
-			});
-			response.setHeader( "Content-Type", "application/zip" );
-			response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
-			packer.zipTo( response, function( err, written, elapsedTime ) {
-				if ( err ) {
-					return callback( err );
-				}
-				// Log statistics
-				downloadLogger.info(
-					JSON.stringify({
-						build_size: written,
-						build_time: new Date() - start,
-						components: builder.components,
-						theme_name: theme.name,
-						version: jqueryUi.pkg.version
-					})
-				);
-				return callback();
-			});
+
+			// The old way to generate a package (to be deprecated when jQuery UI support baseline is UI 1.12).
+			if ( semver.lt( jqueryUi.pkg.version, "1.12.0-a" ) ) {
+				start = new Date();
+				theme = new ThemeRoller({
+					vars: themeVars,
+					version: fields.version
+				});
+				builder = new ToBeDeprecatedBuilder( jqueryUi, components, {
+					scope: fields.scope
+				});
+				packer = new ToBeDeprecatedPacker( builder, theme, {
+					scope: fields.scope
+				});
+				response.setHeader( "Content-Type", "application/zip" );
+				response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
+				packer.zipTo( response, function( err, written ) {
+					if ( err ) {
+						return callback( err );
+					}
+					// Log statistics
+					downloadLogger.info(
+						JSON.stringify({
+							build_size: written,
+							build_time: new Date() - start,
+							components: components,
+							theme_name: theme && theme.name || "n/a",
+							version: jqueryUi.pkg.version
+						})
+					);
+					return callback();
+				});
+
+			// The new way to generate a package.
+			} else {
+				Package = require( "./lib/package-1-12" );
+				packager = new Packager( jqueryUi.files().cache, Package, {
+					components: components,
+					themeVars: themeVars,
+					scope: fields.scope
+				}, { cache: cache } );
+				response.setHeader( "Content-Type", "application/zip" );
+				response.setHeader( "Content-Disposition", "attachment; filename=" + packager.pkg.zipFilename );
+				packager.toZip( response, {
+					basedir: packager.pkg.zipBasedir
+				}, function( error ) {
+					if ( error ) {
+						return callback( error );
+					}
+					// Log statistics
+					downloadLogger.info(
+						JSON.stringify({
+							build_size: packager.stats.toZip.size,
+							build_time: packager.stats.build.time + packager.stats.toZip.time,
+							components: components,
+							version: jqueryUi.pkg.version
+						})
+					);
+					return callback();
+				});
+			}
 		} catch( err ) {
 			return callback( err );
 		}

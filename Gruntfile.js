@@ -394,7 +394,7 @@ function buildPackages( folder, callback ) {
 					return callback();
 				}
 				stream = fs.createWriteStream( filename );
-				packer.zipTo( stream, function( error, result ) {
+				packer.zipTo( stream, function( error ) {
 					if ( error ) {
 						return callback( error );
 					}
