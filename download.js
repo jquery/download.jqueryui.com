@@ -1,15 +1,16 @@
 var downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
-	Builder = require( "./lib/builder" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
-	Packer = require( "./lib/packer" ),
+	Packager = require( "archive-packager" ),
 	querystring = require( "querystring" ),
 	semver = require( "semver" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
+	ToBeDeprecatedBuilder = require( "./lib/builder" ),
+	ToBeDeprecatedPacker = require( "./lib/packer" ),
 	winston = require( "winston" );
 
 downloadLogger = new winston.Logger({
@@ -91,7 +92,7 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, jqueryUi, packer, start, theme,
+			var builder, components, jqueryUi, Package, packer, start, theme,
 				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
@@ -101,19 +102,28 @@ Frontend.prototype = {
 				themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
 				themeVars.scope = fields.scope || themeVars.scope;
 			}
-			theme = new ThemeRoller({
-				vars: themeVars,
-				version: fields.version
-			});
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
 			start = new Date();
 			jqueryUi = JqueryUi.find( fields.version );
-			builder = new Builder( jqueryUi, components, {
-				scope: fields.scope
-			});
-			packer = new Packer( builder, theme, {
-				scope: fields.scope
-			});
+			if ( semver.lt( this.jqueryUi.pkg.version, "1.12.0-a" ) ) {
+				theme = new ThemeRoller({
+					vars: themeVars,
+					version: fields.version
+				});
+				builder = new ToBeDeprecatedBuilder( jqueryUi, components, {
+					scope: fields.scope
+				});
+				packer = new ToBeDeprecatedPacker( builder, theme, {
+					scope: fields.scope
+				});
+			} else {
+				Package = require( "./lib/package-1-12" );
+				packer = new Packager( Package, jqueryUi.files(), {
+					components: components,
+					themeVars: themeVars,
+					scope: fields.scope
+				});
+			}
 			response.setHeader( "Content-Type", "application/zip" );
 			response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
 			packer.zipTo( response, function( err, written, elapsedTime ) {
