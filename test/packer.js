@@ -111,8 +111,8 @@ var commonFiles = [
 	"development-bundle/ui/jquery-ui.custom.js",
 	"development-bundle/ui/minified/jquery-ui.custom.min.js",
 	/js\/jquery.js/,
-	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.js/,
-	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.js/
+	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.js/,
+	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.min\.js/
 ];
 var skipFiles = [
 	"development-bundle/MANIFEST",
@@ -335,8 +335,8 @@ function componentFilesCheck( test, files, components ) {
 
 var themeFiles = {
 	"all": [
-		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.css/,
-		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*\.custom\.min\.css/,
+		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.css/,
+		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.min\.css/,
 		"development-bundle/themes/{folder_name}/all.css",
 		"development-bundle/themes/{folder_name}/base.css",
 		"development-bundle/themes/{folder_name}/{component}.css",
