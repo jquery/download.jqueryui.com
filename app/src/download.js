@@ -265,7 +265,7 @@
 		baseVars: baseVars,
 		host: downloadJqueryuiHost
 	});
-	model.defaults[ "version" ] = $( "#download-builder [name=version]" ).first().val();
+	model.defaults[ "version" ] = $( "#download-builder [name=version][checked]" ).val();
 
 	model.on( "change", function( changed, created ) {
 		if ( "folderName" in changed && !model.get( "folderName" ).length ) {
