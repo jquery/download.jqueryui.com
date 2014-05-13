@@ -1,10 +1,10 @@
 var _ = require( "underscore" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
-	Image = require( "./lib/themeroller.image" ),
+	Image = require( "./lib/themeroller-image" ),
 	querystring = require( "querystring" ),
-	textures = require( "./lib/themeroller.textures" ),
-	themeGallery = require( "./lib/themeroller.themegallery" )(),
+	textures = require( "./lib/themeroller-textures" ),
+	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" );
 
 function renderImage( filename, response, callback ) {

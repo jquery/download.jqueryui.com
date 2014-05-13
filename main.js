@@ -41,6 +41,6 @@ module.exports = {
 	 * Returns themeGallery using jqueryUi's version.
 	 */
 	themeGallery: function( jqueryUi ) {
-		return require( "./lib/themeroller.themegallery" )( jqueryUi );
+		return require( "./lib/themeroller-themegallery" )( jqueryUi );
 	}
 };

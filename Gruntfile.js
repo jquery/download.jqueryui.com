@@ -370,7 +370,7 @@ function buildPackages( folder, callback ) {
 		path = require( "path" ),
 		JqueryUi = require( "./lib/jquery-ui" ),
 		Packer = require( "./lib/packer" ),
-		ThemeGallery = require( "./lib/themeroller.themegallery" ),
+		ThemeGallery = require( "./lib/themeroller-themegallery" ),
 		ThemesPacker = require( "./lib/themes-packer" );
 
 	// For each jQuery UI release specified in the config file:

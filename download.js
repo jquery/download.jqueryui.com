@@ -7,7 +7,7 @@ var downloadLogger, jqueryUis,
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
 	Packer = require( "./lib/packer" ),
 	querystring = require( "querystring" ),
-	themeGallery = require( "./lib/themeroller.themegallery" )(),
+	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
 	winston = require( "winston" );
 

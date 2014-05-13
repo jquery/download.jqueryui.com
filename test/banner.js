@@ -1,4 +1,4 @@
-var banner = require( "../lib/banner.js" ),
+var banner = require( "../lib/banner" ),
   dateformat = require( "dateformat" );
 
 function today(format) {
