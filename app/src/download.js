@@ -268,6 +268,8 @@
 	model.defaults[ "version" ] = $( "#download-builder [name=version][checked]" ).val();
 
 	model.on( "change", function( changed, created ) {
+		var versionElement;
+
 		if ( "folderName" in changed && !model.get( "folderName" ).length ) {
 			delete model.attributes.folderName;
 			delete changed.folderName;
@@ -316,7 +318,11 @@
 		});
 
 		if ( "version" in changed ) {
-			$( "#download-builder [name=version][value=\"" + model.get( "version" ) + "\"]" ).trigger( "click" );
+			versionElement = $( "#download-builder [name=version][value=\"" + model.get( "version" ) + "\"]" );
+			versionElement.trigger( "click" );
+			themesLoad.done(function() {
+				$( ".advanced-settings .folder-name-area" ).toggle( !versionElement.data( "no-theme-folder" ) );
+			});
 			if ( created.version ) {
 				initComponents( initialComponents );
 			} else {

@@ -44,346 +44,45 @@ function replace( variable, value ) {
 	};
 }
 
-function stripBanner( src ) {
-	if ( src instanceof Buffer ) {
-		src = src.toString( "utf-8" );
-	}
-	return src.replace( /^\s*\/\*[\s\S]*?\*\/\s*/g, "" );
-}
-
 var commonFiles = [
-	"index.html",
-	"development-bundle/AUTHORS.txt",
-	"development-bundle/Gruntfile.js",
-	"development-bundle/MIT-LICENSE.txt",
-	"development-bundle/package.json",
-	"development-bundle/README.md",
-	/development-bundle\/jquery.js/,
-	"development-bundle/package.json",
-	"development-bundle/demos/demos.css",
-	"development-bundle/demos/images/demo-spindown-open.gif",
-	"development-bundle/demos/images/pbar-ani.gif",
-	"development-bundle/demos/images/demo-config-on-tile.gif",
-	"development-bundle/demos/images/icon-docs-info.gif",
-	"development-bundle/demos/images/demo-spindown-closed.gif",
-	"development-bundle/demos/images/demo-config-on.gif",
-	"development-bundle/demos/images/calendar.gif",
-	"development-bundle/external/globalize.culture.de-DE.js",
-	"development-bundle/external/globalize.culture.ja-JP.js",
-	"development-bundle/external/globalize.js",
-	"development-bundle/external/jquery.mousewheel.js",
-	"development-bundle/external/jshint.js",
-	"development-bundle/external/qunit.css",
-	"development-bundle/themes/base/all.css",
-	"development-bundle/themes/base/base.css",
-	"development-bundle/themes/base/theme.css",
-	"development-bundle/themes/base/jquery-ui.css",
-	"development-bundle/themes/base/images/animated-overlay.gif",
-	"development-bundle/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png",
-	"development-bundle/themes/base/images/ui-bg_flat_75_ffffff_40x100.png",
-	"development-bundle/themes/base/images/ui-bg_glass_55_fbf9ee_1x400.png",
-	"development-bundle/themes/base/images/ui-bg_glass_65_ffffff_1x400.png",
-	"development-bundle/themes/base/images/ui-bg_glass_75_dadada_1x400.png",
-	"development-bundle/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png",
-	"development-bundle/themes/base/images/ui-bg_glass_95_fef1ec_1x400.png",
-	"development-bundle/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png",
-	"development-bundle/themes/base/images/ui-icons_2e83ff_256x240.png",
-	"development-bundle/themes/base/images/ui-icons_222222_256x240.png",
-	"development-bundle/themes/base/images/ui-icons_454545_256x240.png",
-	"development-bundle/themes/base/images/ui-icons_888888_256x240.png",
-	"development-bundle/themes/base/images/ui-icons_cd0a0a_256x240.png",
-	"development-bundle/themes/base/minified/theme.min.css",
-	"development-bundle/themes/base/minified/jquery-ui.min.css",
-	"development-bundle/themes/base/minified/images/animated-overlay.gif",
-	"development-bundle/themes/base/minified/images/ui-bg_flat_0_aaaaaa_40x100.png",
-	"development-bundle/themes/base/minified/images/ui-bg_flat_75_ffffff_40x100.png",
-	"development-bundle/themes/base/minified/images/ui-bg_glass_55_fbf9ee_1x400.png",
-	"development-bundle/themes/base/minified/images/ui-bg_glass_65_ffffff_1x400.png",
-	"development-bundle/themes/base/minified/images/ui-bg_glass_75_dadada_1x400.png",
-	"development-bundle/themes/base/minified/images/ui-bg_glass_75_e6e6e6_1x400.png",
-	"development-bundle/themes/base/minified/images/ui-bg_glass_95_fef1ec_1x400.png",
-	"development-bundle/themes/base/minified/images/ui-bg_highlight-soft_75_cccccc_1x100.png",
-	"development-bundle/themes/base/minified/images/ui-icons_2e83ff_256x240.png",
-	"development-bundle/themes/base/minified/images/ui-icons_222222_256x240.png",
-	"development-bundle/themes/base/minified/images/ui-icons_454545_256x240.png",
-	"development-bundle/themes/base/minified/images/ui-icons_888888_256x240.png",
-	"development-bundle/themes/base/minified/images/ui-icons_cd0a0a_256x240.png",
-	"development-bundle/ui/jquery-ui.custom.js",
-	"development-bundle/ui/minified/jquery-ui.custom.min.js",
-	/js\/jquery.js/,
-	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.js/,
-	/js\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.min\.js/
+	"jquery.js",
+	"jquery-ui.js",
+	"jquery-ui.min.js"
 ];
-var skipFiles = [
-	"development-bundle/MANIFEST",
-	"development-bundle/demos/addClass/*",
-	"development-bundle/demos/animate/*",
-	"development-bundle/demos/hide/*",
-	"development-bundle/demos/removeClass/*",
-	"development-bundle/demos/show/*",
-	"development-bundle/demos/switchClass/*",
-	"development-bundle/demos/toggle/*",
-	"development-bundle/demos/toggleClass/*"
-];
-var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
+var COMMON_FILES_TESTCASES = commonFiles.length;
 function commonFilesCheck( test, files ) {
 	commonFiles.forEach(function( filepath ) {
 		test.ok( filePresent( files, filepath ), "Missing a common file \"" + filepath + "\"." );
-	});
-	skipFiles.forEach(function( filepath ) {
-		test.ok( !filePresent( files, filepath ), "Should not include \"" + filepath + "\"." );
-	});
-}
-
-
-var componentFiles = {
-	"all": [
-		"development-bundle/ui.{component}.jquery.json",
-		"development-bundle/ui/{component}.js",
-		"development-bundle/ui/minified/{component}.min.js"
-	],
-	"widget": [
-		"development-bundle/demos/widget/*",
-		"development-bundle/docs/jQuery.widget.html"
-	],
-	"core": [
-		"development-bundle/docs/data-selector.html",
-		"development-bundle/docs/disableSelection.html",
-		"development-bundle/docs/enableSelection.html",
-		"development-bundle/docs/focus.html",
-		"development-bundle/docs/focusable-selector.html",
-		"development-bundle/docs/jQuery.ui.keyCode.html",
-		"development-bundle/docs/removeUniqueId.html",
-		"development-bundle/docs/scrollParent.html",
-		"development-bundle/docs/tabbable-selector.html",
-		"development-bundle/docs/uniqueId.html",
-		"development-bundle/docs/zIndex.html"
-	],
-	"mouse": [],
-	"position": [
-		"development-bundle/demos/position/*",
-		"development-bundle/docs/position.html"
-	],
-	"draggable": [
-		"development-bundle/demos/draggable/*",
-		"development-bundle/docs/draggable.html"
-	],
-	"droppable": [
-		"development-bundle/demos/droppable/*",
-		"development-bundle/docs/droppable.html"
-	],
-	"resizable": [
-		"development-bundle/demos/resizable/*",
-		"development-bundle/docs/resizable.html",
-		"development-bundle/themes/base/resizable.css",
-		"development-bundle/themes/base/minified/resizable.min.css"
-	],
-	"selectable": [
-		"development-bundle/demos/selectable/*",
-		"development-bundle/docs/selectable.html",
-		"development-bundle/themes/base/selectable.css",
-		"development-bundle/themes/base/minified/selectable.min.css"
-	],
-	"sortable": [
-		"development-bundle/demos/sortable/*",
-		"development-bundle/docs/sortable.html"
-	],
-	"accordion": [
-		"development-bundle/demos/accordion/*",
-		"development-bundle/docs/accordion.html",
-		"development-bundle/themes/base/accordion.css",
-		"development-bundle/themes/base/minified/accordion.min.css"
-	],
-	"autocomplete": [
-		"development-bundle/demos/autocomplete/*",
-		"development-bundle/docs/autocomplete.html",
-		"development-bundle/themes/base/autocomplete.css",
-		"development-bundle/themes/base/minified/autocomplete.min.css"
-	],
-	"button": [
-		"development-bundle/demos/button/*",
-		"development-bundle/docs/button.html",
-		"development-bundle/themes/base/button.css",
-		"development-bundle/themes/base/minified/button.min.css"
-	],
-	"datepicker": [
-		"development-bundle/demos/datepicker/*",
-		"development-bundle/docs/datepicker.html",
-		"development-bundle/themes/base/datepicker.css",
-		"development-bundle/themes/base/minified/datepicker.min.css",
-		"development-bundle/ui/i18n/*",
-		"development-bundle/ui/i18n/datepicker-*.js",
-		"development-bundle/ui/i18n/jquery-ui-i18n.js"
-	],
-	"dialog": [
-		"development-bundle/demos/dialog/*",
-		"development-bundle/docs/dialog.html",
-		"development-bundle/themes/base/dialog.css",
-		"development-bundle/themes/base/minified/dialog.min.css"
-	],
-	"menu": [
-		"development-bundle/demos/menu/*",
-		"development-bundle/docs/menu.html",
-		"development-bundle/themes/base/menu.css",
-		"development-bundle/themes/base/minified/menu.min.css"
-	],
-	"progressbar": [
-		"development-bundle/demos/progressbar/*",
-		"development-bundle/docs/progressbar.html",
-		"development-bundle/themes/base/progressbar.css",
-		"development-bundle/themes/base/minified/progressbar.min.css"
-	],
-	"slider": [
-		"development-bundle/demos/slider/*",
-		"development-bundle/docs/slider.html",
-		"development-bundle/themes/base/slider.css",
-		"development-bundle/themes/base/minified/slider.min.css"
-	],
-	"spinner": [
-		"development-bundle/demos/spinner/*",
-		"development-bundle/docs/spinner.html",
-		"development-bundle/themes/base/spinner.css",
-		"development-bundle/themes/base/minified/spinner.min.css"
-	],
-	"tabs": [
-		"development-bundle/demos/tabs/*",
-		"development-bundle/docs/tabs.html",
-		"development-bundle/themes/base/tabs.css",
-		"development-bundle/themes/base/minified/tabs.min.css"
-	],
-	"tooltip": [
-		"development-bundle/demos/tooltip/*",
-		"development-bundle/docs/tooltip.html",
-		"development-bundle/themes/base/tooltip.css",
-		"development-bundle/themes/base/minified/tooltip.min.css"
-	],
-	"effect": [
-		"development-bundle/demos/effect/*",
-		"development-bundle/docs/addClass.html",
-		"development-bundle/docs/color-animation.html",
-		"development-bundle/docs/effect.html",
-		"development-bundle/docs/hide.html",
-		"development-bundle/docs/removeClass.html",
-		"development-bundle/docs/show.html",
-		"development-bundle/docs/switchClass.html",
-		"development-bundle/docs/toggle.html",
-		"development-bundle/docs/toggleClass.html"
-	],
-	"effect-blind": [
-		"development-bundle/docs/blind-effect.html"
-	],
-	"effect-bounce": [
-		"development-bundle/docs/bounce-effect.html"
-	],
-	"effect-clip": [
-		"development-bundle/docs/clip-effect.html"
-	],
-	"effect-drop": [
-		"development-bundle/docs/drop-effect.html"
-	],
-	"effect-explode": [
-		"development-bundle/docs/explode-effect.html"
-	],
-	"effect-fade": [
-		"development-bundle/docs/fade-effect.html"
-	],
-	"effect-fold": [
-		"development-bundle/docs/fold-effect.html"
-	],
-	"effect-highlight": [
-		"development-bundle/docs/highlight-effect.html"
-	],
-	"effect-puff": [
-		"development-bundle/docs/puff-effect.html"
-	],
-	"effect-pulsate": [
-		"development-bundle/docs/pulsate-effect.html"
-	],
-	"effect-scale": [
-		"development-bundle/docs/scale-effect.html"
-	],
-	"effect-size": [
-		"development-bundle/docs/size-effect.html"
-	],
-	"effect-shake": [
-		"development-bundle/docs/shake-effect.html"
-	],
-	"effect-slide": [
-		"development-bundle/docs/slide-effect.html"
-	],
-	"effect-transfer": [
-		"development-bundle/docs/transfer-effect.html"
-	]
-};
-var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce(function( sum, component ) {
-	return sum + componentFiles.all.length + componentFiles[ component ].length;
-}, 0 );
-function componentFilesCheck( test, files, components ) {
-	Object.keys( componentFiles ).forEach(function( component ) {
-		if ( components.indexOf( component ) >= 0 ) {
-			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( filePresent( files, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
-			});
-		} else {
-			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
-				test.ok( !filePresent( files, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
-			});
-		}
 	});
 }
 
 
 var themeFiles = {
 	"all": [
-		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.css/,
-		/css\/\{folder_name\}\/jquery-ui-[^\.]*\.[^\.]*\.[^\.]*.*?\.custom\.min\.css/,
-		"development-bundle/themes/{folder_name}/all.css",
-		"development-bundle/themes/{folder_name}/base.css",
-		"development-bundle/themes/{folder_name}/{component}.css",
-		"development-bundle/themes/{folder_name}/jquery-ui.css",
-		"development-bundle/themes/{folder_name}/minified/{component}.min.css",
-		"development-bundle/themes/{folder_name}/minified/jquery-ui.min.css"
+		"jquery-ui.css",
+		"jquery-ui.min.css",
+		"jquery-ui.structure.css",
+		"jquery-ui.structure.min.css"
 	],
 	"anyTheme": [
-		"css/{folder_name}/images/animated-overlay.gif",
-		"css/{folder_name}/images/ui-icons*png",
-		"css/{folder_name}/images/ui-bg*png",
-		"development-bundle/themes/{folder_name}/theme.css",
-		"development-bundle/themes/{folder_name}/images/animated-overlay.gif",
-		"development-bundle/themes/{folder_name}/images/ui-icons*png",
-		"development-bundle/themes/{folder_name}/images/ui-bg*png",
-		"development-bundle/themes/{folder_name}/minified/theme.min.css",
-		"development-bundle/themes/{folder_name}/minified/images/animated-overlay.gif",
-		"development-bundle/themes/{folder_name}/minified/images/ui-icons*png",
-		"development-bundle/themes/{folder_name}/minified/images/ui-bg*png"
+		"jquery-ui.theme.css",
+		"jquery-ui.theme.min.css",
+		"images/animated-overlay.gif",
+		"images/ui-icons*png",
+		"images/ui-bg*png"
 	]
 };
-var themeComponents = "accordion autocomplete button core datepicker dialog menu progressbar resizable selectable slider spinner tabs tooltip".split( " " ),
-	themeComponentsRe = new RegExp( themeComponents.join( "|" ) );
-function themeComponentOnly( component ) {
-	return themeComponentsRe.test( component );
-}
-var THEME_FILES_TESTCASES = function( components ) {
+var themeComponents = "accordion autocomplete button core datepicker dialog menu progressbar resizable selectable slider spinner tabs tooltip".split( " " );
+var THEME_FILES_TESTCASES = function() {
 	return Object.keys( themeFiles ).reduce(function( sum, group ) {
-		return sum + themeFiles[ group ].reduce(function( sum, themeFile ) {
-			return sum + ( (/\{component\}/).test( themeFile.toString() ) ? components.filter( themeComponentOnly ).length : 1 );
-		}, 0);
+		return sum + themeFiles[ group ].length;
 	}, 0 );
 };
 function themeFilesCheck( test, files, components, theme ) {
-	var expandComponents = function( themeFile ) {
-		// For every themeFile that has a {component} variable, replicate themeFile for each component (expanding each component).
-		if ( (/\{component\}/).test( themeFile.toString() ) ) {
-			return components.filter( themeComponentOnly ).map(function( component ) {
-				return replace( "component", component )( themeFile );
-			});
-		}
-		return themeFile;
-	};
-	themeFiles.all.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
+	themeFiles.all.reduce( flatten, [] ).forEach(function( filepath ) {
 			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 	});
-	themeFiles.anyTheme.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
+	themeFiles.anyTheme.reduce( flatten, [] ).forEach(function( filepath ) {
 		if ( theme.isNull ) {
 			test.ok( !filePresent( files, filepath ), "Should not include the theme file \"" + filepath + "\"." );
 		} else {
@@ -398,14 +97,13 @@ var tests = {
 		"with a theme": function( test ) {
 			var components = this.allComponents,
 				theme = this.theme;
-			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES() );
 			pack( this.jqueryUi, components, theme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
 					commonFilesCheck( test, files );
-					componentFilesCheck( test, files, components );
 					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
@@ -414,14 +112,13 @@ var tests = {
 		"with a named theme": function( test ) {
 			var components = this.allComponents,
 				namedTheme = this.namedTheme;
-			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES() );
 			pack( this.jqueryUi, components, namedTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
 					commonFilesCheck( test, files );
-					componentFilesCheck( test, files, components );
 					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
@@ -430,14 +127,13 @@ var tests = {
 		"no theme": function( test ) {
 			var components = this.allComponents,
 				noTheme = this.noTheme;
-			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES() );
 			pack( this.jqueryUi, components, noTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
 					commonFilesCheck( test, files );
-					componentFilesCheck( test, files, components );
 					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
@@ -446,28 +142,26 @@ var tests = {
 	},
 	"test: select all widgets": function( test ) {
 		var components = this.allWidgets;
-		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES );
 		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
 				commonFilesCheck( test, files );
-				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
 	},
 	"test: select all effects": function( test ) {
 		var components = this.allEffects;
-		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES );
 		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
 				commonFilesCheck( test, files );
-				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -476,14 +170,13 @@ var tests = {
 		"with a theme": function( test ) {
 			var components = someWidgets1,
 				theme = this.theme;
-			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES() );
 			pack( this.jqueryUi, components, theme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
 					commonFilesCheck( test, files );
-					componentFilesCheck( test, files, components );
 					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
@@ -492,14 +185,13 @@ var tests = {
 		"with a named theme": function( test ) {
 			var components = someWidgets1,
 				namedTheme = this.namedTheme;
-			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES() );
 			pack( this.jqueryUi, components, namedTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
 					commonFilesCheck( test, files );
-					componentFilesCheck( test, files, components );
 					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
@@ -509,14 +201,13 @@ var tests = {
 		 function( test ) {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
-			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES() );
 			pack( this.jqueryUi, components, noTheme, function( err, files ) {
 				if ( err ) {
 					test.ok( false, err.message );
 					test.done();
 				} else {
 					commonFilesCheck( test, files );
-					componentFilesCheck( test, files, components );
 					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
@@ -525,28 +216,26 @@ var tests = {
 	},
 	"test: select some widgets (2)": function( test ) {
 		var components = someWidgets2;
-		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES );
 		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
 				commonFilesCheck( test, files );
-				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
 	},
 	"test: select no components": function( test ) {
 		var components = noComponents;
-		test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES );
 		pack( this.jqueryUi, components, this.theme, function( err, files ) {
 			if ( err ) {
 				test.ok( false, err.message );
 				test.done();
 			} else {
 				commonFilesCheck( test, files );
-				componentFilesCheck( test, files, components );
 				test.done();
 			}
 		});
@@ -555,8 +244,8 @@ var tests = {
 		var builder, packer,
 			components = [ "core", "widget", "tabs" ],
 			filesToCheck = [
-				new RegExp( "development-bundle/themes/smoothness/tabs.css" ),
-				/css\/smoothness\/jquery-ui-.*\.custom\.min\.css/
+				/jquery-ui\.css/,
+				/jquery-ui\.min\.css/
 			],
 			scope = "#wrapper";
 		test.expect( filesToCheck.length );
@@ -571,7 +260,7 @@ var tests = {
 						return filepath.test( file.path );
 					});
 				}).forEach(function( file ) {
-					test.ok( (new RegExp( "^" + scope )).test( stripBanner( file.data ) ), "Builder should scope any other-than-theme CSS. But, failed to scope \"" + file.path + "\"." );
+					test.ok( (new RegExp( scope )).test( file.data ), "Builder should scope any other-than-theme CSS. But, failed to scope \"" + file.path + "\"." );
 				});
 			}
 			test.done();
