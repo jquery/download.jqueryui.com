@@ -7,6 +7,7 @@ var downloadLogger, jqueryUis,
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
 	Packer = require( "./lib/packer" ),
 	querystring = require( "querystring" ),
+	semver = require( "semver" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
 	winston = require( "winston" );
@@ -24,6 +25,10 @@ jqueryUis = JqueryUi.all();
 
 Handlebars.registerHelper( "isVersionChecked", function( jqueryUi ) {
 	return JqueryUi.getStable().pkg.version === jqueryUi.pkg.version ? " checked=\"checked\"" : "";
+});
+
+Handlebars.registerHelper( "isThereThemeFolder", function( jqueryUi ) {
+	return semver.gte( jqueryUi.pkg.version, "1.11.0-a" ) ? " data-no-theme-folder=\"true\"" : "";
 });
 
 Handlebars.registerHelper( "join", function( array, sep, options ) {
