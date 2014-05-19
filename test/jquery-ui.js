@@ -1,4 +1,5 @@
-var JqueryUi = require( "../lib/jquery-ui" );
+var JqueryUi = require( "../lib/jquery-ui" ),
+	semver = require( "semver" );
 
 function notNull( data ) {
 	if ( data instanceof Buffer ) {
@@ -26,37 +27,16 @@ var tests = {
 			test.ok( notNull( file.data ), "Null file \"" + file.path + "\"." );
 		});
 		test.done();
-	},
-	"test: demo files present": function( test ) {
-		var files = this.jqueryUi.files();
-		test.expect( files.demoFiles.length );
-		files.demoFiles.forEach(function( file ) {
-			test.ok( notNull( file.data ), "Null file \"" + file.path + "\"." );
-		});
-		test.done();
-	},
-	"test: doc files present": function( test ) {
-		var files = this.jqueryUi.files();
-		test.expect( files.docFiles.length );
-		files.docFiles.forEach(function( file ) {
-			test.ok( notNull( file.data ), "Null file \"" + file.path + "\"." );
-		});
-		test.done();
-	},
-	"test: base theme files present": function( test ) {
-		var files = this.jqueryUi.files();
-		test.expect( files.baseThemeFiles.length );
-		files.baseThemeFiles.forEach(function( file ) {
-			test.ok( notNull( file.data ), "Null file \"" + file.path + "\"." );
-		});
-		test.done();
 	}
 };
 
 module.exports = {};
 
 // Build tests for each jqueryUi release
-JqueryUi.all().forEach(function( jqueryUi ) {
+JqueryUi.all().filter(function( jqueryUi ) {
+	// Filter supported releases only
+	return semver.gte( jqueryUi.pkg.version, "1.11.0-a" );
+}).forEach(function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
 			if ( typeof tests[ i ] === "object" ) {
