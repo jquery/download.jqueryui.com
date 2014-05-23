@@ -7,7 +7,7 @@
     "connect": "1.9.2",
     "dateformat": "1.0.2-1.2.3",
     "formidable": "1.0.9",
-    "glob-whatev": "0.1.7",
+    "glob": "4.0.0",
     "gm": "1.8.1",
     "grunt": "0.4.1",
     "grunt-check-modules": "0.2.0",
