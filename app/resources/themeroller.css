@@ -654,19 +654,12 @@ ul#icons span.ui-icon {float: left; margin: 0 4px;}
 #themeroller .fakewindowcontain .ui-widget-overlay {
 	position: absolute; /* 1 */
 }
-
-/* Clearfix */
+.clearfix:before,
 .clearfix:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
+	content: "";
+	display: table;
+	border-collapse: collapse;
 }
-
-.clearfix {display: inline-block;}
-
-/* Hides from IE-mac \ */
-* html .clearfix {height: 1%;}
-.clearfix {display: block;}
-/* End hide from IE-mac */
+.clearfix:after {
+	clear: both;
+}
