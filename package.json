@@ -24,7 +24,7 @@
     "sqwish": "0.2.0",
     "uglify-js": "2.2.5",
     "underscore": "1.4.4",
-    "winston": "0.6.2"
+    "winston": "0.7.3"
   },
   "devDependencies": {
     "nodeunit": "0.7.4"
