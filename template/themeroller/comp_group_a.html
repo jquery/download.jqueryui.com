@@ -260,6 +260,15 @@
 <!-- Tooltip -->
 <h2 class="demoHeaders">Tooltip</h2>
 <p>
-	<img src="/resources/images/themeroller/st-stephens.jpg" alt="St. Stephen's Cathedral">
-	<img src="/resources/images/themeroller/tower-bridge.jpg" alt="Tower Bridge">
+	{{#if production}}
+		<link rel="stylesheet" href="/resources/external/farbtastic.css">
+		<link rel="stylesheet" href="/resources/themeroller.css">
+		<img src="/resources/images/themeroller/st-stephens.jpg" alt="St. Stephen's Cathedral">
+		<img src="/resources/images/themeroller/tower-bridge.jpg" alt="Tower Bridge">
+	{{else}}
+		<link rel="stylesheet" href="/external/farbtastic.css">
+		<link rel="stylesheet" href="/app/themeroller.css">
+		<img src="/app/images/themeroller/st-stephens.jpg" alt="St. Stephen's Cathedral">
+		<img src="/app/images/themeroller/tower-bridge.jpg" alt="Tower Bridge">
+	{{/if}}
 </p>

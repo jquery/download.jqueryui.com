@@ -48,6 +48,7 @@ var Frontend = function( args ) {
 
 Frontend.prototype = {
 	index: function( params, options ) {
+		var production = this.env.toLowerCase() === "production";
 		options = options || {};
 		if ( options.wrap ) {
 			options = _.defaults({
@@ -64,7 +65,8 @@ Frontend.prototype = {
 				categories: JqueryUi.getStable().categories()
 			}),
 			host: this.host,
-			production: this.env.toLowerCase() === "production",
+			lzmaWorker: ( production ? "/resources" : "" ) + "/external/lzma_worker.min.js",
+			production: production,
 			resources: this.resources,
 			jqueryUis: jqueryUis
 		});

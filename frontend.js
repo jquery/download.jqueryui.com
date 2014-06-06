@@ -20,7 +20,7 @@ var errorTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/
  *
  */
 var Frontend = function( options ) {
-	options = _.extend( {}, Frontend.defaults, options );
+	this.options = options = _.extend( {}, Frontend.defaults, options );
 	if ( options.config && typeof options.config === "object" ) {
 		require( "./lib/config" ).get = function() {
 			return options.config;

@@ -7,7 +7,8 @@ process.on( "uncaughtException", function ( err ) {
 	process.exit( 1 );
 });
 
-var argv = require( "optimist" ).argv,
+var frontend, server,
+	argv = require( "optimist" ).argv,
 	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
 	connect = require( "connect" ),
@@ -29,10 +30,9 @@ var argv = require( "optimist" ).argv,
 		themerollerIcon: /^\/themeroller\/images\/(ui-icons_.+)$/,
 		themerollerParseTheme: "/themeroller/parsetheme.css",
 		themerollerTexture: /^\/themeroller\/images\/(ui-bg_.+)$/
-	},
-	staticDir = "app";
+	};
 
-var frontend = new Frontend();
+frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	Cache.on( 60000 * 60 );
 	Packer.cacheThemeGalleryImages();
@@ -95,9 +95,19 @@ function route( app ) {
 	});
 }
 
-connect.createServer(
-	connect.router( route ),
-	connect[ "static" ]( staticDir )
-).listen( httpPort, httpHost, function() {
+
+server = connect( connect.router( route ) );
+
+// App static directories.
+if ( frontend.options.env === "production" ) {
+	server.use( "/resources", connect[ "static" ]( "app/dist" ) );
+} else {
+	server
+		.use( "/app", connect[ "static" ]( "app/src" ) )
+		.use( "/external", connect[ "static" ]( "external" ) )
+		.use( "/template", connect[ "static" ]( "tmp/app/template" ) );
+}
+
+server.listen( httpPort, httpHost, function() {
 	console.log( "HTTP Server running at http://%s:%d", httpHost, httpPort );
 });
