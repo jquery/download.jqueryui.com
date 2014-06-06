@@ -142,7 +142,7 @@
 	padding: 0;
 	text-indent: -999999px;
 	overflow: hidden;
-	background: transparent url("/resources/images/themeroller/logo_themeRoller_sml.gif") -5px 0 no-repeat;
+	background: transparent url("images/themeroller/logo_themeRoller_sml.gif") -5px 0 no-repeat;
 }
 
 /* corner radius in TR app elements */
@@ -195,11 +195,11 @@
 
 
 /* tabs colors, texture */
-#themeroller .application #rollerTabsNav {font-size: 1em; border: 1px solid #222222/* borderColorHeader */; background: #000000 url("/resources/images/themeroller/bg_tr_tabs.png") 0 50% repeat-x; color: #222222/* fcHeader */; font-weight: bold !important; border-bottom: 0; margin: 0; list-style: none;}
+#themeroller .application #rollerTabsNav {font-size: 1em; border: 1px solid #222222/* borderColorHeader */; background: #000000 url("images/themeroller/bg_tr_tabs.png") 0 50% repeat-x; color: #222222/* fcHeader */; font-weight: bold !important; border-bottom: 0; margin: 0; list-style: none;}
 #themeroller .application #rollerTabsNav .widget-header a { color: #222222/* fcHeader */; }
-#themeroller .application #rollerTabsNav li { float: left; border: 1px solid #000000/* borderColorDefault */; background: #333333 url("/resources/images/themeroller/bg_tr_tabs_tab.png") 0 50% repeat-x; font-weight: normal/* fwDefault */; color: #dddddd/* fcDefault */ !important; }
+#themeroller .application #rollerTabsNav li { float: left; border: 1px solid #000000/* borderColorDefault */; background: #333333 url("images/themeroller/bg_tr_tabs_tab.png") 0 50% repeat-x; font-weight: normal/* fwDefault */; color: #dddddd/* fcDefault */ !important; }
 #themeroller .application #rollerTabsNav li a { color: #dddddd/* fcDefault */; text-decoration: none; }
-#themeroller .application #rollerTabsNav li.state-hover { border: 1px solid #000000/* borderColorHover */; background: #333333 url("/resources/images/themeroller/bg_tr_tabs_tab_hover.png") 0  50% repeat-x; font-weight: normal/* fwDefault */; color: #ffffff/* fcHover */ !important; }
+#themeroller .application #rollerTabsNav li.state-hover { border: 1px solid #000000/* borderColorHover */; background: #333333 url("images/themeroller/bg_tr_tabs_tab_hover.png") 0  50% repeat-x; font-weight: normal/* fwDefault */; color: #ffffff/* fcHover */ !important; }
 #themeroller .application #rollerTabsNav li.state-hover a { color: #ffffff/* fcHover */; text-decoration: none; }
 #themeroller .application #rollerTabsNav li.ui-tabs-active { border: 1px solid #111111/* borderColorActive */; border-bottom: #000; background: #000 ; font-weight: normal/* fwDefault */; color: #ffffff/* fcActive */ !important; outline: none; }
 #themeroller .application #rollerTabsNav li.ui-tabs-active a { color: #ffffff/* fcActive */; outline: none; text-decoration: none; }
@@ -220,7 +220,7 @@
 
 /* Download Theme button */
 #downloadTheme  {
-	background: #fa9300 url("/resources/images/themeroller/bg_download_btn.png") repeat-x scroll 0 50%;
+	background: #fa9300 url("images/themeroller/bg_download_btn.png") repeat-x scroll 0 50%;
 	color:#222;
 	border: 1px solid #111;
 	padding: 0.3em 1.8em 0.4em 2.8em;
@@ -231,7 +231,7 @@
 	margin: -2px 0 14px 0;
 }
 #downloadTheme .download-icon {
-	background-image: url("/resources/images/themeroller/tr_icons_white.png");
+	background-image: url("images/themeroller/tr_icons_white.png");
 	background-position: -128px -192px;
 	position: absolute;
 	top: 50%;
@@ -239,7 +239,7 @@
 	margin-top: -8px;
 }
 #downloadTheme:hover {
-	background:#faae00 url("/resources/images/themeroller/bg_download_btn_hover.png") repeat-x scroll 0 50%
+	background:#faae00 url("images/themeroller/bg_download_btn_hover.png") repeat-x scroll 0 50%
 	color: #000;
 	border-color: #000;
 }
@@ -264,17 +264,17 @@
 
 }
 /* header states */
-#themeroller .application .theme-group .theme-group-header.state-default { border: 1px solid #222/* borderColorDefault */; background: #111 url("/resources/images/themeroller/bg_tr_group_headers.png") 0 50% repeat-x; font-weight: normal; color: #aaaaaa/* fcDefault */ !important; }
+#themeroller .application .theme-group .theme-group-header.state-default { border: 1px solid #222/* borderColorDefault */; background: #111 url("images/themeroller/bg_tr_group_headers.png") 0 50% repeat-x; font-weight: normal; color: #aaaaaa/* fcDefault */ !important; }
 #themeroller .application .theme-group .theme-group-header.state-default a { color: #aaaaaa/* fcDefault */; text-decoration: none; }
-#themeroller .application .theme-group .theme-group-header.state-active { border: 1px solid #444/* borderColorActive */; border-bottom: 0 !important; background: #333 url("/resources/images/themeroller/bg_tr_group_headers_active.png") 0 50% repeat-x; font-weight: normal/* fwDefault */; color: #ffffff/* fcActive */ !important; outline: none; }
+#themeroller .application .theme-group .theme-group-header.state-active { border: 1px solid #444/* borderColorActive */; border-bottom: 0 !important; background: #333 url("images/themeroller/bg_tr_group_headers_active.png") 0 50% repeat-x; font-weight: normal/* fwDefault */; color: #ffffff/* fcActive */ !important; outline: none; }
 #themeroller .application .theme-group .theme-group-header.state-active a { color: #ffffff/* fcActive */; outline: none; text-decoration: none; }
-#themeroller .application .theme-group .theme-group-content { border: 1px solid #444/* borderColorContent */;  background: #333 url("/resources/images/themeroller/bg_tr_group_headers_content.png") 0 0 repeat-x/* bgContentRepeat */; color: #ffffff/* fcContent */; }
-#themeroller .application .theme-group .theme-group-header.state-hover { border: 1px solid #444/* borderColorHover */; background: #1a1a1a url("/resources/images/themeroller/bg_tr_group_headers_hover.png") 0  50% repeat-x; font-weight: normal/* fwDefault */; color: #cccccc/* fcHover */ !important; }
+#themeroller .application .theme-group .theme-group-content { border: 1px solid #444/* borderColorContent */;  background: #333 url("images/themeroller/bg_tr_group_headers_content.png") 0 0 repeat-x/* bgContentRepeat */; color: #ffffff/* fcContent */; }
+#themeroller .application .theme-group .theme-group-header.state-hover { border: 1px solid #444/* borderColorHover */; background: #1a1a1a url("images/themeroller/bg_tr_group_headers_hover.png") 0  50% repeat-x; font-weight: normal/* fwDefault */; color: #cccccc/* fcHover */ !important; }
 #themeroller .application .theme-group .theme-group-header.state-hover a { color: #cccccc/* fcHover */; text-decoration: none; }
 #themeroller .arrow-icon {
 	float: left;
 	margin: -2px 3px 0 0;
-	background-image: url("/resources/images/themeroller/tr_icons_white.png");
+	background-image: url("images/themeroller/tr_icons_white.png");
 }
 #themeroller .state-active .arrow-icon {
 	margin: -1px 2px 0 1px !important;
@@ -506,13 +506,13 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 	z-index: 99999999;
 }
 .farbtastic .wheel {
-	background-image: url("/resources/images/farbtastic/wheel.png");
+	background-image: url("images/farbtastic/wheel.png");
 }
 .farbtastic .overlay {
-	background-image: url("/resources/images/farbtastic/mask.png");
+	background-image: url("images/farbtastic/mask.png");
 }
 .farbtastic .marker {
-	background-image: url("/resources/images/farbtastic/marker.png");
+	background-image: url("images/farbtastic/marker.png");
 }
 
 
@@ -583,7 +583,7 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 	font-size: .9em;
 	text-decoration: none !important;
 	float: left;
-	background: #333 url("/resources/images/themeroller/bg_sml_download_edit_btn.png") repeat-x scroll 50% 50% ;
+	background: #333 url("images/themeroller/bg_sml_download_edit_btn.png") repeat-x scroll 50% 50% ;
 	margin: 3px 4px 0 0;
 	padding: 2px 4px;
 	border: 1px solid #222;
@@ -591,7 +591,7 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 
 }
 #themeGallery a.download:hover, #themeGallery a.edit:hover {
-	background: #444 url("/resources/images/themeroller/bg_sml_download_edit_btn_hover.png") repeat-x scroll 50% 50%;
+	background: #444 url("images/themeroller/bg_sml_download_edit_btn_hover.png") repeat-x scroll 50% 50%;
 	color: #ddd;
 }
 
@@ -606,7 +606,7 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 }
 #help span.icon {
 	float: left;
-	background-image: url("/resources/images/themeroller/tr_icons_orange.png");
+	background-image: url("images/themeroller/tr_icons_orange.png");
 	height: 13px;
 	width: 14px;
 	margin: -1px 4px 0 0;

@@ -1,6 +1,5 @@
-app/resources/download.all.min.js
-app/resources/themeroller.all.min.js
-app/src/template
+app/dist
+external
 jquery-ui
 log/downloads.log
 node_modules

@@ -2,7 +2,11 @@
 	<ul>
 		{{#each themeGallery}}
 			<li><a data-z-theme-params="{{zThemeParams}}" href="themeroller?{{serializedVars}}">
-				<img src="../resources/images/themeGallery/{{thumb}}" alt="{{name}}" title="{{name}}" />
+				{{#if ../production}}
+					<img src="../resources/images/themeGallery/{{thumb}}" alt="{{name}}" title="{{name}}" />
+				{{else}}
+					<img src="/app/images/themeGallery/{{thumb}}" alt="{{name}}" title="{{name}}" />
+				{{/if}}
 				<span class="themeName">{{name}}</span>
 			</a></li>
 		{{/each}}

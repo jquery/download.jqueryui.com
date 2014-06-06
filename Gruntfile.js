@@ -6,6 +6,8 @@ module.exports = function( grunt ) {
 
 "use strict";
 grunt.loadNpmTasks( "grunt-check-modules" );
+grunt.loadNpmTasks( "grunt-contrib-clean" );
+grunt.loadNpmTasks( "grunt-contrib-copy" );
 grunt.loadNpmTasks( "grunt-contrib-handlebars" );
 grunt.loadNpmTasks( "grunt-contrib-jshint" );
 grunt.loadNpmTasks( "grunt-contrib-uglify" );
@@ -23,8 +25,8 @@ grunt.initConfig({
 		},
 		compile: {
 			files: {
-				"app/src/template/download.js": [ "template/download/components.html", "template/download/service_status.html", "template/download/theme.html" ],
-				"app/src/template/themeroller.js": [ "template/themeroller/rollyourown.html", "template/themeroller/_rollyourown_group_corner.html", "template/themeroller/_rollyourown_group_default.html", "template/themeroller/_rollyourown_group_dropshadow.html", "template/themeroller/_rollyourown_group_font.html", "template/themeroller/_rollyourown_group_modaloverlay.html" ]
+				"tmp/app/template/download.js": [ "template/download/components.html", "template/download/service_status.html", "template/download/theme.html" ],
+				"tmp/app/template/themeroller.js": [ "template/themeroller/rollyourown.html", "template/themeroller/_rollyourown_group_corner.html", "template/themeroller/_rollyourown_group_default.html", "template/themeroller/_rollyourown_group_dropshadow.html", "template/themeroller/_rollyourown_group_font.html", "template/themeroller/_rollyourown_group_modaloverlay.html" ]
 			}
 		}
 	},
@@ -48,20 +50,43 @@ grunt.initConfig({
 			undef: true
 		}
 	},
+	copy: {
+		appExternal: {
+			expand: true,
+			cwd: "external",
+			src: [ "farbtastic.css", "lzma_worker.min.js" ],
+			dest: "app/dist/external"
+		},
+		appImages: {
+			expand: true,
+			cwd: "app/src",
+			src: [ "images/**/*" ],
+			dest: "app/dist"
+		},
+		appStyles: {
+			expand: true,
+			cwd: "app/src",
+			src: [ "download.css", "themeroller.css" ],
+			dest: "app/dist"
+		}
+	},
 	uglify: {
 		options: {
 			preserveComments: "some"
 		},
 		// DownloadBuilder minified frontend bundle
 		download: {
-			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/download.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
-			dest: "app/resources/download.all.min.js"
+			src: [ "external/event_emitter.min.js", "external/handlebars.runtime.js", "tmp/app/template/download.js", "external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
+			dest: "app/dist/download.all.min.js"
 		},
 		// ThemeRoller minified frontend bundle
 		themeroller: {
-			src: [ "app/src/external/event_emitter.min.js", "app/src/external/handlebars.runtime.js", "app/src/template/themeroller.js", "app/src/external/farbtastic.js", "app/src/external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
-			dest: "app/resources/themeroller.all.min.js"
+			src: [ "external/event_emitter.min.js", "external/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic.js", "external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
+			dest: "app/dist/themeroller.all.min.js"
 		}
+	},
+	clean: {
+		appDist: [ "app/dist" ]
 	}
 });
 
@@ -429,7 +454,7 @@ function buildPackages( folder, callback ) {
 
 grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 
-grunt.registerTask( "build-app", [ "handlebars", "uglify" ] );
+grunt.registerTask( "build-app", [ "clean:appDist", "handlebars", "copy", "uglify" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();
@@ -441,7 +466,7 @@ grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI rele
 });
 
 grunt.registerTask( "mkdirs", "Create directories", function() {
-	[ "app/resources/template", "log", "tmp" ].forEach(function( dir ) {
+	[ "log", "tmp" ].forEach(function( dir ) {
 		if ( !fs.existsSync( dir ) ) {
 			grunt.file.mkdir( dir );
 		}

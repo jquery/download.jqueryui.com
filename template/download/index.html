@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/{{resources.jqueryuiVersion}}/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="/resources/download.css">
-<div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}" data-initial-components="{{components}}">
+{{#if production}}
+    <link rel="stylesheet" href="/resources/download.css">
+{{else}}
+    <link rel="stylesheet" href="/app/download.css">
+{{/if}}
+<div id="download-builder" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}" data-initial-components="{{components}}" data-lzma-worker="{{lzmaWorker}}">
 	<p class="bundle-links">
 		<strong>Quick downloads:</strong>  
 		{{#join jqueryUis " | "}}
@@ -39,12 +43,12 @@
 {{#if production}}
 	<script src="/resources/download.all.min.js"></script>
 {{else}}
-	<script src="/src/external/event_emitter.min.js"></script>
-	<script src="/src/external/handlebars.runtime.js"></script>
-	<script src="/src/template/download.js"></script>
-	<script src="/src/external/lzma.js"></script>
-	<script src="/src/hash.js"></script>
-	<script src="/src/querystring.js"></script>
-	<script src="/src/model.js"></script>
-	<script src="/src/download.js"></script>
+	<script src="/external/event_emitter.min.js"></script>
+	<script src="/external/handlebars.runtime.js"></script>
+	<script src="/template/download.js"></script>
+	<script src="/external/lzma.js"></script>
+	<script src="/app/hash.js"></script>
+	<script src="/app/querystring.js"></script>
+	<script src="/app/model.js"></script>
+	<script src="/app/download.js"></script>
 {{/if}}

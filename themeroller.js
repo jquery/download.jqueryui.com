@@ -45,9 +45,10 @@ Frontend.prototype = {
 		if ( vars && "zThemeParams" in vars ) {
 			delete vars.zThemeParams;
 		}
-		var theme = new ThemeRoller({
-			vars: vars
-		});
+		var production = this.env.toLowerCase() === "production",
+			theme = new ThemeRoller({
+				vars: vars
+			});
 		options = options || {};
 		if ( options.wrap ) {
 			options = _.defaults({
@@ -62,14 +63,18 @@ Frontend.prototype = {
 			appinterface: appinterfaceTemplate({
 				help: helpTemplate(),
 				themegallery: themegalleryTemplate({
+					production: production,
 					themeGallery: themeGallery
 				})
 			}),
 			baseVars: themeGallery[ 2 ].serializedVars,
-			compGroupA: compGroupATemplate(),
+			compGroupA: compGroupATemplate({
+				production: production
+			}),
 			compGroupB: compGroupBTemplate(),
 			host: this.host,
-			production: this.env.toLowerCase() === "production",
+			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/external/lzma-js/src/lzma_worker.js",
+			production: production,
 			resources: this.resources,
 			textures: JSON.stringify( textures )
 		});

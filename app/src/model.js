@@ -10,7 +10,7 @@
  */
 (function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
 	var Model, DownloadBuilderModel, ThemeRollerModel, lzmaInterval,
-		lzma = new LZMA( "/resources/external/lzma_worker.min.js" ),
+		lzma = new LZMA( $( "[data-lzma-worker]" ).data( "lzma-worker" ) ),
 		lzmaLoad = $.Deferred();
 
 	// Encodes an Array of booleans [ true, false, ... ] into a string sequence "10...".
