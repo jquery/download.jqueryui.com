@@ -51,11 +51,9 @@ grunt.initConfig({
 		}
 	},
 	copy: {
-		appExternal: {
-			expand: true,
-			cwd: "external",
-			src: [ "farbtastic.css", "lzma_worker.min.js" ],
-			dest: "app/dist/external"
+		appExternalFarbtastic: {
+			src: "external/farbtastic/farbtastic.css",
+			dest: "app/dist/external/farbtastic.css"
 		},
 		appImages: {
 			expand: true,
@@ -76,13 +74,17 @@ grunt.initConfig({
 		},
 		// DownloadBuilder minified frontend bundle
 		download: {
-			src: [ "external/event_emitter.min.js", "external/handlebars.runtime.js", "tmp/app/template/download.js", "external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
+			src: [ "external/eventEmitter/EventEmitter.js", "external/handlebars/handlebars.runtime.js", "tmp/app/template/download.js", "external/lzma-js/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
 			dest: "app/dist/download.all.min.js"
 		},
 		// ThemeRoller minified frontend bundle
 		themeroller: {
-			src: [ "external/event_emitter.min.js", "external/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic.js", "external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
+			src: [ "external/eventEmitter/EventEmitter.js", "external/handlebars/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic/farbtastic.js", "external/lzma-js/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
 			dest: "app/dist/themeroller.all.min.js"
+		},
+		external_lzma_worker: {
+			src: [ "external/lzma-js/src/lzma_worker.js" ],
+			dest: "app/dist/external/lzma_worker.min.js"
 		}
 	},
 	clean: {
