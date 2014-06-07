@@ -65,7 +65,7 @@ Frontend.prototype = {
 				categories: JqueryUi.getStable().categories()
 			}),
 			host: this.host,
-			lzmaWorker: ( production ? "/resources" : "" ) + "/external/lzma_worker.min.js",
+			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/external/lzma-js/src/lzma_worker.js",
 			production: production,
 			resources: this.resources,
 			jqueryUis: jqueryUis

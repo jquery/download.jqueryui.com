@@ -51,17 +51,21 @@ grunt.initConfig({
 		}
 	},
 	copy: {
-		appExternal: {
-			expand: true,
-			cwd: "external",
-			src: [ "farbtastic.css", "lzma_worker.min.js" ],
-			dest: "app/dist/external"
+		appExternalFarbtastic: {
+			src: "external/farbtastic/farbtastic.css",
+			dest: "app/dist/external/farbtastic.css"
 		},
 		appImages: {
 			expand: true,
 			cwd: "app/src",
 			src: [ "images/**/*" ],
 			dest: "app/dist"
+		},
+		appImagesExternalFarbtastic: {
+			expand: true,
+			cwd: "external/farbtastic",
+			src: [ "marker.png", "mask.png", "wheel.png" ],
+			dest: "app/dist/images/farbtastic"
 		},
 		appStyles: {
 			expand: true,
@@ -76,13 +80,17 @@ grunt.initConfig({
 		},
 		// DownloadBuilder minified frontend bundle
 		download: {
-			src: [ "external/event_emitter.min.js", "external/handlebars.runtime.js", "tmp/app/template/download.js", "external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
+			src: [ "external/eventEmitter/EventEmitter.js", "external/handlebars/handlebars.runtime.js", "tmp/app/template/download.js", "external/lzma-js/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
 			dest: "app/dist/download.all.min.js"
 		},
 		// ThemeRoller minified frontend bundle
 		themeroller: {
-			src: [ "external/event_emitter.min.js", "external/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic.js", "external/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
+			src: [ "external/eventEmitter/EventEmitter.js", "external/handlebars/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic/farbtastic.js", "external/lzma-js/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
 			dest: "app/dist/themeroller.all.min.js"
+		},
+		external_lzma_worker: {
+			src: [ "external/lzma-js/src/lzma_worker.js" ],
+			dest: "app/dist/external/lzma_worker.min.js"
 		}
 	},
 	clean: {
@@ -454,7 +462,15 @@ function buildPackages( folder, callback ) {
 
 grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 
-grunt.registerTask( "build-app", [ "clean", "handlebars", "copy", "uglify" ] );
+grunt.registerTask( "bower-install", "Runs bower install", function() {
+	var done = this.async();
+	grunt.util.spawn({
+		cmd: "./node_modules/bower/bin/bower",
+		args: [ "install" ]
+	}, done );
+});
+
+grunt.registerTask( "build-app", [ "clean", "bower-install", "handlebars", "copy", "uglify" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();

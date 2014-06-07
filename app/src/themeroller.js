@@ -9,7 +9,7 @@
  * http://jquery.org/license
  */
 (function( $, Hash, JST, Model, QueryString, undefined ) {
-	var model, reloadRollYourOwn, skipHashChange, theme, Theme,
+	var farbtasticTriggerChangeDelay, model, reloadRollYourOwn, skipHashChange, theme, Theme,
 		focusedEl = null,
 		openGroups = [],
 		textureVars = "bgTextureDefault bgTextureHover bgTextureActive bgTextureHeader bgTextureContent bgTextureHighlight bgTextureError bgTextureOverlay bgTextureShadow".split( " " ),
@@ -58,6 +58,53 @@
 	// Function called after a change event in the form
 	function formChange() {
 		model.set( QueryString.decode( themeroller.find( ".application form" ).serialize() ) );
+	}
+
+	// Farbtastic hack.
+	// TODO: get rid of this hack.
+	farbtasticTriggerChangeDelay = 200;
+	function updateDisplay( fb, e ) {
+		return function() {
+			// Markers
+			var angle = fb.hsl[ 0 ] * 6.28;
+			$( ".h-marker", e ).css({
+				left: Math.round( Math.sin( angle ) * fb.radius + fb.width / 2 ) + "px",
+				top: Math.round( -Math.cos( angle ) * fb.radius + fb.width / 2 ) + "px"
+			});
+
+			$( ".sl-marker", e ).css({
+				left: Math.round( fb.square * ( 0.5 - fb.hsl[ 1 ] ) + fb.width / 2 ) + "px",
+				top: Math.round( fb.square * ( 0.5 - fb.hsl[ 2 ] ) + fb.width / 2 ) + "px"
+			});
+
+			// Saturation/Luminance gradient
+			$( ".color", e ).css( "backgroundColor", fb.pack( fb.HSLToRGB( [ fb.hsl[ 0 ], 1, 0.5 ] ) ) );
+
+			// Linked elements or callback
+			if ( typeof fb.callback === "object" ) {
+				// Set background/foreground color
+				$( fb.callback ).css({
+					backgroundColor: fb.color,
+					color: fb.hsl[ 2 ] > 0.5 ? "#000" : "#fff"
+				});
+
+				// Change linked value
+				$( fb.callback ).each(function() {
+					if ( this.value && this.value !== fb.color ) {
+						var element = $( this );
+						element.val( fb.color );
+						if( fb.triggerChange ) {
+							clearInterval( fb.triggerChange );
+						}
+						fb.triggerChange = setTimeout(function() {
+							element.trigger( "change" );
+						}, farbtasticTriggerChangeDelay);
+					}
+				});
+			} else if ( typeof fb.callback === "function" ) {
+				fb.callback.call( fb, fb.color );
+			}
+		};
 	}
 
 	// Set up spindowns
@@ -162,12 +209,20 @@
 					$( this ).trigger( "validate" );
 				},
 				"click": function( event ) {
+
+					// TODO: do we need the `#picker` id?
+					var farbtastic,
+						picker = $( "<div id=\"picker\"></div>" );
 					$( this ).addClass( "focus" );
 					$( "#picker" ).remove();
 					themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
 					themeroller.find( "div.texturePicker ul:visible" ).hide( 0 ).parent().css( "position", "static" );
-					$( this ).after( "<div id=\"picker\"></div>" ).parent().addClass( "picker-on" );
-					$( "#picker" ).farbtastic( this );
+					$( this ).after( picker ).parent().addClass( "picker-on" );
+
+					// Farbtastic hack.
+					// TODO: get rid of this hack.
+					farbtastic = $.farbtastic( picker, this );
+					farbtastic.updateDisplay = updateDisplay( farbtastic, picker.find( ".farbtastic" ) );
 					event.preventDefault();
 				},
 				"validate": function() {
