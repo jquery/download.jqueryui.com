@@ -101,8 +101,7 @@
 						}, farbtasticTriggerChangeDelay);
 					}
 				});
-			}
-			else if ( typeof fb.callback === "function" ) {
+			} else if ( typeof fb.callback === "function" ) {
 				fb.callback.call( fb, fb.color );
 			}
 		};
