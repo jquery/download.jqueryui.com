@@ -104,6 +104,7 @@ if ( frontend.options.env === "production" ) {
 } else {
 	server
 		.use( "/app", connect[ "static" ]( "app/src" ) )
+		.use( "/app/images/farbtastic", connect[ "static" ]( "external/farbtastic" ) )
 		.use( "/external", connect[ "static" ]( "external" ) )
 		.use( "/template", connect[ "static" ]( "tmp/app/template" ) );
 }

@@ -61,6 +61,12 @@ grunt.initConfig({
 			src: [ "images/**/*" ],
 			dest: "app/dist"
 		},
+		appImagesExternalFarbtastic: {
+			expand: true,
+			cwd: "external/farbtastic",
+			src: [ "marker.png", "mask.png", "wheel.png" ],
+			dest: "app/dist/images/farbtastic"
+		},
 		appStyles: {
 			expand: true,
 			cwd: "app/src",
