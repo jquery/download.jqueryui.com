@@ -465,7 +465,7 @@ grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 grunt.registerTask( "bower-install", "Runs bower install", function() {
 	var done = this.async();
 	grunt.util.spawn({
-		cmd: "bower",
+		cmd: "./node_modules/bower/bin/bower",
 		args: [ "install" ]
 	}, done );
 });
