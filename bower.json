@@ -3,7 +3,7 @@
   "dependencies": {},
   "devDependencies": {
     "eventEmitter": "4.2.7",
-    "farbtastic": "mattfarina/farbtastic#1.3u",
+    "farbtastic": "1.3u",
     "handlebars": "1.3.0",
     "lzma-js": "nmrugg/LZMA-JS#27986c2cb045bc1c5b0be5a0b8f234cff7364e41"
   }
