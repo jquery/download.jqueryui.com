@@ -1,15 +1,15 @@
 {
 	"jqueryUi": [
 		{
-			"version": "1.10.4",
+			"version": "1.11.0",
 			"dependsOn": "jQuery1.6+",
 			"label": "Stable",
 			"stable": true
 		},
 		{
-			"version": "1.11.0-beta.2",
+			"version": "1.10.4",
 			"dependsOn": "jQuery1.6+",
-			"label": "Pre-release"
+			"label": "Legacy"
 		},
 		{
 			"version": "1.9.2",
