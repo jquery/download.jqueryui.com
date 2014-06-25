@@ -462,15 +462,7 @@ function buildPackages( folder, callback ) {
 
 grunt.registerTask( "default", [ "check-modules", "jshint" ] );
 
-grunt.registerTask( "bower-install", "Runs bower install", function() {
-	var done = this.async();
-	grunt.util.spawn({
-		cmd: "./node_modules/bower/bin/bower",
-		args: [ "install" ]
-	}, done );
-});
-
-grunt.registerTask( "build-app", [ "clean", "bower-install", "handlebars", "copy", "uglify" ] );
+grunt.registerTask( "build-app", [ "clean", "handlebars", "copy", "uglify" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();

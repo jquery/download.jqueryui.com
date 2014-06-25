@@ -1,0 +1,324 @@
+<html>
+    <head>
+        <title>LZMA.JS Advanced Demo</title>
+        <link rel="stylesheet" type="text/css" href="assets/LZMADemo.css" />
+    </head>
+    <body bgcolor="white"> 
+        <table cellpadding="0" cellspacing="0">
+        <tbody>
+            <tr><td style="vertical-align: top;" align="left">
+                <div style="white-space: nowrap;" class="lzmademo-title">LZMA.JS Advanced Demo</div>
+            </td></tr>
+            <tr><td style="vertical-align: top;" align="left">
+                <div class="lzmademo-description">
+                    <p>
+                    This page demonstrates <a href="http://github.com/nmrugg/LZMA-JS/">LZMA.JS</a>:
+                    an implementation of the <a href="http://en.wikipedia.org/wiki/Lzma">LZMA</a> compression algorithm in JavaScript.
+                    It is a standalone version of the <a href="http://gwt-lzma.googlecode.com/">GWT-LZMA</a> compression module.
+                    LZMA.JS will use web workers, if available, which allows the browser to remain interactive even while compressing/decompressing
+                    large amounts of data.  It will also gracefully degrade on older browsers that do not support web workers.
+                    (It even works on IE6!) You can find a simpler demo <a href="simple_demo.html">here</a>.
+                    </p>
+
+                    <p>
+                    <strong>Compressing:</strong>
+                    Enter any content into the left window and press "Compress" to compress it.
+                    When finished, the right window will display the hexadecimal representation
+                    of the compressed content of the left window (after encoding it in UTF-8).
+                    Use the pulldown to choose from fastest (Level 1) to best (Level 9) compression&mdash;lower levels
+                    are more appropriate for JavaScript running in a browser.
+                    </p>
+
+                    <p>
+                    <strong>Decompressing:</strong>
+                    Enter whitespace-separated hexadecimal bytes in the right window corresponding
+                    to compressed output of the LZMA algorithm.
+                    Press the "Decompress" button to decompress the data and the original will be shown back in
+                    the left window (decoded from UTF-8).
+                    </p>
+
+                    <p>
+                    On UNIX machines, you can generate input for the right window yourself using commands like this:
+                    <blockquote>
+                    <span style="white-space: pre; font-family: Courier">$ echo "Hello, world." | lzma -3 | hexdump -C | cut -c9-60</span>
+                    </blockquote>
+                    </p>
+
+                    <p>
+                    <small><em>Warning:</em> The LZMA algorithm was not originally designed to run in a browser.
+                    Use of the higher compression levels (in either direction) and/or large files may cause your browser to explode.</small>
+                    </p>
+
+                    <p class="lzmademo-footnote">
+                    This JavaScript application runs entirely within your web browser.
+                    </p>
+                </div>
+            </td></tr>
+        </tbody>
+        </table>
+        <table cellpadding="0" cellspacing="5">
+            <tbody>
+                <tr>
+                    <td style="vertical-align: top;" align="left">
+                        <table class="demo-panel" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    <td style="vertical-align: top;" align="left">
+                                        <textarea rows="25" cols="70" class="gwt-TextArea" tabindex="0" id=left_text>Hello, world.</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top;" align="left">
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="vertical-align: top;" align="left">
+                                                        <select class="gwt-ListBox" tabindex="0" id=select_mode>
+                                                            <option value="1">
+                                                                Level 1
+                                                            </option>
+                                                            <option value="2">
+                                                                Level 2
+                                                            </option>
+                                                            <option value="3">
+                                                                Level 3
+                                                            </option>
+                                                            <option value="4">
+                                                                Level 4
+                                                            </option>
+                                                            <option value="5">
+                                                                Level 5
+                                                            </option>
+                                                            <option value="6">
+                                                                Level 6
+                                                            </option>
+                                                            <option value="7">
+                                                                Level 7
+                                                            </option>
+                                                            <option value="8">
+                                                                Level 8
+                                                            </option>
+                                                            <option value="9">
+                                                                Level 9
+                                                            </option>
+                                                        </select>
+                                                    </td>
+    
+                                                    <td style="vertical-align: top;" align="left">
+                                                        <button class="gwt-Button" type="button" tabindex="0" id=compress_button>Compress</button>
+                                                    </td>
+                                                    <td style="vertical-align: top;" align="left">
+                                                        <button class="gwt-Button" type="button" tabindex="0" id=clear_left_button>Clear</button>
+                                                    </td>
+                                                    <td style="vertical-align: top;" align="left" id=left_output></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+    
+                    <td style="vertical-align: top;" align="left">
+                        <table class="demo-panel" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    <td style="vertical-align: top;" align="left">
+                                        <textarea rows="25" cols="70" class="gwt-TextArea" tabindex="0" id=right_text></textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="vertical-align: top;" align="left">
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="vertical-align: top;" align="left">
+                                                        <button class="gwt-Button" type="button" tabindex= "0" id=decompress_button>Decompress</button>
+                                                    </td>
+                                                    <td style="vertical-align: top;" align="left">
+                                                        <button class="gwt-Button" type="button" tabindex="0" id=clear_right_button>Clear</button>
+                                                    </td>
+                                                    <td style="vertical-align: top;" align="left" id=right_output></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--[if IE]>
+        <script language="javascript" src="assets/fix_ie_split.js"></script>
+        <![endif]-->
+        <script language="javascript" src="../src/lzma.js"></script>
+        <script>
+            var clear_left_button_el  = document.getElementById("clear_left_button"),
+                clear_right_button_el = document.getElementById("clear_right_button"),
+                compress_button_el    = document.getElementById("compress_button"),
+                decompress_button_el  = document.getElementById("decompress_button"),
+                left_text_el          = document.getElementById("left_text"),
+                left_output_el        = document.getElementById("left_output"),
+                right_text_el         = document.getElementById("right_text"),
+                right_output_el       = document.getElementById("right_output"),
+                select_mode_el        = document.getElementById("select_mode"),
+                
+                my_lzma = new LZMA("../src/lzma_worker.js");
+            
+            if (!String.prototype.trim) {
+                String.prototype.trim = function () {
+                    return this.replace(/^\s+|\s+$/, "");
+                }
+            }
+            
+            function is_array(input) {
+                return typeof(input) === "object" && (input instanceof Array);
+            }
+            
+            function convert_formated_hex_to_bytes(hex_str) {
+                var count = 0,
+                    hex_arr,
+                    hex_data = [],
+                    hex_len,
+                    i;
+                
+                if (hex_str.trim() == "") return [];
+                
+                /// Check for invalid hex characters.
+                if (/[^0-9a-fA-F\s]/.test(hex_str)) {
+                    return false;
+                }
+                
+                hex_arr = hex_str.split(/([0-9a-fA-F]+)/g);
+                hex_len = hex_arr.length;
+                
+                for (i = 0; i < hex_len; ++i) {
+                    if (hex_arr[i].trim() == "") {
+                        continue;
+                    }
+                    hex_data[count++] = parseInt(hex_arr[i], 16);
+                }
+                
+                return hex_data;
+            }
+            
+            function convert_to_formated_hex(byte_arr) {
+                var hex_str = "",
+                    i,
+                    len,
+                    tmp_hex;
+                
+                if (!is_array(byte_arr)) {
+                    return false;
+                }
+                
+                len = byte_arr.length;
+                
+                for (i = 0; i < len; ++i) {
+                    if (byte_arr[i] < 0) {
+                        byte_arr[i] = byte_arr[i] + 256;
+                    }
+                    tmp_hex = byte_arr[i].toString(16);
+                    
+                    // Add leading zero.
+                    if (tmp_hex.length == 1) tmp_hex = "0" + tmp_hex;
+                    
+                    if ((i + 1) % 16 === 0) {
+                        tmp_hex += "\n";
+                    } else {
+                        tmp_hex += " ";
+                    }
+                    
+                    hex_str += tmp_hex;
+                }
+                
+                return hex_str.trim();
+            }
+            
+            function update_sizes(compare) {
+                var compare_result = "",
+                    left_size  = left_text_el.value.length,
+                    right_size = convert_formated_hex_to_bytes(right_text_el.value);
+                
+                if (right_size === false) {
+                    right_size = "invalid hex input";
+                } else {
+                    right_size = right_size.length;
+                }
+                
+                if (compare && right_size > 0 && left_size > 0) {
+                    compare_result = " (" + Math.round((right_size / left_size) * 100) + "%)";
+                }
+                
+                left_output_el.innerHTML  = left_size  + " byte" + (left_size  !== 1 ? "s" : "");
+                right_output_el.innerHTML = right_size + " byte" + (right_size !== 1 ? "s" : "") + compare_result;
+            }
+            
+            function clear_left() {
+                left_text_el.value = "";
+                update_sizes();
+            }
+            
+            function clear_right() {
+                right_text_el.value = "";
+                update_sizes();
+            }
+            
+            
+            clear_left_button_el.onclick  = clear_left;
+            clear_right_button_el.onclick = clear_right;
+            
+            compress_button_el.onclick = function () {
+                right_text_el.value = "";
+                update_sizes();
+                
+                right_output_el.innerHTML = "Compressing... 0%";
+                
+                my_lzma.compress(left_text_el.value, select_mode_el.value, function (result) {
+                    if (result === false) {
+                        alert("An error occurred during compression.");
+                        update_sizes();
+                        return;
+                    }
+                    
+                    right_text_el.value = convert_to_formated_hex(result);
+                    update_sizes(true);
+                }, function (percent) {
+                    right_output_el.innerHTML = "Compressing... " + Math.round(percent * 100) + "%";
+                });
+            }
+            
+            decompress_button_el.onclick = function () {
+                var byte_arr = convert_formated_hex_to_bytes(right_text_el.value),
+                    decompressed;
+                
+                left_text_el.value = "";
+                update_sizes();
+                left_output_el.innerHTML = "Decompressing... 0%";
+                
+                if (byte_arr == false) {
+                    ///TODO: Show which character is wrong.  I.e., invalid compressed input: invalid hex character `s
+                    alert("invalid compressed input");
+                    update_sizes();
+                    return false;
+                }
+                
+                my_lzma.decompress(byte_arr, function (result) {
+                    if (result === false) {
+                        alert("An error occurred during decompression.");
+                        return;
+                    }
+                    
+                    left_text_el.value = result;
+                    update_sizes(true);
+                }, function (percent) {
+                    left_output_el.innerHTML  = "Decompressing... " + Math.round(percent * 100) + "%";
+                });
+            }
+        </script>
+    </body>
+</html>
