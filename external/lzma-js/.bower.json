@@ -1,0 +1,12 @@
+{
+  "name": "lzma-js",
+  "homepage": "https://github.com/nmrugg/LZMA-JS",
+  "_release": "27986c2cb0",
+  "_resolution": {
+    "type": "commit",
+    "commit": "27986c2cb045bc1c5b0be5a0b8f234cff7364e41"
+  },
+  "_source": "git://github.com/nmrugg/LZMA-JS.git",
+  "_target": "27986c2cb045bc1c5b0be5a0b8f234cff7364e41",
+  "_originalSource": "nmrugg/LZMA-JS"
+}

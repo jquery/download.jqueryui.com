@@ -1,5 +1,4 @@
 app/dist
-external
 jquery-ui
 log/downloads.log
 node_modules
