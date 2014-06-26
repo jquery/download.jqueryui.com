@@ -659,6 +659,11 @@
 		// Menu
 		$( "#menu" ).menu();
 
+		// Selectmenu
+		$( "#selectmenu" ).selectmenu({
+			width: 150
+		});
+
 		// Tooltip
 		themeroller.find( "p" ).tooltip({
 			items: "img[alt]",
