@@ -460,7 +460,7 @@ function buildPackages( folder, callback ) {
 	}, callback );
 }
 
-grunt.registerTask( "default", [ "check-modules", "jshint" ] );
+grunt.registerTask( "default", [ "check-modules", "jshint", "test" ] );
 
 grunt.registerTask( "bower-install", "Runs bower install", function() {
 	var done = this.async();
@@ -501,6 +501,14 @@ grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases 
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
 	});
+});
+
+grunt.registerTask( "test", "Runs npm test", function() {
+	var done = this.async();
+	grunt.util.spawn({
+		cmd: "npm",
+		args: [ "test" ]
+	}, done );
 });
 
 };
