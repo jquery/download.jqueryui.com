@@ -293,7 +293,7 @@ module.exports = {};
 // Build tests for each jqueryUi release
 JqueryUi.all().filter(function( jqueryUi ) {
 	// Filter supported releases only
-	return semver.gte( jqueryUi.pkg.version, "1.11.0-a" );
+	return semver.lt( jqueryUi.pkg.version, "1.11.1-a" ) && semver.gte( jqueryUi.pkg.version, "1.11.0-a" );
 }).forEach(function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		Object.keys( tests ).forEach(function( i ) {
