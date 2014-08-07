@@ -45,7 +45,7 @@ function replace( variable, value ) {
 }
 
 var commonFiles = [
-	"jquery.js",
+	"external/jquery/jquery.js",
 	"jquery-ui.js",
 	"jquery-ui.min.js"
 ];
