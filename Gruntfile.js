@@ -307,22 +307,6 @@ function install( jqueryUi ) {
 function prepare( jqueryUi ) {
 	return function( callback ) {
 		async.series([
-			function( next ) {
-				grunt.log.writeln( "Building manifest for jQuery UI" );
-				grunt.file.expand( "tmp/jquery-ui/*.jquery.json" ).forEach(function( file ) {
-					grunt.file.delete( file );
-				});
-				next();
-			},
-			function( next ) {
-				grunt.util.spawn({
-					cmd: "grunt",
-					args: [ "manifest" ],
-					opts: {
-						cwd: "tmp/jquery-ui"
-					}
-				}, log( jqueryUi.docs ? next : callback, "Done building manifest", "Error building manifest" ) );
-			},
 			function() {
 				grunt.log.writeln( "Building API documentation for jQuery UI" );
 				if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
