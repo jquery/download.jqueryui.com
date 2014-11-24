@@ -62,7 +62,7 @@ Frontend.prototype = {
 		return indexTemplate({
 			baseVars: themeGallery[ 2 ].serializedVars,
 			components: JSON.stringify({
-				categories: JqueryUi.getStable().categories()
+				categories: JqueryUi.getStable().categories
 			}),
 			host: this.host,
 			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/external/lzma-js/src/lzma_worker.js",
@@ -81,7 +81,7 @@ Frontend.prototype = {
 			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
 			data = { error : "invalid version" };
 		} else {
-			data = { categories: jqueryUi.categories() };
+			data = { categories: jqueryUi.categories };
 		}
 		return jsonpTemplate({
 			callback: params.callback,
