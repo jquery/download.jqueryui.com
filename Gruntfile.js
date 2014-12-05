@@ -318,7 +318,7 @@ function prepare( callback ) {
 				}
 			}, log( callback, "Done building manifest", "Error building manifest" ) );
 		},
-		function( callback ) {
+		function() {
 			grunt.log.writeln( "Building API documentation for jQuery UI" );
 			if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
 				grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
@@ -331,16 +331,6 @@ function prepare( callback ) {
 					cwd: "tmp/api.jqueryui.com"
 				}
 			}, log( callback, "Done building documentation", "Error building documentation" ) );
-		},
-		function() {
-			grunt.log.writeln( "Building manifest for API documentation for jQuery UI" );
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "manifest" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, "Done building manifest", "Error building manifest" ) );
 		}
 	]);
 }
@@ -379,7 +369,6 @@ function copy( ref ) {
 				var srcpath = "tmp/api.jqueryui.com/dist/wordpress",
 					destpath = "jquery-ui/" + ref + "/docs/";
 				grunt.log.writeln( "Copying API documentation for jQuery UI over to " + destpath );
-				grunt.file.copy( srcpath + "/categories.json", destpath + "/categories.json" );
 				[ srcpath + "/posts/post", srcpath + "/posts/page" ].forEach(function( srcpath ) {
 					grunt.file.expand({ filter: "isFile" }, srcpath + "/**" ).forEach(function( file ) {
 						// OBS: No overwrite check is needed, because the posts/pages basenames must be unique among themselves.
