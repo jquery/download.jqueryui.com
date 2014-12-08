@@ -178,10 +178,10 @@ function prepareAll( callback ) {
 
 	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
 		async.series([
-			checkout( jqueryUi.ref ),
-			install,
-			prepare,
-			copy( jqueryUi.ref )
+			checkout( jqueryUi ),
+			install( jqueryUi ),
+			prepare( jqueryUi ),
+			copy( jqueryUi )
 		], function( err ) {
 			// Go to next ref
 			callback( err );
@@ -192,11 +192,12 @@ function prepareAll( callback ) {
 	});
 }
 
-function checkout( ref ) {
+function checkout( jqueryUi ) {
+	var ref = jqueryUi.ref;
 	return function( callback ) {
 		async.series([
 			// Check out jquery-ui
-			function( callback ) {
+			function( next ) {
 				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
 				grunt.util.spawn({
 					cmd: "git",
@@ -204,7 +205,7 @@ function checkout( ref ) {
 					opts: {
 						cwd: "tmp/jquery-ui"
 					}
-				}, log( callback, "Done with checkout", "Error checking out" ) );
+				}, log( jqueryUi.docs ? next : callback, "Done with checkout", "Error checking out" ) );
 			},
 			// Check out api.jqueryui.com
 			function() {
@@ -257,100 +258,105 @@ function checkout( ref ) {
 	};
 }
 
-function install( callback ) {
-	async.series([
-		function( callback ) {
-			grunt.log.writeln( "Installing jquery-ui npm modules" );
-			grunt.util.spawn({
-				cmd: "npm",
-				args: [ "prune" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, null, "Error pruning npm modules" ) );
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "npm",
-				args: [ "install" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
-		},
-		function( callback ) {
-			grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
-			grunt.util.spawn({
-				cmd: "npm",
-				args: [ "prune" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, null, "Error pruning npm modules" ) );
-		},
-		function() {
-			grunt.util.spawn({
-				cmd: "npm",
-				args: [ "install" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
-		}
-	]);
-}
-
-function prepare( callback ) {
-	async.series([
-		function( callback ) {
-			grunt.log.writeln( "Building manifest for jQuery UI" );
-			grunt.file.expand( "tmp/jquery-ui/*.jquery.json" ).forEach(function( file ) {
-				grunt.file.delete( file );
-			});
-			callback();
-		},
-		function( callback ) {
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "manifest" ],
-				opts: {
-					cwd: "tmp/jquery-ui"
-				}
-			}, log( callback, "Done building manifest", "Error building manifest" ) );
-		},
-		function() {
-			grunt.log.writeln( "Building API documentation for jQuery UI" );
-			if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
-				grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
-				grunt.log.writeln( "Copied config-sample.json to config.json" );
+function install( jqueryUi ) {
+	return function( callback ) {
+		async.series([
+			function( next ) {
+				grunt.log.writeln( "Installing jquery-ui npm modules" );
+				grunt.util.spawn({
+					cmd: "npm",
+					args: [ "prune" ],
+					opts: {
+						cwd: "tmp/jquery-ui"
+					}
+				}, log( next, null, "Error pruning npm modules" ) );
+			},
+			function( next ) {
+				grunt.util.spawn({
+					cmd: "npm",
+					args: [ "install" ],
+					opts: {
+						cwd: "tmp/jquery-ui"
+					}
+				}, log( jqueryUi.docs ? next : callback, "Installed npm modules", "Error installing npm modules" ) );
+			},
+			function( next ) {
+				grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
+				grunt.util.spawn({
+					cmd: "npm",
+					args: [ "prune" ],
+					opts: {
+						cwd: "tmp/api.jqueryui.com"
+					}
+				}, log( next, null, "Error pruning npm modules" ) );
+			},
+			function() {
+				grunt.util.spawn({
+					cmd: "npm",
+					args: [ "install" ],
+					opts: {
+						cwd: "tmp/api.jqueryui.com"
+					}
+				}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
 			}
-			grunt.util.spawn({
-				cmd: "grunt",
-				args: [ "clean", "build" ],
-				opts: {
-					cwd: "tmp/api.jqueryui.com"
-				}
-			}, log( callback, "Done building documentation", "Error building documentation" ) );
-		}
-	]);
+		]);
+	};
 }
 
-function copy( ref ) {
+function prepare( jqueryUi ) {
+	return function( callback ) {
+		async.series([
+			function( next ) {
+				grunt.log.writeln( "Building manifest for jQuery UI" );
+				grunt.file.expand( "tmp/jquery-ui/*.jquery.json" ).forEach(function( file ) {
+					grunt.file.delete( file );
+				});
+				next();
+			},
+			function( next ) {
+				grunt.util.spawn({
+					cmd: "grunt",
+					args: [ "manifest" ],
+					opts: {
+						cwd: "tmp/jquery-ui"
+					}
+				}, log( jqueryUi.docs ? next : callback, "Done building manifest", "Error building manifest" ) );
+			},
+			function() {
+				grunt.log.writeln( "Building API documentation for jQuery UI" );
+				if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
+					grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
+					grunt.log.writeln( "Copied config-sample.json to config.json" );
+				}
+				grunt.util.spawn({
+					cmd: "grunt",
+					args: [ "clean", "build" ],
+					opts: {
+						cwd: "tmp/api.jqueryui.com"
+					}
+				}, log( callback, "Done building documentation", "Error building documentation" ) );
+			}
+		]);
+	};
+}
+
+function copy( jqueryUi ) {
+	var ref = jqueryUi.ref;
 	return function( callback ) {
 		var rimraf = require( "rimraf" ),
 			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
 			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
 		grunt.file.mkdir( "jquery-ui" );
 		async.series([
-			function( callback ) {
+			function( next ) {
 				if ( fs.existsSync( "jquery-ui/" + ref ) ) {
 					grunt.log.writeln( "Cleaning up existing jquery-ui/" + ref );
-					rimraf( "jquery-ui/" + ref, log( callback, "Cleaned", "Error cleaning" ) );
+					rimraf( "jquery-ui/" + ref, log( next, "Cleaned", "Error cleaning" ) );
 				} else {
-					callback();
+					next();
 				}
 			},
-			function( callback ) {
+			function( next ) {
 				var from = "tmp/jquery-ui",
 					to = "jquery-ui/" + ref;
 				grunt.log.writeln( "Copying jQuery UI " + version + " over to jquery-ui/" + ref );
@@ -360,10 +366,10 @@ function copy( ref ) {
 					});
 				} catch( e ) {
 					grunt.log.error( "Error copying", e.toString() );
-					return callback( e );
+					return ( jqueryUi.docs ? next : callback )( e );
 				}
 				grunt.log.ok( "Done copying" );
-				callback();
+				( jqueryUi.docs ? next : callback )();
 			},
 			function( callback ) {
 				var srcpath = "tmp/api.jqueryui.com/dist/wordpress",

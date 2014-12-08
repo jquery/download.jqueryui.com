@@ -9,12 +9,14 @@
 		{
 			"version": "1.10.4",
 			"dependsOn": "jQuery1.6+",
-			"label": "Legacy"
+			"label": "Legacy",
+			"docs": true
 		},
 		{
 			"version": "1.9.2",
 			"dependsOn": "jQuery1.6+",
-			"label": "Legacy"
+			"label": "Legacy",
+			"docs": true
 		}
 	],
 	"jquery": "1.9.1"
