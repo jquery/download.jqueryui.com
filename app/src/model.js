@@ -4,7 +4,7 @@
  * jQuery UI helper JavaScript file for DownloadBuilder and ThemeRoller models
  * http://jqueryui.com/download/
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  */
