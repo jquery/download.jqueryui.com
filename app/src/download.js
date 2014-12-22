@@ -4,7 +4,7 @@
  * jQuery UI DownloadBuilder client-side JavaScript file
  * http://jqueryui.com/download/
  *
- * Copyright 2012 jQuery Foundation and other contributors
+ * Copyright jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  */
