@@ -2,5 +2,5 @@
 * {{homepage}}{{#if fileNames}}
 * Includes: {{fileNames}}{{/if}}{{#if customThemeUrl}}
 * To view and modify this theme, visit http://jqueryui.com{{{customThemeUrl}}}{{/if}}
-* Copyright {{year}} {{authorName}}; Licensed {{licenses}} */
+* Copyright {{authorName}}; Licensed {{licenses}} */
 
