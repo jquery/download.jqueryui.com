@@ -7,6 +7,11 @@
 			"stable": true
 		},
 		{
+			"version": "1a10f10cb0a39281e91eec5a53b5bb874497c629",
+			"dependsOn": "jQuery1.6+",
+			"label": "Experimental"
+		},
+		{
 			"version": "1.10.4",
 			"dependsOn": "jQuery1.6+",
 			"label": "Legacy",
