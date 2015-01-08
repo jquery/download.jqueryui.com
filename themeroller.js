@@ -67,7 +67,7 @@ Frontend.prototype = {
 					themeGallery: themeGallery
 				})
 			}),
-			baseVars: themeGallery[ 2 ].serializedVars,
+			baseVars: themeGallery[ 0 ].serializedVars,
 			compGroupA: compGroupATemplate({
 				production: production
 			}),
@@ -82,6 +82,7 @@ Frontend.prototype = {
 
 	css: function( vars ) {
 		var theme = new ThemeRoller({
+			version: "1.12.0-pre",
 			vars: _.extend({
 				dynamicImage: true,
 				dynamicImageHost: this.host
