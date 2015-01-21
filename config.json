@@ -7,7 +7,7 @@
 			"stable": true
 		},
 		{
-			"version": "1a10f10cb0a39281e91eec5a53b5bb874497c629",
+			"version": "a2db6209ca77c901b0195683d330d1d8c935bb12",
 			"dependsOn": "jQuery1.6+",
 			"label": "Experimental"
 		},
