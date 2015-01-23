@@ -1,6 +1,7 @@
 var async = require( "async" ),
 	fs = require( "fs" ),
-	path = require( "path" );
+	path = require( "path" ),
+	rimraf = require( "rimraf" );
 
 module.exports = function( grunt ) {
 
@@ -328,9 +329,10 @@ function prepare( jqueryUi ) {
 					grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
 					grunt.log.writeln( "Copied config-sample.json to config.json" );
 				}
+				rimraf.sync( "tmp/api.jqueryui.com/dist" );
 				grunt.util.spawn({
 					cmd: "grunt",
-					args: [ "clean", "build" ],
+					args: [ "build" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
 					}
@@ -343,8 +345,7 @@ function prepare( jqueryUi ) {
 function copy( jqueryUi ) {
 	var ref = jqueryUi.ref;
 	return function( callback ) {
-		var rimraf = require( "rimraf" ),
-			version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
+		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
 			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
 		grunt.file.mkdir( "jquery-ui" );
 		async.series([
