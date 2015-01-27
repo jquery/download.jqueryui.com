@@ -47,69 +47,26 @@
 }
 
 /* TR application styles */
-#themeroller {
+.themeroller__app-area {
+	font-family: Verdana, Arial, sans-serif;
 	font-size: 10px;
-}
-#themeroller button,
-#themeroller input,
-#themeroller select,
-#themeroller textarea {
-	font-size: 12px;
-}
-#themeroller .mask-area {
-	clear: both;
 	float: left;
-	overflow: hidden;
-	position: relative;
-	width: 100%;
-}
-#themeroller .mid-area {
-	float: left;
-	left: 224px;/* 214px + 4px*2 + 1px*2 */
-	position: relative;
-	width: 200%;
-}
-#themeroller .right-area {
-	float: left;
-	left: 50%;
-	margin-left: -460px;/* 230px*2 */
-	position: relative;
-	width: 100%;
-	z-index: 0;
-}
-#themeroller .app-area {
-	float: left;
-	left: 239px;/* 224px + 15px */
-	margin-left: -50%;
-	overflow: hidden;
 	position: relative;
 	width: 224px;
 	z-index: 2;
 }
-#themeroller .components-b-area {
-	float: left;
-	left: 0px;
-	overflow: hidden;
-	position: relative;
-	width: 230px;
-}
-#themeroller .components-a-wrap {
-	float: right;
-	position: relative;
-	right: 100%;
-	width: 50%;
+.themeroller__demo-area {
+	margin-left: 244px; /* 224px + 20px */
+	padding-right: 20px;
 	z-index: 1;
 }
-#themeroller .components-a-pad {
-	margin: 0 15px 0 478px;
-	overflow: hidden;
-}
-@media all and (max-width: 1100px) {
-	#themeroller .components-b-area {
-		clear: both;
+@media all and (max-width: 800px) {
+	.themeroller__app-area {
+		float: none;
 	}
-	#themeroller .components-a-pad {
-		margin: 0 15px 0 239px;
+	.themeroller__demo-area {
+		margin-left: 0;
+		padding-left: 20px;
 	}
 }
 
@@ -128,9 +85,6 @@
 	border: 1px solid #222;
 	position: relative;
 	float: left;
-}
-#themeroller .application a:focus, div.content * {
-	outline: 0 !important;
 }
 #themeHeader h1 { /* logo */
 	font-size: 1.5em;
@@ -615,45 +569,6 @@ a.cornerWarning { color: red !important; text-decoration: none; }
 	font-size: 1.1em;
 }
 
-.demoHeaders {
-	font-size: 1.3em;
-	font-weight: normal;
-	margin: 2em 0 1em;
-	clear: both;
-}
-.demoHeaders span {
-	font-size: .8em;
-}
-
-
-#dialog_link {
-	padding: .4em 1em .4em 20px;
-	text-decoration: none;
-	position: relative;
-}
-#dialog_link span.ui-icon {
-	margin: 0 5px 0 0;
-	position: absolute;
-	left: .2em;
-	top: 50%;
-	margin-top: -8px;
-	zoom: 1;
-}
-
-
-ul#icons {margin: 0; padding: 0;}
-ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
-ul#icons span.ui-icon {float: left; margin: 0 4px;}
-
-
-/* Demo */
-
-/*
- * 1: On 1.10, `.ui-widget-overlay` position has been changed to "fixed". Reverting it to absolute in the demo, so it's possible to contain overlay inside `.fakewindowcontain`.
- */
-#themeroller .fakewindowcontain .ui-widget-overlay {
-	position: absolute; /* 1 */
-}
 .clearfix:before,
 .clearfix:after {
 	content: "";

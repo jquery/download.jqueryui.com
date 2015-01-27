@@ -7,27 +7,12 @@
 	<link rel="stylesheet" href="/app/themeroller.css">
 {{/if}}
 <div id="themeroller" data-base-vars="{{baseVars}}" data-download-jqueryui-host="{{host}}" data-lzma-worker="{{lzmaWorker}}" data-textures="{{textures}}" class="content">
-	<div id="application-content" class="clearfix">
-		<div class="mask-area">
-			<div class="mid-area">
-				<div class="right-area">
-					<div class="app-area">
-						{{{appinterface}}}
-						<div id="demo-options"><input type="checkbox" name="reverse-background" id="reverse-background"> <label for="reverse-background">Reverse page background color</label></div>
-					</div>
-					<div class="components-b-area">
-						{{{compGroupB}}}
-					</div>
-					<div class="components-a-wrap">
-						<div class="components-a-pad">
-							<div class="components-a-area">
-								{{{compGroupA}}}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	<div class="themeroller__app-area">
+		{{{appinterface}}}
+		<div id="demo-options"><input type="checkbox" name="reverse-background" id="reverse-background"> <label for="reverse-background">Reverse page background color</label></div>
+	</div>
+	<div class="themeroller__demo-area">
+		{{{demo}}}
 	</div>
 </div>
 
