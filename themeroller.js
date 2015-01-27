@@ -28,8 +28,7 @@ Handlebars.registerHelper( "themeParams", function( serializedVars ) {
 });
 
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
-	compGroupATemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/comp_group_a.html", "utf8" ) ),
-	compGroupBTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/comp_group_b.html", "utf8" ) ),
+	demoTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/demo.html", "utf8" ) ),
 	helpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/help.html", "utf8" ) ),
 	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/index.html", "utf8" ) ),
 	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
@@ -68,10 +67,9 @@ Frontend.prototype = {
 				})
 			}),
 			baseVars: themeGallery[ 0 ].serializedVars,
-			compGroupA: compGroupATemplate({
+			demo: demoTemplate({
 				production: production
 			}),
-			compGroupB: compGroupBTemplate(),
 			host: this.host,
 			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/external/lzma-js/src/lzma_worker.js",
 			production: production,

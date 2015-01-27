@@ -166,7 +166,7 @@
 		});
 
 		$( "#reverse-background" ).on( "click", function() {
-			var maskArea = themeroller.find( ".mask-area" ),
+			var maskArea = themeroller,
 				textElems = themeroller.find( ".demoHeaders, #demo-options" );
 			if ( $( this ).is( ":checked" ) ) {
 				maskArea.css({ background: "#333" });
