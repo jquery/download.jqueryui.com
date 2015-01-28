@@ -80,6 +80,7 @@ Frontend.prototype = {
 
 	css: function( vars ) {
 		var theme = new ThemeRoller({
+			version: "1.12.0-pre",
 			vars: _.extend({
 				dynamicImage: true,
 				dynamicImageHost: this.host
