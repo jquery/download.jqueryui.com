@@ -102,7 +102,7 @@ grunt.initConfig({
 function log( callback, successMsg, errorMsg ) {
 	return function( error, result, code ) {
 		if ( error && errorMsg ) {
-			grunt.log.error( errorMsg + ": " + error.stderr );
+			grunt.log.error( errorMsg + ": " + error );
 		} else if ( ! error && successMsg ) {
 			grunt.log.ok( successMsg );
 		}

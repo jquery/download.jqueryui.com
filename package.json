@@ -1,6 +1,10 @@
 {
   "name": "download.jqueryui.com",
   "version": "2.0.21",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/jquery/download.jqueryui.com.git"
+  },
   "dependencies": {
     "archiver": "0.4.1",
     "async": "0.1.22",
@@ -33,9 +37,11 @@
     "nodeunit": "0.7.4"
   },
   "main": "main.js",
-  "engine": {
-    "node": ">=0.8.x"
+  "engines": {
+    "node": ">=0.8.x",
+    "npm": "<2.0.0"
   },
+  "engineStrict": true,
   "licenses": [
     {
       "type": "MIT",
