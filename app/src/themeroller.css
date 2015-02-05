@@ -1,4 +1,8 @@
 /* jqueryui.com site overrides for TR */
+#themeroller {
+	position: relative;
+}
+
 #themeroller-content {
 	float: left;
 	width: 100%;
@@ -50,8 +54,7 @@
 .themeroller__app-area {
 	font-family: Verdana, Arial, sans-serif;
 	font-size: 10px;
-	float: left;
-	position: relative;
+	position: absolute;
 	width: 224px;
 	z-index: 2;
 }
