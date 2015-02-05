@@ -9,6 +9,7 @@ process.on( "uncaughtException", function ( err ) {
 
 var frontend, server,
 	argv = require( "optimist" ).argv,
+	async = require( "async" ),
 	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
 	connect = require( "connect" ),
@@ -36,6 +37,19 @@ frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	Cache.on( 60000 * 60 );
 	Packer.cacheThemeGalleryImages();
+
+	// Cache jquery-ui-themeroller images as well
+	async.forEachSeries( require( "./lib/themeroller-themegallery" )(), function( theme, callback ) {
+		theme = new (require( "jquery-ui-themeroller" ))( "", theme.vars );
+		theme.generateImages(function( error, imageFiles ) {
+			if ( error ) {
+				error.message = "Caching theme images (2): " + error.message;
+				callback( error );
+				throw error;
+			}
+			callback();
+		});
+	});
 }
 
 // OBS: We are using an older version of connect, which lacks a descent way to centralize requests error handling.

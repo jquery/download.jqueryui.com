@@ -4,7 +4,7 @@ var downloadLogger, jqueryUis,
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
 	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
-	Packager = require( "archive-packager" ),
+	Packager = require( "node-packager" ),
 	querystring = require( "querystring" ),
 	semver = require( "semver" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
@@ -92,7 +92,7 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, jqueryUi, Package, packer, start, theme,
+			var builder, components, files, jqueryUi, Package, packer, start, theme,
 				themeVars = null;
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
@@ -103,9 +103,9 @@ Frontend.prototype = {
 				themeVars.scope = fields.scope || themeVars.scope;
 			}
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
-			start = new Date();
 			jqueryUi = JqueryUi.find( fields.version );
-			if ( semver.lt( this.jqueryUi.pkg.version, "1.12.0-a" ) ) {
+			if ( semver.lt( jqueryUi.pkg.version, "1.12.0-a" ) ) {
+				start = new Date();
 				theme = new ThemeRoller({
 					vars: themeVars,
 					version: fields.version
@@ -116,32 +116,52 @@ Frontend.prototype = {
 				packer = new ToBeDeprecatedPacker( builder, theme, {
 					scope: fields.scope
 				});
+				response.setHeader( "Content-Type", "application/zip" );
+				response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
+				packer.zipTo( response, function( err, written ) {
+					if ( err ) {
+						return callback( err );
+					}
+					// Log statistics
+					downloadLogger.info(
+						JSON.stringify({
+							build_size: written,
+							build_time: new Date() - start,
+							components: components,
+							theme_name: theme && theme.name || "n/a",
+							version: jqueryUi.pkg.version
+						})
+					);
+					return callback();
+				});
 			} else {
 				Package = require( "./lib/package-1-12" );
-				packer = new Packager( Package, jqueryUi.files(), {
+				pkg = new Packager( jqueryUi.files().cache, Package, {
 					components: components,
 					themeVars: themeVars,
 					scope: fields.scope
 				});
+				response.setHeader( "Content-Type", "application/zip" );
+				response.setHeader( "Content-Disposition", "attachment; filename=" + pkg.pkg.zipFilename ); // FIXME
+				pkg.toZip( response, {
+					basedir: pkg.pkg.zipBasedir // FIXME
+				}, function( error ) {
+					if ( error ) {
+						return callback( error );
+					}
+					console.log("stats", JSON.stringify(pkg.stats), null, "   ");
+					// Log statistics
+					downloadLogger.info(
+						JSON.stringify({
+							build_size: pkg.stats.toZip.size,
+							build_time: pkg.stats.toZip.time,
+							components: components,
+							version: jqueryUi.pkg.version
+						})
+					);
+					return callback();
+				});
 			}
-			response.setHeader( "Content-Type", "application/zip" );
-			response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
-			packer.zipTo( response, function( err, written, elapsedTime ) {
-				if ( err ) {
-					return callback( err );
-				}
-				// Log statistics
-				downloadLogger.info(
-					JSON.stringify({
-						build_size: written,
-						build_time: new Date() - start,
-						components: builder.components,
-						theme_name: theme.name,
-						version: jqueryUi.pkg.version
-					})
-				);
-				return callback();
-			});
 		} catch( err ) {
 			return callback( err );
 		}
