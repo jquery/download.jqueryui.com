@@ -623,7 +623,7 @@
 		});
 
 		// Dialog Link
-		$( "#dialog_link" ).on( "click", function( event ) {
+		$( "#dialog-link" ).on( "click", function( event ) {
 			$( "#dialog" ).dialog( "open" );
 			event.preventDefault();
 		});
@@ -645,7 +645,7 @@
 		});
 
 		// Hover states on the static widgets
-		$( "#dialog_link, #icons li" )
+		$( "#dialog-link, #icons li" )
 			.mouseenter(function() {
 				$( this ).addClass( "ui-state-hover" );
 			})
@@ -665,14 +665,7 @@
 		});
 
 		// Tooltip
-		themeroller.find( "p" ).tooltip({
-			items: "img[alt]",
-			content: function() {
-				var alt = $( this ).attr( "alt" );
-				// Escape alt, since we're going from an attribute to raw HTML
-				return $( "<a>" ).text( alt ).html();
-			}
-		});
+		$( "#tooltip" ).tooltip();
 	}
 
 	function rollYourOwnLoad() {
