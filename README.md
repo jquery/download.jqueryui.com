@@ -64,29 +64,32 @@ Use `node server.js` to run the server. Arguments:
 Use `npm test` to run the unit tests.
 
 
-## Deploy on WP
-
-On [jqueryui.com](https://github.com/jquery/jqueryui.com), run `grunt deploy` [note, run that on jqueryui.com repo]. More details on its README.
-
-### Local testing
+## Local testing in WordPress
 
 Here's how to do integration testing with WordPress:
 
-Symlink your local download.jqueryui.com module on jqueryui.com.
-```
+Link your local `download.jqueryui.com` module on `jqueryui.com`.
+```sh
 $ cd <local download.jqueryui.com path>
 $ npm link
+$ node server.js --console
+
 $ cd <local jqueryui.com path>
 $ npm link download.jqueryui.com
 ```
 
-Temporarily change its `grunt.js` to use localhost instead of http://download.jqueryui.com.
+Temporarily change its `Gruntfile.js` to use localhost instead of http://download.jqueryui.com.
 ```diff
                 var frontend = require( "download.jqueryui.com" ).frontend({
 -                               host: "http://download.jqueryui.com"
 +                               host: "http://localhost:8088",
                                 env: "production"
                         }),
+```
+
+Then deploy:
+```sh
+$ grunt deploy
 ```
 
 ## Appendix
