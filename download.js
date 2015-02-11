@@ -104,6 +104,8 @@ Frontend.prototype = {
 			}
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
 			jqueryUi = JqueryUi.find( fields.version );
+
+			// The old way to generate a package (to be deprecated when jQuery UI support baseline is UI 1.12).
 			if ( semver.lt( jqueryUi.pkg.version, "1.12.0-a" ) ) {
 				start = new Date();
 				theme = new ThemeRoller({
@@ -134,6 +136,8 @@ Frontend.prototype = {
 					);
 					return callback();
 				});
+
+			// The new way to generate a package.
 			} else {
 				Package = require( "./lib/package-1-12" );
 				pkg = new Packager( jqueryUi.files().cache, Package, {
