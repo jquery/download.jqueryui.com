@@ -73,6 +73,12 @@ grunt.initConfig({
 			cwd: "app/src",
 			src: [ "download.css", "themeroller.css" ],
 			dest: "app/dist"
+		},
+		bla: {
+			expand: true,
+			cwd: "app/src",
+			src: [ "jquery-ui.css", "jquery-ui.js" ],
+			dest: "app/dist"
 		}
 	},
 	uglify: {

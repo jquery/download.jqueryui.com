@@ -1,7 +1,7 @@
 {
 	"jqueryUi": [
 		{
-			"version": "79c4fa1e7a09a3d28f0f8ff7a5b9f41a6d6e123d",
+			"version": "d58051ba1a7d06b503853645b13babfc9d8a0242",
 			"dependsOn": "jQuery1.6+",
 			"label": "Experimental"
 		},
