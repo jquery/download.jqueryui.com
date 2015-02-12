@@ -1,7 +1,7 @@
 {
 	"jqueryUi": [
 		{
-			"version": "1.11.2",
+			"version": "1.11.3",
 			"dependsOn": "jQuery1.6+",
 			"label": "Stable",
 			"stable": true
