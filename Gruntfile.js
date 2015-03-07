@@ -308,6 +308,9 @@ function prepare( jqueryUi ) {
 	return function( callback ) {
 		async.series([
 			function() {
+				if ( !jqueryUi.docs ) {
+					return callback();
+				}
 				grunt.log.writeln( "Building API documentation for jQuery UI" );
 				if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
 					grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
