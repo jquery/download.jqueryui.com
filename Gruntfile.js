@@ -279,7 +279,7 @@ function install( jqueryUi ) {
 					opts: {
 						cwd: "tmp/jquery-ui"
 					}
-				}, log( jqueryUi.docs ? next : callback, "Installed npm modules", "Error installing npm modules" ) );
+				}, log( jqueryUi.docs ? callback : next, "Installed npm modules", "Error installing npm modules" ) );
 			},
 			function( next ) {
 				grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
