@@ -308,19 +308,24 @@ function prepare( jqueryUi ) {
 	return function( callback ) {
 		async.series([
 			function() {
-				grunt.log.writeln( "Building API documentation for jQuery UI" );
-				if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
-					grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
-					grunt.log.writeln( "Copied config-sample.json to config.json" );
-				}
-				rimraf.sync( "tmp/api.jqueryui.com/dist" );
-				grunt.util.spawn({
-					cmd: "grunt",
-					args: [ "build" ],
-					opts: {
-						cwd: "tmp/api.jqueryui.com"
+				if ( jqueryUi.docs === undefined ) {
+					grunt.log.writeln("API documentation not embedded from 1.11 onwards.");
+					callback();
+				} else {
+					grunt.log.writeln( "Building API documentation for jQuery UI" );
+					if ( !fs.existsSync( "tmp/api.jqueryui.com/config.json" ) ) {
+						grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
+						grunt.log.writeln( "Copied config-sample.json to config.json" );
 					}
-				}, log( callback, "Done building documentation", "Error building documentation" ) );
+					rimraf.sync( "tmp/api.jqueryui.com/dist" );
+					grunt.util.spawn({
+						cmd: "grunt",
+						args: [ "build" ],
+						opts: {
+							cwd: "tmp/api.jqueryui.com"
+						}
+					}, log( callback, "Done building documentation", "Error building documentation" ) );
+				}
 			}
 		]);
 	};
