@@ -263,25 +263,9 @@ function install( jqueryUi ) {
 	return function( callback ) {
 		async.series([
 			function( next ) {
-				grunt.log.writeln( "Installing jquery-ui npm modules" );
-				grunt.util.spawn({
-					cmd: "npm",
-					args: [ "prune" ],
-					opts: {
-						cwd: "tmp/jquery-ui"
-					}
-				}, log( next, null, "Error pruning npm modules" ) );
-			},
-			function( next ) {
-				grunt.util.spawn({
-					cmd: "npm",
-					args: [ "install" ],
-					opts: {
-						cwd: "tmp/jquery-ui"
-					}
-				}, log( jqueryUi.docs ? next : callback, "Installed npm modules", "Error installing npm modules" ) );
-			},
-			function( next ) {
+				if ( !jqueryUi.docs ) {
+					return next();
+				}
 				grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
 				grunt.util.spawn({
 					cmd: "npm",
@@ -292,6 +276,9 @@ function install( jqueryUi ) {
 				}, log( next, null, "Error pruning npm modules" ) );
 			},
 			function() {
+				if ( !jqueryUi.docs ) {
+					return callback();
+				}
 				grunt.util.spawn({
 					cmd: "npm",
 					args: [ "install" ],
