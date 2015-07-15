@@ -140,25 +140,25 @@ Frontend.prototype = {
 			// The new way to generate a package.
 			} else {
 				Package = require( "./lib/package-1-12" );
-				pkg = new Packager( jqueryUi.files().cache, Package, {
+				packager = new Packager( jqueryUi.files().cache, Package, {
 					components: components,
 					themeVars: themeVars,
 					scope: fields.scope
 				});
 				response.setHeader( "Content-Type", "application/zip" );
-				response.setHeader( "Content-Disposition", "attachment; filename=" + pkg.pkg.zipFilename ); // FIXME
-				pkg.toZip( response, {
-					basedir: pkg.pkg.zipBasedir // FIXME
+				response.setHeader( "Content-Disposition", "attachment; filename=" + packager.pkg.zipFilename );
+				packager.toZip( response, {
+					basedir: packager.pkg.zipBasedir
 				}, function( error ) {
 					if ( error ) {
 						return callback( error );
 					}
-					console.log("stats", JSON.stringify(pkg.stats), null, "   ");
+					console.log("stats", JSON.stringify(packager.stats), null, "   ");
 					// Log statistics
 					downloadLogger.info(
 						JSON.stringify({
-							build_size: pkg.stats.toZip.size,
-							build_time: pkg.stats.toZip.time,
+							build_size: packager.stats.toZip.size,
+							build_time: packager.stats.toZip.time,
 							components: components,
 							version: jqueryUi.pkg.version
 						})
