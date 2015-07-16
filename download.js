@@ -1,5 +1,6 @@
-var downloadLogger, jqueryUis,
+var cache, downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
+	Cache = require( "./lib/cache" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
@@ -12,6 +13,8 @@ var downloadLogger, jqueryUis,
 	ToBeDeprecatedBuilder = require( "./lib/builder" ),
 	ToBeDeprecatedPacker = require( "./lib/packer" ),
 	winston = require( "winston" );
+
+cache = new Cache( "Built Packages Cache" );
 
 downloadLogger = new winston.Logger({
 	transports: [
@@ -144,7 +147,7 @@ Frontend.prototype = {
 					components: components,
 					themeVars: themeVars,
 					scope: fields.scope
-				});
+				}, { cache: cache } );
 				response.setHeader( "Content-Type", "application/zip" );
 				response.setHeader( "Content-Disposition", "attachment; filename=" + packager.pkg.zipFilename );
 				packager.toZip( response, {
@@ -153,12 +156,11 @@ Frontend.prototype = {
 					if ( error ) {
 						return callback( error );
 					}
-					console.log("stats", JSON.stringify(packager.stats), null, "   ");
 					// Log statistics
 					downloadLogger.info(
 						JSON.stringify({
 							build_size: packager.stats.toZip.size,
-							build_time: packager.stats.toZip.time,
+							build_time: packager.stats.build.time + packager.stats.toZip.time,
 							components: components,
 							version: jqueryUi.pkg.version
 						})
