@@ -1,6 +1,11 @@
 {
 	"jqueryUi": [
 		{
+			"version": "origin/master",
+			"dependsOn": "jQuery1.7+",
+			"label": "preview"
+		},
+		{
 			"version": "1.11.4",
 			"dependsOn": "jQuery1.6+",
 			"label": "Stable",

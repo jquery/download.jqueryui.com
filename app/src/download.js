@@ -208,11 +208,23 @@
 			if ( !thisName || !thisDependencies ) {
 				return;
 			}
-			thisDependencies = thisDependencies.split( "," );
+
+			// Adjust path prefixes to match names
+			var path = thisName.match( /^(.+)\// );
+			thisDependencies = thisDependencies.split( "," ).map(function( dependency ) {
+				if ( !path ) {
+					return dependency;
+				}
+				if ( /\.\.\//.test( dependency ) ) {
+					return dependency.replace( /^.+\//, "" );
+				}
+				return path[ 1 ] + "/" + dependency;
+			});
+
 			dependencies[ thisName ] = $();
 			$.each( thisDependencies, function() {
 				var dependecy = this,
-					dependecyElem = $( "[name=" + this + "]" );
+					dependecyElem = $( ".components-area input[type=checkbox][name='" + this + "']" );
 				dependencies[ thisName ] = dependencies[ thisName ].add( dependecyElem );
 				if ( !dependents[ dependecy ] ) {
 					dependents[ dependecy ] = $();
@@ -318,7 +330,7 @@
 		});
 
 		if ( "version" in changed ) {
-			versionElement = $( "#download-builder [name=version][value=\"" + model.get( "version" ) + "\"]" );
+			versionElement = $( "#download-builder input[type=radio][name=version][value=\"" + model.get( "version" ) + "\"]" );
 			versionElement.trigger( "click" );
 			themesLoad.done(function() {
 				$( ".advanced-settings .folder-name-area" ).toggle( !versionElement.data( "no-theme-folder" ) );
