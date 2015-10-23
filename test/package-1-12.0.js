@@ -14,8 +14,8 @@ function filePresent( files, filepath ) {
 }
 
 defaultTheme = themeGallery[ 0 ].vars;
-someWidgets1 = "widget core position autocomplete button menu progressbar spinner tabs".split( " " );
-someWidgets2 = "widget core mouse position draggable resizable button datepicker dialog slider tooltip".split( " " );
+someWidgets1 = "widget core position widgets/autocomplete widgets/button widgets/menu widgets/progressbar widgets/spinner widgets/tabs".split( " " );
+someWidgets2 = "widget core widgets/mouse position widgets/draggable widgets/resizable widgets/button widgets/datepicker widgets/dialog widgets/slider widgets/tooltip".split( " " );
 
 commonFiles = [
 	"external/jquery/jquery.js",
@@ -57,7 +57,7 @@ tests = {
 				components: this.allComponents,
 				themeVars: defaultTheme
 			});
-			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 			pkg.toJson(function( error, files ) {
 				if (error) {
 					return test.done( error );
@@ -72,7 +72,7 @@ tests = {
 				components: this.allComponents,
 				themeVars: themeGallery[ 1 ].vars
 			});
-			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 			pkg.toJson(function( error, files ) {
 				if (error) {
 					return test.done( error );
@@ -88,7 +88,7 @@ tests = {
 			components: this.allWidgets,
 			themeVars: defaultTheme
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -101,9 +101,9 @@ tests = {
 	"test: select all effects": function( test ) {
 		var pkg = new Packager( this.files, Package, {
 			components: this.allEffects,
-			themeVars: defaultTheme
+			themeVars: null
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -118,7 +118,7 @@ tests = {
 			components: someWidgets1,
 			themeVars: defaultTheme
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -133,7 +133,7 @@ tests = {
 			components: someWidgets2,
 			themeVars: defaultTheme
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -156,7 +156,7 @@ tests = {
 			themeVars: defaultTheme,
 			scope: scope
 		});
-		test.expect( filesToCheck.length + 1 );
+		test.expect( filesToCheck.length );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
