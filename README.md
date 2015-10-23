@@ -1,11 +1,10 @@
 jQuery UI DownloadBuilder & ThemeRoller backend and frontend application.
 
 ## Requirements
-- node >= 0.8.x.
-- ImageMagick 6.6.x. (see apendix below for instructions to compile it from source)
-- npm.
-- grunt-cli. (installed globally via npm)
-- [api.jquery.com](https://github.com/jquery/api.jquery.com) requirements.
+- [node >= 0.12.x and npm](https://nodejs.org/en/download/)
+- ImageMagick 6.6.x. ([see below for instructions to compile it from source](#compile-and-install-imagemagick-from-source))
+- grunt-cli: `npm install -g grunt-cli`
+- [api.jqueryui.com](https://github.com/jquery/api.jqueryui.com#requirements) requirements.
 
 ## Getting Started
 
@@ -32,22 +31,26 @@ Go to the URL it outputs.
 
 Use the config file to define which jQueryUI version DownloadBuilder should serve. Eg:
 ```
-"jqueryUi": {
-  "stable": {  // required
+"jqueryUi": [
+  {
     "version": "1.10.0"
-    "dependsOn": "jQuery 1.7+"
+    "dependsOn": "jQuery 1.7+",
+    "label": "Stable",
+    "stable": true
   },
-  "legacy": {  // optional
+  {
     "version": "1.9.1"
-    "dependsOn": "jQuery 1.6+"
+    "dependsOn": "jQuery 1.6+",
+    "label": "Legacy"
   }
 }
 ```
 
-The `stable` release is required, but `legacy` is optional. Each release has the following attributes:
+One version with the `stable` property set to `true` is required. Each release has the following attributes:
 - `version` is a String, can be a tag or a branch of jQuery UI. Note: use `repo/branch` eg. `origin/master` when defining a branch.
 - `dependsOn` is a String, any textual value allowed.
-- `path` [optional] can be used instead of `version` to straight point to the prepared release path.
+- `label` is a boolean, describing the lifecycle of this version, like "Stable", "Legacy" or "Beta".
+- `stable` is a boolean, marking the current stable release. This will be selected by default in the web UI and will be used to generate demo files.
 
 
 ### node server.js
