@@ -102,7 +102,10 @@ grunt.initConfig({
 function log( callback, successMsg, errorMsg ) {
 	return function( error, result, code ) {
 		if ( error && errorMsg ) {
-			grunt.log.error( errorMsg + ": " + error );
+			grunt.log.error( errorMsg );
+			grunt.log.error( error );
+			grunt.log.error( result.stdout );
+			grunt.log.error( result.stderr );
 		} else if ( ! error && successMsg ) {
 			grunt.log.ok( successMsg );
 		}
@@ -306,7 +309,7 @@ function prepare( jqueryUi ) {
 				rimraf.sync( "tmp/api.jqueryui.com/dist" );
 				grunt.util.spawn({
 					cmd: "grunt",
-					args: [ "build" ],
+					args: [ "build", "--stack" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
 					}
