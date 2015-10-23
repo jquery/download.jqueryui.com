@@ -59,7 +59,9 @@ tests = {
 			});
 			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 			pkg.toJson(function( error, files ) {
-				test.ifError( error );
+				if (error) {
+					return test.done( error );
+				}
 				commonFilesCheck( test, files );
 				themeFilesCheck( test, files, true );
 				test.done();
@@ -72,7 +74,9 @@ tests = {
 			});
 			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 			pkg.toJson(function( error, files ) {
-				test.ifError( error );
+				if (error) {
+					return test.done( error );
+				}
 				commonFilesCheck( test, files );
 				themeFilesCheck( test, files, true );
 				test.done();
@@ -86,7 +90,9 @@ tests = {
 		});
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 		pkg.toJson(function( error, files ) {
-			test.ifError( error );
+			if (error) {
+				return test.done( error );
+			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
 			test.done();
@@ -99,7 +105,9 @@ tests = {
 		});
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 		pkg.toJson(function( error, files ) {
-			test.ifError( error );
+			if (error) {
+				return test.done( error );
+			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, false );
 			test.done();
@@ -112,7 +120,9 @@ tests = {
 		});
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 		pkg.toJson(function( error, files ) {
-			test.ifError( error );
+			if (error) {
+				return test.done( error );
+			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
 			test.done();
@@ -125,7 +135,9 @@ tests = {
 		});
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 		pkg.toJson(function( error, files ) {
-			test.ifError( error );
+			if (error) {
+				return test.done( error );
+			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
 			test.done();
@@ -146,7 +158,9 @@ tests = {
 		});
 		test.expect( filesToCheck.length + 1 );
 		pkg.toJson(function( error, files ) {
-			test.ifError( error );
+			if (error) {
+				return test.done( error );
+			}
 			filesToCheck.forEach(function( filepath ) {
 				test.ok( scopeRe.test( files[ filepath ] ), "Missing scope selector on \"" + filepath + "\"." );
 			});
