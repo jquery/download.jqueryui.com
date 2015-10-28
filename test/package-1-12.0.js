@@ -84,12 +84,13 @@ tests = {
 		}
 	},
 	"test: select all widgets": function( test ) {
+		var allWidgets = this.allWidgets;
 		var pkg = new Packager( this.files, Package, {
-			components: this.allWidgets,
+			components: allWidgets,
 			themeVars: defaultTheme
 		});
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( this.allWidgets.length, 15 );
+		test.equal( allWidgets.length, 15 );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -99,7 +100,7 @@ tests = {
 
 			// 15 widgets, 14 have CSS, plus core, theme, draggable, resizable
 			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			test.equal( includes[ 1 ].split( "," ).length, 18 );
+			test.equal( includes[ 1 ].split( "," ).length, 18, allWidgets + " -> " + includes[ 1 ] );
 
 			test.done();
 		});
@@ -137,7 +138,7 @@ tests = {
 			// 9 components selected, 6 have CSS, plus core, theme,
 			// checkboxradio, controlgroup (tmp button dependencies)
 			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			test.equal( includes[ 1 ].split( "," ).length, 10 );
+			test.equal( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
 
 			test.done();
 		});
@@ -148,7 +149,7 @@ tests = {
 			themeVars: defaultTheme
 		});
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( someWidgets2.length, 9000 );
+		test.equal( someWidgets2.length, 11 );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -159,7 +160,7 @@ tests = {
 			// 11 components selected, 7 have CSS, plus core, theme,
 			// checkboxradio, controlgroup (tmp button dependencies)
 			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			test.equal( includes[ 1 ].split( "," ).length, 11 );
+			test.equal( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
 
 			test.done();
 		});
