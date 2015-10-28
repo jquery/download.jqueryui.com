@@ -88,13 +88,19 @@ tests = {
 			components: this.allWidgets,
 			themeVars: defaultTheme
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
+		test.equal( this.allWidgets.length, 15 );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
+
+			// 15 widgets, 14 have CSS, plus core, theme, draggable, resizable
+			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+			test.equal( includes[ 1 ].split( "," ).length, 18 );
+
 			test.done();
 		});
 	},
@@ -103,7 +109,8 @@ tests = {
 			components: this.allEffects,
 			themeVars: null
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+		test.equal( this.allEffects.length, 16 );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
@@ -118,13 +125,20 @@ tests = {
 			components: someWidgets1,
 			themeVars: defaultTheme
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
+		test.equal( someWidgets1.length, 9 );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
+
+			// 9 components selected, 6 have CSS, plus core, theme,
+			// checkboxradio, controlgroup (tmp button dependencies)
+			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+			test.equal( includes[ 1 ].split( "," ).length, 10 );
+
 			test.done();
 		});
 	},
@@ -133,13 +147,20 @@ tests = {
 			components: someWidgets2,
 			themeVars: defaultTheme
 		});
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
+		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
+		test.equal( someWidgets2.length, 9000 );
 		pkg.toJson(function( error, files ) {
 			if (error) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
+
+			// 11 components selected, 7 have CSS, plus core, theme,
+			// checkboxradio, controlgroup (tmp button dependencies)
+			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+			test.equal( includes[ 1 ].split( "," ).length, 11 );
+
 			test.done();
 		});
 	},
@@ -185,7 +206,7 @@ JqueryUi.all().filter(function( jqueryUi ) {
 			allWidgets = jqueryUi.components().filter(function( component ) {
 				return component.category === "Widgets";
 			}).map(function( component ) {
-				return [ component.name ].concat( component.dependencies );
+				return [ component.name ]
 			}).reduce(function( flat, arr ) {
 				return flat.concat( arr );
 			}, [] ).sort().filter(function( element, i, arr ) {
