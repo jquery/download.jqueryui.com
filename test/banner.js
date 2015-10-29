@@ -10,7 +10,7 @@ var pkg = {
 		version: "1.9.0",
 		homepage: "http://jqueryui.com",
 		author: {
-			name: "authors.txt"
+			name: "jQuery Foundation and other contributors"
 		},
 		licenses: [
 			{
@@ -25,7 +25,7 @@ var pkg = {
 	output = "/*! jQuery UI - v1.9.0 - " + today( "isoDate" ) + "\n" +
 		"* http://jqueryui.com\n" +
 		"* Includes: jquery.ui.autocomplete.js, jquery.ui.accordion.js\n" +
-		"* Copyright authors.txt; Licensed MIT, GPL */\n\n";
+		"* Copyright jQuery Foundation and other contributors; Licensed MIT, GPL */\n\n";
 
 module.exports = {
 	"test: case 1": function( test ) {
