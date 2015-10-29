@@ -1,6 +1,6 @@
 {
   "name": "download.jqueryui.com",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/jquery/download.jqueryui.com.git"
