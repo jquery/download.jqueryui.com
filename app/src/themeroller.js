@@ -600,9 +600,13 @@
 			source: [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "python", "c", "scala", "groovy", "haskell", "perl" ]
 		});
 
-		// Button
 		$( "#button" ).button();
-		$( "#radioset").buttonset();
+		$( "#button-icon" ).button({
+			icon: "ui-icon-gear",
+			showLabel: false
+		});
+		$( "#radioset input").checkboxradio();
+		$( "#controlgroup").controlgroup();
 
 		// Tabs
 		$( "#tabs" ).tabs();
