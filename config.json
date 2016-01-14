@@ -3,7 +3,7 @@
 		{
 			"version": "1.12.0-beta.1",
 			"dependsOn": "jQuery1.7+",
-			"label": "preview"
+			"label": "Stable"
 		},
 		{
 			"version": "1.11.4",
