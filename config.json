@@ -1,6 +1,11 @@
 {
 	"jqueryUi": [
 		{
+			"version": "1.12.0-beta.1",
+			"dependsOn": "jQuery1.7+",
+			"label": "Beta"
+		},
+		{
 			"version": "1.11.4",
 			"dependsOn": "jQuery1.6+",
 			"label": "Stable",
