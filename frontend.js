@@ -35,7 +35,9 @@ Frontend.defaults = {
 	host: "",
 	resources: {
 		jqueryVersion: config.jquery,
-		jqueryuiVersion: JqueryUi.getStable().pkg.version
+		jqueryuiVersion: JqueryUi.getStable().pkg.version,
+		jqueryVersionForThemeRoller: config.themeroller.jquery,
+		jqueryuiVersionForThemeroller: config.themeroller.jqueryUi
 	}
 };
 
