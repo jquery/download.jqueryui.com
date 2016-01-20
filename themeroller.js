@@ -2,6 +2,7 @@ var _ = require( "underscore" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	Image = require( "./lib/themeroller-image" ),
+	JqueryUi = require( "./jquery-ui" ),
 	querystring = require( "querystring" ),
 	textures = require( "./lib/themeroller-textures" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
@@ -36,7 +37,9 @@ var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/te
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/wrap.html", "utf8" ) );
 
 var Frontend = function( args ) {
-	_.extend( this, args );
+	_.extend( this, args, {
+		jqueryUiForThemeroller: JqueryUi.find(args.resources.jqueryuiVersionForThemeroller)
+	});
 };
 
 Frontend.prototype = {
@@ -80,6 +83,7 @@ Frontend.prototype = {
 
 	css: function( vars ) {
 		var theme = new ThemeRoller({
+			jqueryUi: this.jqueryUiForThemeroller,
 			vars: _.extend({
 				dynamicImage: true,
 				dynamicImageHost: this.host
