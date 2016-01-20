@@ -7,13 +7,13 @@
 		{
 			"version": "1.12.0-beta.1",
 			"dependsOn": "jQuery1.7+",
-			"label": "Stable",
-			"stable": true
+			"label": "Beta"
 		},
 		{
 			"version": "1.11.4",
 			"dependsOn": "jQuery1.6+",
-			"label": "Stable"
+			"label": "Stable",
+			"stable": true
 		},
 		{
 			"version": "1.10.4",
