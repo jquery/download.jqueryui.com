@@ -1,7 +1,8 @@
 var async = require( "async" ),
 	fs = require( "fs" ),
 	path = require( "path" ),
-	rimraf = require( "rimraf" );
+	rimraf = require( "rimraf" ),
+	semver = require( "semver" );
 
 module.exports = function( grunt ) {
 
@@ -370,6 +371,36 @@ function copy( jqueryUi ) {
 	};
 }
 
+function packagerZip(packageModule, zipBasedir, themeVars, folder, jqueryUi, callback) {
+	var Package = require( packageModule );
+	var Packager = require( "node-packager" );
+	var filename = path.join( folder, zipBasedir + ".zip" );
+	grunt.log.ok( "Building \"" + filename + "\"" );
+	if ( fs.existsSync( filename ) ) {
+		grunt.log.warn( filename + "\" already exists. Skipping..." );
+		return callback();
+	}
+	var target = fs.createWriteStream( filename );
+	var packager = new Packager( jqueryUi.files().cache, Package, {
+		// components + theme OR all themes (don't include components for theme package)
+		components: themeVars ? jqueryUi.components().map( function( component ) {
+			return component.name;
+		} ) : [],
+		jqueryUi: jqueryUi,
+		themeVars: themeVars
+	} );
+	packager.ready.then( function() {
+		packager.toZip( target, {
+			basedir: zipBasedir
+		}, function( error ) {
+			if ( error ) {
+				return callback( error );
+			}
+			callback();
+		} );
+	} );
+}
+
 function buildPackages( folder, callback ) {
 	var Builder = require( "./lib/builder" ),
 		fs = require( "fs" ),
@@ -387,6 +418,11 @@ function buildPackages( folder, callback ) {
 
 			// (a) Build jquery-ui-[VERSION].zip;
 			function( callback ) {
+				if ( semver.gte( jqueryUi.pkg.version, "1.12.0-a" ) ) {
+					packagerZip( "./lib/package-1-12", "jquery-ui-" + jqueryUi.pkg.version,
+						new ThemeGallery( jqueryUi )[ 0 ].vars, folder, jqueryUi, callback );
+					return;
+				}
 				var stream,
 					theme = new ThemeGallery( jqueryUi )[ 0 ],
 					packer = new Packer( builder, theme, { bundleSuffix: "" }),
@@ -407,6 +443,11 @@ function buildPackages( folder, callback ) {
 
 			// (b) Build themes package jquery-ui-themes-[VERSION].zip;
 			function( callback ) {
+				if ( semver.gte( jqueryUi.pkg.version, "1.12.0-a" ) ) {
+					packagerZip( "./lib/package-1-12-themes", "jquery-ui-themes-" + jqueryUi.pkg.version,
+						null, folder, jqueryUi, callback );
+					return;
+				}
 				var stream,
 					packer = new ThemesPacker( builder ),
 					filename = path.join( folder, packer.filename() );
@@ -447,7 +488,7 @@ grunt.registerTask( "build-app", [ "clean", "bower-install", "handlebars", "copy
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();
-  buildPackages( folder, function( err ) {
+	buildPackages( folder, function( err ) {
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
