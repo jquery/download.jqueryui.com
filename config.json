@@ -1,13 +1,13 @@
 {
 	"themeroller": {
 		"jquery": "1.7",
-		"jqueryUi": "1.12.0-beta.1"
+		"jqueryUi": "1.12.0-rc.1"
 	},
 	"jqueryUi": [
 		{
-			"version": "1.12.0-beta.1",
+			"version": "1.12.0-rc.1",
 			"dependsOn": "jQuery1.7+",
-			"label": "Beta"
+			"label": "Release Candidate"
 		},
 		{
 			"version": "1.11.4",
