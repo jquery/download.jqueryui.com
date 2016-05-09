@@ -382,10 +382,9 @@ function packagerZip(packageModule, zipBasedir, themeVars, folder, jqueryUi, cal
 	}
 	var target = fs.createWriteStream( filename );
 	var packager = new Packager( jqueryUi.files().cache, Package, {
-		// components + theme OR all themes (don't include components for theme package)
-		components: themeVars ? jqueryUi.components().map( function( component ) {
+		components: jqueryUi.components().map( function( component ) {
 			return component.name;
-		} ) : [],
+		} ),
 		jqueryUi: jqueryUi,
 		themeVars: themeVars
 	} );
