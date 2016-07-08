@@ -1,19 +1,19 @@
 {
 	"themeroller": {
 		"jquery": "1.7",
-		"jqueryUi": "1.12.0-rc.2"
+		"jqueryUi": "1.12.0"
 	},
 	"jqueryUi": [
 		{
-			"version": "1.12.0-rc.2",
+			"version": "1.12.0",
 			"dependsOn": "jQuery1.7+",
-			"label": "Release Candidate"
+			"label": "Stable",
+			"stable": true
 		},
 		{
 			"version": "1.11.4",
 			"dependsOn": "jQuery1.6+",
-			"label": "Stable",
-			"stable": true
+			"label": "Legacy"
 		},
 		{
 			"version": "1.10.4",
