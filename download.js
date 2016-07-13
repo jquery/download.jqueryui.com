@@ -162,7 +162,7 @@ Frontend.prototype = {
 					downloadLogger.info(
 						JSON.stringify({
 							build_size: toZip && toZip.hasOwnProperty("size") ? toZip.size : 'unknown',
-							build_time: packager.stats.build.time + packager.stats.toZip.time,
+							build_time: packager.stats.build.time + (toZip && toZip.hasOwnProperty("time") ? toZip.time : 0),
 							components: components,
 							version: jqueryUi.pkg.version
 						})
