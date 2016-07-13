@@ -159,7 +159,7 @@ Frontend.prototype = {
 					// Log statistics
 					downloadLogger.info(
 						JSON.stringify({
-							build_size: packager.stats.toZip.size,
+							build_size: packager.stats.toZip.hasOwnProperty("size") ? packager.stats.toZip : 'unknown',
 							build_time: packager.stats.build.time + packager.stats.toZip.time,
 							components: components,
 							version: jqueryUi.pkg.version
