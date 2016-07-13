@@ -157,10 +157,12 @@ Frontend.prototype = {
 						return callback( error );
 					}
 					// Log statistics
+					var toZip = packager.stats.toZip;
+
 					downloadLogger.info(
 						JSON.stringify({
-							build_size: packager.stats.toZip.size,
-							build_time: packager.stats.build.time + packager.stats.toZip.time,
+							build_size: toZip && toZip.hasOwnProperty("size") ? toZip.size : 'unknown',
+							build_time: packager.stats.build.time + (toZip && toZip.hasOwnProperty("time") ? toZip.time : 0),
 							components: components,
 							version: jqueryUi.pkg.version
 						})
