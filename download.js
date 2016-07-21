@@ -97,6 +97,10 @@ Frontend.prototype = {
 		try {
 			var builder, components, files, jqueryUi, Package, packer, start, theme,
 				themeVars = null;
+			// If fields.theme is unexpectedly absent, consider it as "none".
+			if ( !fields.theme ) {
+				fields.theme = "none"
+			}
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );
 			}
