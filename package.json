@@ -9,7 +9,7 @@
   "dependencies": {
     "archiver": "0.14.4",
     "async": "0.1.22",
-    "bower": "1.3.8",
+    "bower": "1.8.8",
     "builder-amd": "0.0.x",
     "builder-jquery-css": "0.0.4",
     "connect": "1.9.2",
