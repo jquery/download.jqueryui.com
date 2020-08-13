@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var logger = require( "simple-log" ).init( "download.jqueryui.com" );
+var logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" );
 
 process.on( "uncaughtException", function ( err ) {
 	logger.error( "Caught exception: " + ( err.stack || err ) );
@@ -8,7 +8,7 @@ process.on( "uncaughtException", function ( err ) {
 });
 
 var frontend, server,
-	argv = require( "optimist" ).argv,
+	argv = require( "yargs" ).argv,
 	async = require( "async" ),
 	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
