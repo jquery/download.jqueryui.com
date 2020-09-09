@@ -18,11 +18,11 @@ var cache, downloadLogger, jqueryUis,
 
 cache = new Cache( "Built Packages Cache" );
 
-downloadLogger = new winston.Logger({
+downloadLogger = winston.createLogger({
+	format: winston.format.simple(),
 	transports: [
 		new winston.transports.File({
-			filename: __dirname + "/log/downloads.log",
-			json: false
+			filename: __dirname + "/log/downloads.log"
 		})
 	]
 });
