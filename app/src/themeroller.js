@@ -131,215 +131,6 @@
 		});
 	};
 
-	/**
-	 * App
-	 */
-	function appInit() {
-		/* jqueryui.com site overrides for TR */
-		$( "#content" ).attr( "id", "themeroller-content" );
-
-		$( "#rollerTabs" ).tabs();
-
-		themeGalleryInit();
-
-		// General app click cleanup
-		$( "body" ).on( "click", function( event ) {
-			if ( $( event.target ).is( "input.hex.focus" ) || $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
-				return;
-			}
-			themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
-			$( "#picker" ).remove();
-			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
-			themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
-		});
-
-		// Links to roll your own from help tab
-		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
-			$( "#rollerTabs" ).tabs( "option", "active", 0 );
-			event.preventDefault();
-		});
-
-		// Links to theme gallery from help tab
-		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
-			$( "#rollerTabs" ).tabs( "option", "active", 1 );
-			event.preventDefault();
-		});
-
-		$( "#reverse-background" ).on( "click", function() {
-			var maskArea = themeroller,
-				textElems = themeroller.find( ".demoHeaders, #demo-options" );
-			if ( $( this ).is( ":checked" ) ) {
-				maskArea.css({ background: "#333" });
-				textElems.css({ color: "#CCC" });
-			} else {
-				maskArea.css({ background: "#FFF" });
-				textElems.css({ color: "#000" });
-			}
-		});
-	}
-
-	function rollYourOwnInit() {
-		$( "#rollYourOwn" ).html( JST[ "rollyourown.html" ]( rollYourOwnObject() ) );
-		model.downloadUrl(function( url ) {
-			$( "#downloadTheme" ).attr( "href", url );
-		});
-		$( "#downloadTheme" ).on({
-			"click": function() {
-				var form = $( this ).parent().find( "form" );
-				if ( form.find( ".state-error" ).length ) {
-					// TODO: tell user submit has been cancelled, because there are errors!
-					return false;
-				}
-			}
-		});
-
-		// Hover class toggles in app panel
-		themeroller.find( "li.state-default, div.state-default" )
-			.mouseenter(function() {
-				$( this ).addClass( "state-hover" );
-			})
-			.mouseleave(function() {
-				$( this ).removeClass( "state-hover" );
-			});
-
-		// Hex inputs
-		themeroller.find( "input.hex" )
-			.on({
-				"change": function() {
-					$( this ).trigger( "validate" );
-				},
-				"click": function( event ) {
-
-					// TODO: do we need the `#picker` id?
-					var farbtastic,
-						picker = $( "<div id=\"picker\"></div>" );
-					$( this ).addClass( "focus" );
-					$( "#picker" ).remove();
-					themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
-					themeroller.find( "div.texturePicker ul:visible" ).hide( 0 ).parent().css( "position", "static" );
-					$( this ).after( picker ).parent().addClass( "picker-on" );
-
-					// Farbtastic hack.
-					// TODO: get rid of this hack.
-					farbtastic = $.farbtastic( picker, this );
-					farbtastic.updateDisplay = updateDisplay( farbtastic, picker.find( ".farbtastic" ) );
-					event.preventDefault();
-				},
-				"validate": function() {
-					// Validate hex colors
-					if ( isHexColor( $( this ).val() ) ) {
-						$( this ).removeClass( "state-error" );
-					} else {
-						$( this ).addClass( "state-error" );
-					}
-				}
-			})
-			.trigger( "validate" )
-			.wrap( "<div class=\"hasPicker\"></div>" )
-			.applyFarbtastic();
-
-		// Focus and blur classes in form
-		themeroller.find( "input, select" )
-		.focus(function() {
-			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
-			$( this ).addClass( "focus" );
-		})
-		.blur(function() {
-			$( this ).removeClass( "focus" );
-		});
-
-		// Texture pickers from select menus
-		themeroller.find( "select.texture" ).each(function() {
-
-			$( this ).after( "<div class=\"texturePicker\"><a href=\"#\"></a><ul></ul></div>" );
-			var texturePicker = $( this ).next(),
-				a = texturePicker.find( "a" ),
-				ul = texturePicker.find( "ul" ),
-				sIndex = texturePicker.prev().get( 0 ).selectedIndex;
-
-			// Scrape options
-			$( this ).find( "option" ).each(function() {
-				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
-				if( $( this ).get( 0 ).index === sIndex ) {
-					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
-				}
-			});
-
-			ul.find( "li" ).on( "click", function( event ) {
-				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
-				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "class" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
-				ul.fadeOut( 100 );
-				formChange();
-				event.preventDefault();
-			});
-
-			// Hide the menu and select el
-			ul.hide();
-
-			// Show/hide of menus
-			texturePicker.on( "click", function( event ) {
-				$( this ).addClass( "focus" );
-				$( "#picker" ).remove();
-				var showIt;
-				if ( ul.is( ":hidden" ) ) {
-					showIt = true;
-				}
-				themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
-				if ( showIt === true ) {
-					texturePicker.css( "position", "relative" );
-					ul.show();
-				}
-
-				event.preventDefault();
-			});
-		});
-
-		// Ensures numbers only are entered for opacity inputs
-		themeroller.find( "input.opacity" ).on( "change", function() {
-			var withinThreshold,
-				number = parseInt( $( this ).val(), 10 );
-			if( isNaN( number ) ) {
-				$( this ).val( "" );
-			} else {
-				withinThreshold = Math.max( 0, Math.min( 100, number ) );
-				if ( $( this ).val() !== withinThreshold ) {
-					$( this ).val( withinThreshold );
-				}
-			}
-		});
-
-		// Spindowns in TR panel
-		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
-
-		// Change event in form
-		themeroller.find( ".application form" ).on({
-			"change": function( event ) {
-				formChange();
-				event.preventDefault();
-			},
-			"submit": function( event ) {
-				event.preventDefault();
-			},
-			"validate": function() {
-				var form = $( this ).parent().find( "form" );
-				if ( form.find( ".state-error" ).length ) {
-					$( "#downloadTheme" ).addClass( "ui-state-disabled" );
-				} else {
-					$( "#downloadTheme" ).removeClass( "ui-state-disabled" );
-				}
-			}
-		});
-
-		if ( openGroups.length > 0 ) {
-			$.each( openGroups, function() {
-				themeroller.find( ".theme-group-content:eq( " + this + " )" ).prev().trigger( "click" );
-			});
-		}
-		if( focusedEl ) {
-			themeroller.find( "form" ).find( "input, select, .texturePicker" ).eq( focusedEl ).click();
-		}
-	}
-
 	// TODO move this away into an external themeRoller helper.
 	function rollYourOwnObject() {
 		var augmentGroups, hashColor, textureOptions,
@@ -558,6 +349,177 @@
 		};
 	}
 
+	function rollYourOwnInit() {
+		$( "#rollYourOwn" ).html( JST[ "rollyourown.html" ]( rollYourOwnObject() ) );
+		model.downloadUrl(function( url ) {
+			$( "#downloadTheme" ).attr( "href", url );
+		});
+		$( "#downloadTheme" ).on({
+			"click": function() {
+				var form = $( this ).parent().find( "form" );
+				if ( form.find( ".state-error" ).length ) {
+					// TODO: tell user submit has been cancelled, because there are errors!
+					return false;
+				}
+			}
+		});
+
+		// Hover class toggles in app panel
+		themeroller.find( "li.state-default, div.state-default" )
+			.mouseenter(function() {
+				$( this ).addClass( "state-hover" );
+			})
+			.mouseleave(function() {
+				$( this ).removeClass( "state-hover" );
+			});
+
+		// Hex inputs
+		themeroller.find( "input.hex" )
+			.on({
+				"change": function() {
+					$( this ).trigger( "validate" );
+				},
+				"click": function( event ) {
+
+					// TODO: do we need the `#picker` id?
+					var farbtastic,
+						picker = $( "<div id=\"picker\"></div>" );
+					$( this ).addClass( "focus" );
+					$( "#picker" ).remove();
+					themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
+					themeroller.find( "div.texturePicker ul:visible" ).hide( 0 ).parent().css( "position", "static" );
+					$( this ).after( picker ).parent().addClass( "picker-on" );
+
+					// Farbtastic hack.
+					// TODO: get rid of this hack.
+					farbtastic = $.farbtastic( picker, this );
+					farbtastic.updateDisplay = updateDisplay( farbtastic, picker.find( ".farbtastic" ) );
+					event.preventDefault();
+				},
+				"validate": function() {
+					// Validate hex colors
+					if ( isHexColor( $( this ).val() ) ) {
+						$( this ).removeClass( "state-error" );
+					} else {
+						$( this ).addClass( "state-error" );
+					}
+				}
+			})
+			.trigger( "validate" )
+			.wrap( "<div class=\"hasPicker\"></div>" )
+			.applyFarbtastic();
+
+		// Focus and blur classes in form
+		themeroller.find( "input, select" )
+		.focus(function() {
+			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
+			$( this ).addClass( "focus" );
+		})
+		.blur(function() {
+			$( this ).removeClass( "focus" );
+		});
+
+		// Texture pickers from select menus
+		themeroller.find( "select.texture" ).each(function() {
+
+			$( this ).after( "<div class=\"texturePicker\"><a href=\"#\"></a><ul></ul></div>" );
+			var texturePicker = $( this ).next(),
+				a = texturePicker.find( "a" ),
+				ul = texturePicker.find( "ul" ),
+				sIndex = texturePicker.prev().get( 0 ).selectedIndex;
+
+			// Scrape options
+			$( this ).find( "option" ).each(function() {
+				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
+				if( $( this ).get( 0 ).index === sIndex ) {
+					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
+				}
+			});
+
+			ul.find( "li" ).on( "click", function( event ) {
+				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
+				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "class" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
+				ul.fadeOut( 100 );
+				formChange();
+				event.preventDefault();
+			});
+
+			// Hide the menu and select el
+			ul.hide();
+
+			// Show/hide of menus
+			texturePicker.on( "click", function( event ) {
+				$( this ).addClass( "focus" );
+				$( "#picker" ).remove();
+				var showIt;
+				if ( ul.is( ":hidden" ) ) {
+					showIt = true;
+				}
+				themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
+				if ( showIt === true ) {
+					texturePicker.css( "position", "relative" );
+					ul.show();
+				}
+
+				event.preventDefault();
+			});
+		});
+
+		// Ensures numbers only are entered for opacity inputs
+		themeroller.find( "input.opacity" ).on( "change", function() {
+			var withinThreshold,
+				number = parseInt( $( this ).val(), 10 );
+			if( isNaN( number ) ) {
+				$( this ).val( "" );
+			} else {
+				withinThreshold = Math.max( 0, Math.min( 100, number ) );
+				if ( $( this ).val() !== withinThreshold ) {
+					$( this ).val( withinThreshold );
+				}
+			}
+		});
+
+		// Spindowns in TR panel
+		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
+
+		// Change event in form
+		themeroller.find( ".application form" ).on({
+			"change": function( event ) {
+				formChange();
+				event.preventDefault();
+			},
+			"submit": function( event ) {
+				event.preventDefault();
+			},
+			"validate": function() {
+				var form = $( this ).parent().find( "form" );
+				if ( form.find( ".state-error" ).length ) {
+					$( "#downloadTheme" ).addClass( "ui-state-disabled" );
+				} else {
+					$( "#downloadTheme" ).removeClass( "ui-state-disabled" );
+				}
+			}
+		});
+
+		if ( openGroups.length > 0 ) {
+			$.each( openGroups, function() {
+				themeroller.find( ".theme-group-content:eq( " + this + " )" ).prev().trigger( "click" );
+			});
+		}
+		if( focusedEl ) {
+			themeroller.find( "form" ).find( "input, select, .texturePicker" ).eq( focusedEl ).click();
+		}
+	}
+
+	function updateThemeGalleryDownloadLink() {
+		$( "#themeGallery a.download" ).each(function() {
+			var elem = $( this );
+			model.downloadUrl(function( url ) {
+				elem.attr( "href", url );
+			}, elem.parent().find( "a:first-child" ).data( "z-theme-params" ) );
+		});
+	}
+
 	function themeGalleryInit() {
 		// Loading and viewing gallery themes
 		$( "#themeGallery a" )
@@ -580,15 +542,6 @@
 				event.preventDefault();
 			});
 		updateThemeGalleryDownloadLink();
-	}
-
-	function updateThemeGalleryDownloadLink() {
-		$( "#themeGallery a.download" ).each(function() {
-			var elem = $( this );
-			model.downloadUrl(function( url ) {
-				elem.attr( "href", url );
-			}, elem.parent().find( "a:first-child" ).data( "z-theme-params" ) );
-		});
 	}
 
 	function demoInit() {
@@ -691,6 +644,53 @@
 		});
 
 		rollYourOwnInit();
+	}
+
+	/**
+	 * App
+	 */
+	function appInit() {
+		/* jqueryui.com site overrides for TR */
+		$( "#content" ).attr( "id", "themeroller-content" );
+
+		$( "#rollerTabs" ).tabs();
+
+		themeGalleryInit();
+
+		// General app click cleanup
+		$( "body" ).on( "click", function( event ) {
+			if ( $( event.target ).is( "input.hex.focus" ) || $( event.target ).parent().is( "div.texturePicker.focus" ) ) {
+				return;
+			}
+			themeroller.find( "div.picker-on" ).removeClass( "picker-on" );
+			$( "#picker" ).remove();
+			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
+			themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
+		});
+
+		// Links to roll your own from help tab
+		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
+			$( "#rollerTabs" ).tabs( "option", "active", 0 );
+			event.preventDefault();
+		});
+
+		// Links to theme gallery from help tab
+		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
+			$( "#rollerTabs" ).tabs( "option", "active", 1 );
+			event.preventDefault();
+		});
+
+		$( "#reverse-background" ).on( "click", function() {
+			var maskArea = themeroller,
+				textElems = themeroller.find( ".demoHeaders, #demo-options" );
+			if ( $( this ).is( ":checked" ) ) {
+				maskArea.css({ background: "#333" });
+				textElems.css({ color: "#CCC" });
+			} else {
+				maskArea.css({ background: "#FFF" });
+				textElems.css({ color: "#000" });
+			}
+		});
 	}
 
 	model = new Model.ThemeRoller({

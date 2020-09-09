@@ -26,6 +26,10 @@
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
+	function pluralize( count, singular, plural ) {
+		return count === 1 ? singular : plural;
+	}
+
 	function componentsFetch() {
 		return $.ajax( downloadJqueryuiHost + "/download/components/", {
 			dataType: "jsonp",
@@ -56,6 +60,14 @@
 
 	function allComponents() {
 		return $( "#download-builder .component-group-list input[type=checkbox]" );
+	}
+
+	function downloadOnOff() {
+		if ( !allComponents().filter( ":checked" ).length && $( "#theme" ).val() === "none" ) {
+			$( "#download-builder input[type=submit]" ).prop( "disabled", true ).addClass( "ui-state-disabled" );
+		} else {
+			$( "#download-builder input[type=submit]" ).prop( "disabled", false ).removeClass( "ui-state-disabled" );
+		}
 	}
 
 	function allGroup( referenceElement ) {
@@ -167,14 +179,6 @@
 		}
 	}
 
-	function downloadOnOff() {
-		if ( !allComponents().filter( ":checked" ).length && $( "#theme" ).val() === "none" ) {
-			$( "#download-builder input[type=submit]" ).prop( "disabled", true ).addClass( "ui-state-disabled" );
-		} else {
-			$( "#download-builder input[type=submit]" ).prop( "disabled", false ).removeClass( "ui-state-disabled" );
-		}
-	}
-
 	function drawToggleAll( className ) {
 		return $( "<label>" )
 			.addClass( className )
@@ -267,10 +271,6 @@
 		});
 
 		componentsLoad.resolve();
-	}
-
-	function pluralize( count, singular, plural ) {
-		return count === 1 ? singular : plural;
 	}
 
 	model = new Model.DownloadBuilder({

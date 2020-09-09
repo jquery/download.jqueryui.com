@@ -28,6 +28,11 @@
 		listen = false;
 	}
 
+	function currHash() {
+		// Can't use window.location.hash, because Firefox automatically decodes it.
+		return location.href.split( "#" )[ 1 ];
+	}
+
 	// check if hash has changed
 	function checkHashChange() {
 		var hash = currHash();
@@ -65,11 +70,6 @@
 
 	function clean( hash ) {
 		return hash.replace( /^[\?#]+/g, "" );
-	}
-
-	function currHash() {
-		// Can't use window.location.hash, because Firefox automatically decodes it.
-		return location.href.split( "#" )[ 1 ];
 	}
 
 	function currSearch() {

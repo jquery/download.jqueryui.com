@@ -1,3 +1,5 @@
+'use strict';
+
 var cache, downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
 	Cache = require( "./lib/cache" ),
@@ -95,11 +97,11 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, files, jqueryUi, Package, packer, start, theme,
+			var builder, components, jqueryUi, Package, packer, packager, start, theme,
 				themeVars = null;
 			// If fields.theme is unexpectedly absent, consider it as "none".
 			if ( !fields.theme ) {
-				fields.theme = "none"
+				fields.theme = "none";
 			}
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );

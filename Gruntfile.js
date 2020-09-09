@@ -35,21 +35,7 @@ grunt.initConfig({
 	jshint: {
 		all: [ "*.js", "test/*js", "lib/**/*.js", "app/src/*.js" ],
 		options: {
-			boss: true,
-			curly: true,
-			eqeqeq: true,
-			eqnull: true,
-			immed: true,
-			latedef: true,
-			noarg: true,
-			node: true,
-			onevar: true,
-			proto: true,
-			smarttabs: true,
-			strict: false,
-			sub: true,
-			trailing: true,
-			undef: true
+			jshintrc: true
 		}
 	},
 	copy: {
@@ -176,25 +162,6 @@ function cloneOrFetch( callback ) {
 			}
 		}
 	]);
-}
-
-function prepareAll( callback ) {
-	var config = require( "./lib/config" )();
-
-	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
-		async.series([
-			checkout( jqueryUi ),
-			install( jqueryUi ),
-			prepare( jqueryUi ),
-			copy( jqueryUi )
-		], function( err ) {
-			// Go to next ref
-			callback( err );
-		});
-	}, function( err ) {
-		// Done
-		callback( err );
-	});
 }
 
 function checkout( jqueryUi ) {
@@ -369,6 +336,25 @@ function copy( jqueryUi ) {
 			}
 		]);
 	};
+}
+
+function prepareAll( callback ) {
+	var config = require( "./lib/config" )();
+
+	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
+		async.series([
+			checkout( jqueryUi ),
+			install( jqueryUi ),
+			prepare( jqueryUi ),
+			copy( jqueryUi )
+		], function( err ) {
+			// Go to next ref
+			callback( err );
+		});
+	}, function( err ) {
+		// Done
+		callback( err );
+	});
 }
 
 function packagerZip(packageModule, zipBasedir, themeVars, folder, jqueryUi, callback) {
