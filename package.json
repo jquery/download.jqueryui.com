@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "archiver": "5.0.0",
+    "archiver": "5.0.2",
     "async": "3.2.0",
     "bower": "1.8.8",
     "builder-amd": "0.0.3",
@@ -36,10 +36,10 @@
     "rimraf": "3.0.2",
     "semver": "7.3.2",
     "sqwish": "0.2.2",
-    "uglify-js": "3.10.4",
+    "uglify-js": "3.11.1",
     "underscore": "1.11.0",
     "winston": "3.3.3",
-    "yargs": "16.0.0"
+    "yargs": "16.0.3"
   },
   "devDependencies": {
     "nodeunit": "0.11.3"
