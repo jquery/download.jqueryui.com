@@ -53,5 +53,8 @@
   ],
   "scripts": {
     "test": "nodeunit test"
+  },
+  "engines": {
+    "node": "10 || 12 || 14"
   }
 }
