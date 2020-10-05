@@ -121,6 +121,7 @@ if ( frontend.options.env === "production" ) {
 		.use( "/app", express.static( "app/src" ) )
 		.use( "/app/images/farbtastic", express.static( "external/farbtastic" ) )
 		.use( "/external", express.static( "external" ) )
+		.use( "/node_modules", express.static( "node_modules" ) )
 		.use( "/template", express.static( "tmp/app/template" ) );
 }
 
