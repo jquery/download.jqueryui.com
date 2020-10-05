@@ -7,12 +7,12 @@ process.on( "uncaughtException", function ( err ) {
 	process.exit( 1 );
 });
 
-var frontend, server,
+var frontend,
 	argv = require( "yargs" ).argv,
+	express = require( 'express' ),
 	async = require( "async" ),
 	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
-	connect = require( "connect" ),
 	formidable = require( "formidable" ),
 	Frontend = require( "./frontend" ),
 	httpHost = argv.host || "localhost",
@@ -31,7 +31,8 @@ var frontend, server,
 		themerollerIcon: /^\/themeroller\/images\/(ui-icons_.+)$/,
 		themerollerParseTheme: "/themeroller/parsetheme.css",
 		themerollerTexture: /^\/themeroller\/images\/(ui-bg_.+)$/
-	};
+	},
+	app = express();
 
 frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
@@ -52,7 +53,8 @@ if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	});
 }
 
-// OBS: We are using an older version of connect, which lacks a descent way to centralize requests error handling.
+// OBS: We were using an older version of connect, which lacked a descent way to centralize
+// requests error handling. We use express now but we haven't updated that code.
 function error( err, response ) {
 	logger.error( "User request exception: " + ( err.stack || err ) );
 	frontend.error( response );
@@ -109,20 +111,19 @@ function route( app ) {
 	});
 }
 
-
-server = connect( connect.router( route ) );
+route(app);
 
 // App static directories.
 if ( frontend.options.env === "production" ) {
-	server.use( "/resources", connect[ "static" ]( "app/dist" ) );
+	app.use( "/resources", express.static( "app/dist" ) );
 } else {
-	server
-		.use( "/app", connect[ "static" ]( "app/src" ) )
-		.use( "/app/images/farbtastic", connect[ "static" ]( "external/farbtastic" ) )
-		.use( "/external", connect[ "static" ]( "external" ) )
-		.use( "/template", connect[ "static" ]( "tmp/app/template" ) );
+	app
+		.use( "/app", express.static( "app/src" ) )
+		.use( "/app/images/farbtastic", express.static( "external/farbtastic" ) )
+		.use( "/external", express.static( "external" ) )
+		.use( "/template", express.static( "tmp/app/template" ) );
 }
 
-server.listen( httpPort, httpHost, function() {
+app.listen( httpPort, httpHost, function() {
 	console.log( "HTTP Server running at http://%s:%d", httpHost, httpPort );
 });
