@@ -1,10 +1,12 @@
+'use strict';
+
 var cache, downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
 	Cache = require( "./lib/cache" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
-	logger = require( "simple-log" ).init( "download.jqueryui.com" ),
+	logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" ),
 	Packager = require( "node-packager" ),
 	querystring = require( "querystring" ),
 	semver = require( "semver" ),
@@ -16,11 +18,11 @@ var cache, downloadLogger, jqueryUis,
 
 cache = new Cache( "Built Packages Cache" );
 
-downloadLogger = new winston.Logger({
+downloadLogger = winston.createLogger({
+	format: winston.format.simple(),
 	transports: [
 		new winston.transports.File({
-			filename: __dirname + "/log/downloads.log",
-			json: false
+			filename: __dirname + "/log/downloads.log"
 		})
 	]
 });
@@ -69,7 +71,7 @@ Frontend.prototype = {
 				categories: JqueryUi.getStable().categories
 			}),
 			host: this.host,
-			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/external/lzma-js/src/lzma_worker.js",
+			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/node_modules/lzma/src/lzma_worker.js",
 			production: production,
 			resources: this.resources,
 			jqueryUis: jqueryUis
@@ -95,11 +97,11 @@ Frontend.prototype = {
 
 	create: function( fields, response, callback ) {
 		try {
-			var builder, components, files, jqueryUi, Package, packer, start, theme,
+			var builder, components, jqueryUi, Package, packer, packager, start, theme,
 				themeVars = null;
 			// If fields.theme is unexpectedly absent, consider it as "none".
 			if ( !fields.theme ) {
-				fields.theme = "none"
+				fields.theme = "none";
 			}
 			if ( fields.theme !== "none" ) {
 				themeVars = querystring.parse( fields.theme );

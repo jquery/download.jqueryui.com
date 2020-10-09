@@ -207,7 +207,7 @@ JqueryUi.all().filter(function( jqueryUi ) {
 			allWidgets = jqueryUi.components().filter(function( component ) {
 				return component.category === "Widgets";
 			}).map(function( component ) {
-				return [ component.name ]
+				return [ component.name ];
 			}).reduce(function( flat, arr ) {
 				return flat.concat( arr );
 			}, [] ).sort().filter(function( element, i, arr ) {

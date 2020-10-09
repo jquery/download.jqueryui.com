@@ -35,21 +35,7 @@ grunt.initConfig({
 	jshint: {
 		all: [ "*.js", "test/*js", "lib/**/*.js", "app/src/*.js" ],
 		options: {
-			boss: true,
-			curly: true,
-			eqeqeq: true,
-			eqnull: true,
-			immed: true,
-			latedef: true,
-			noarg: true,
-			node: true,
-			onevar: true,
-			proto: true,
-			smarttabs: true,
-			strict: false,
-			sub: true,
-			trailing: true,
-			undef: true
+			jshintrc: true
 		}
 	},
 	copy: {
@@ -82,16 +68,16 @@ grunt.initConfig({
 		},
 		// DownloadBuilder minified frontend bundle
 		download: {
-			src: [ "external/eventEmitter/EventEmitter.js", "external/handlebars/handlebars.runtime.js", "tmp/app/template/download.js", "external/lzma-js/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
+			src: [ "node_modules/wolfy87-eventemitter/EventEmitter.js", "node_modules/handlebars/dist/handlebars.runtime.js", "tmp/app/template/download.js", "node_modules/lzma/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
 			dest: "app/dist/download.all.min.js"
 		},
 		// ThemeRoller minified frontend bundle
 		themeroller: {
-			src: [ "external/eventEmitter/EventEmitter.js", "external/handlebars/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic/farbtastic.js", "external/lzma-js/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
+			src: [ "node_modules/wolfy87-eventemitter/EventEmitter.js", "node_modules/handlebars/dist/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic/farbtastic.js", "node_modules/lzma/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
 			dest: "app/dist/themeroller.all.min.js"
 		},
 		external_lzma_worker: {
-			src: [ "external/lzma-js/src/lzma_worker.js" ],
+			src: [ "node_modules/lzma/src/lzma_worker.js" ],
 			dest: "app/dist/external/lzma_worker.min.js"
 		}
 	},
@@ -176,25 +162,6 @@ function cloneOrFetch( callback ) {
 			}
 		}
 	]);
-}
-
-function prepareAll( callback ) {
-	var config = require( "./lib/config" )();
-
-	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
-		async.series([
-			checkout( jqueryUi ),
-			install( jqueryUi ),
-			prepare( jqueryUi ),
-			copy( jqueryUi )
-		], function( err ) {
-			// Go to next ref
-			callback( err );
-		});
-	}, function( err ) {
-		// Done
-		callback( err );
-	});
 }
 
 function checkout( jqueryUi ) {
@@ -371,6 +338,25 @@ function copy( jqueryUi ) {
 	};
 }
 
+function prepareAll( callback ) {
+	var config = require( "./lib/config" )();
+
+	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
+		async.series([
+			checkout( jqueryUi ),
+			install( jqueryUi ),
+			prepare( jqueryUi ),
+			copy( jqueryUi )
+		], function( err ) {
+			// Go to next ref
+			callback( err );
+		});
+	}, function( err ) {
+		// Done
+		callback( err );
+	});
+}
+
 function packagerZip(packageModule, zipBasedir, themeVars, folder, jqueryUi, callback) {
 	var Package = require( packageModule );
 	var Packager = require( "node-packager" );
@@ -475,15 +461,7 @@ function buildPackages( folder, callback ) {
 
 grunt.registerTask( "default", [ "check-modules", "jshint", "test" ] );
 
-grunt.registerTask( "bower-install", "Runs bower install", function() {
-	var done = this.async();
-	grunt.util.spawn({
-		cmd: "./node_modules/bower/bin/bower",
-		args: [ "install" ]
-	}, done );
-});
-
-grunt.registerTask( "build-app", [ "clean", "bower-install", "handlebars", "copy", "uglify" ] );
+grunt.registerTask( "build-app", [ "clean", "handlebars", "copy", "uglify" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();
