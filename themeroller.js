@@ -74,7 +74,7 @@ Frontend.prototype = {
 				production: production
 			}),
 			host: this.host,
-			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/node_modules/lzma/lzma_worker.js",
+			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/node_modules/lzma/src/lzma_worker.js",
 			production: production,
 			resources: this.resources,
 			textures: JSON.stringify( textures )
