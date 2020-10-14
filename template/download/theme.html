@@ -3,7 +3,7 @@
 	<select data-filesize="152" id="theme" name="theme">
 		<option value="none">No Theme</option>
 		{{#each themeGallery}}
-			<option value="{{serializedVars}}"{{isSelected}}>{{name}}</option>
+			<option value="{{serializedVars}}"{{{isSelected}}}>{{name}}</option>
 		{{/each}}
 	</select>
 </div>
