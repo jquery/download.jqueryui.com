@@ -47,12 +47,6 @@
     "nodeunit": "0.11.3"
   },
   "main": "main.js",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/jquery/download.jqueryui.com/blob/master/LICENSE.txt"
-    }
-  ],
   "scripts": {
     "test": "nodeunit test"
   },
