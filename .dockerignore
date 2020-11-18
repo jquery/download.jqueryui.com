@@ -1,0 +1,6 @@
+.git
+app/dist
+jquery-ui
+log/downloads.log
+node_modules
+tmp
