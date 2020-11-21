@@ -1,3 +1,5 @@
+.idea
+.vscode
 app/dist
 jquery-ui
 log/downloads.log
