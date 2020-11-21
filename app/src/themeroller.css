@@ -196,7 +196,7 @@
 	margin-top: -8px;
 }
 #downloadTheme:hover {
-	background:#faae00 url("images/themeroller/bg_download_btn_hover.png") repeat-x scroll 0 50%
+	background:#faae00 url("images/themeroller/bg_download_btn_hover.png") repeat-x scroll 0 50%;
 	color: #000;
 	border-color: #000;
 }
