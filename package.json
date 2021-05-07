@@ -24,7 +24,7 @@
     "grunt-contrib-handlebars": "2.0.0",
     "grunt-contrib-jshint": "2.1.0",
     "grunt-contrib-uglify": "5.0.0",
-    "handlebars": "4.7.6",
+    "handlebars": "4.7.7",
     "jquery-ui-themeroller": "0.0.5",
     "lzma": "2.3.2",
     "node-packager": "0.0.6",
