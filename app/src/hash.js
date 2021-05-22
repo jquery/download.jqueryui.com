@@ -1,4 +1,4 @@
-/*jshint jquery: true, browser: true */
+/* eslint-env jquery, browser */
 /*global EventEmitter: false */
 /*!
  * jQuery UI helper JavaScript file for History and hash support
@@ -7,8 +7,9 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( exports, $, EventEmitter, undefined ) {
+( function( exports, $, EventEmitter, undefined ) {
 	var emitter = new EventEmitter(),
+
 		// listen to hash changes?
 		listen = true,
 		listenDelay = 600,
@@ -18,7 +19,7 @@
 
 	// start listening again
 	function startListening() {
-		setTimeout(function() {
+		setTimeout( function() {
 			listen = true;
 		}, listenDelay );
 	}
@@ -29,6 +30,7 @@
 	}
 
 	function currHash() {
+
 		// Can't use window.location.hash, because Firefox automatically decodes it.
 		return location.href.split( "#" )[ 1 ];
 	}
@@ -38,6 +40,7 @@
 		var hash = currHash();
 		if ( storedHash !== hash ) {
 			if ( listen === true ) {
+
 				// update was made by navigation button
 				if ( hash ) {
 					hash = hash.replace( /^!*/, "" );
@@ -54,7 +57,8 @@
 
 	function updateHash( hash, options ) {
 		options = options || {};
-		if ( ( hash == null || hash.length === 0 ) && !(/#/).test( location.href ) ) {
+		if ( ( hash == null || hash.length === 0 ) && !( /#/ ).test( location.href ) ) {
+
 			// If setting hash to null, but it has never been set to anything yet, simply do nothing.
 			return;
 		}
@@ -92,4 +96,4 @@
 		off: $.proxy( emitter.off, emitter ),
 		update: updateHash
 	};
-}( this, jQuery, EventEmitter ) );
+} )( this, jQuery, EventEmitter );

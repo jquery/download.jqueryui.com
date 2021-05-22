@@ -1,0 +1,11 @@
+{
+  "env": {
+    "browser": true,
+    "node": false
+  },
+
+  "rules": {
+    // Too many violations
+//    "strict": [ "error", "function" ]
+  }
+}

@@ -2,14 +2,14 @@
 
 var logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" );
 
-process.on( "uncaughtException", function ( err ) {
+process.on( "uncaughtException", function( err ) {
 	logger.error( "Caught exception: " + ( err.stack || err ) );
 	process.exit( 1 );
-});
+} );
 
 var frontend,
 	argv = require( "yargs" ).argv,
-	express = require( 'express' ),
+	express = require( "express" ),
 	async = require( "async" ),
 	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
@@ -41,16 +41,16 @@ if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 
 	// Cache jquery-ui-themeroller images as well
 	async.forEachSeries( require( "./lib/themeroller-themegallery" )(), function( theme, callback ) {
-		theme = new (require( "jquery-ui-themeroller" ))( "", theme.vars );
-		theme.generateImages(function( error, imageFiles ) {
+		theme = new( require( "jquery-ui-themeroller" ) )( "", theme.vars );
+		theme.generateImages( function( error, imageFiles ) {
 			if ( error ) {
 				error.message = "Caching theme images (2): " + error.message;
 				callback( error );
 				throw error;
 			}
 			callback();
-		});
-	});
+		} );
+	} );
 }
 
 // OBS: We were using an older version of connect, which lacked a descent way to centralize
@@ -67,12 +67,12 @@ function params( request ) {
 function route( app ) {
 	app.get( routes.home, function( request, response ) {
 		response.end( frontend.root() );
-	});
+	} );
 	app.get( routes.download, function( request, response ) {
 		response.end( frontend.download.index( params( request ), {
 			wrap: true
-		}));
-	});
+		} ) );
+	} );
 	app.post( routes.download, function( request, response ) {
 		var form = new formidable.IncomingForm();
 		form.parse( request, function( err, fields, files ) {
@@ -83,35 +83,35 @@ function route( app ) {
 				if ( err ) {
 					return error( err, response );
 				}
-			});
-		});
-	});
+			} );
+		} );
+	} );
 	app.get( routes.downloadComponents, function( request, response ) {
 		response.setHeader( "Content-Type", "application/json" );
 		response.end( frontend.download.components( params( request ) ) );
-	});
+	} );
 	app.get( routes.downloadTheme, function( request, response ) {
 		response.setHeader( "Content-Type", "application/json" );
 		response.end( frontend.download.theme( params( request ) ) );
-	});
+	} );
 	app.get( routes.themeroller, function( request, response ) {
 		response.end( frontend.themeroller.index( params( request ), {
 			wrap: true
-		}));
-	});
+		} ) );
+	} );
 	app.get( routes.themerollerIcon, function( request, response ) {
 		frontend.themeroller.icon( request.params[ 0 ], response, error );
-	});
+	} );
 	app.get( routes.themerollerParseTheme, function( request, response ) {
 		response.setHeader( "Content-Type", "text/css" );
 		response.end( frontend.themeroller.css( params( request ) ) );
-	});
+	} );
 	app.get( routes.themerollerTexture, function( request, response ) {
 		frontend.themeroller.texture( request.params[ 0 ], response, error );
-	});
+	} );
 }
 
-route(app);
+route( app );
 
 // App static directories.
 if ( frontend.options.env === "production" ) {
@@ -127,4 +127,4 @@ if ( frontend.options.env === "production" ) {
 
 app.listen( httpPort, httpHost, function() {
 	console.log( "HTTP Server running at http://%s:%d", httpHost, httpPort );
-});
+} );
