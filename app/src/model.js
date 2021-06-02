@@ -9,6 +9,8 @@
  * http://jquery.org/license
  */
 ( function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
+	"use strict";
+
 	var Model, DownloadBuilderModel, ThemeRollerModel, lzmaInterval,
 		lzma = new LZMA( $( "[data-lzma-worker]" ).data( "lzma-worker" ) ),
 		lzmaLoad = $.Deferred();

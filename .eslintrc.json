@@ -15,12 +15,11 @@
   },
 
   "rules": {
-//    "strict": [ "error", "global" ],
+    "strict": [ "error", "global" ],
 
     // Too many violations
     "camelcase": "off",
     "max-len": "off",
-    "no-unused-vars": "off",
-    "strict": "off"
+    "no-unused-vars": "off"
   }
 }

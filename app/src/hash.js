@@ -8,6 +8,8 @@
  * http://jquery.org/license
  */
 ( function( exports, $, EventEmitter, undefined ) {
+	"use strict";
+
 	var emitter = new EventEmitter(),
 
 		// listen to hash changes?

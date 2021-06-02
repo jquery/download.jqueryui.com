@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 var logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" );
 
 process.on( "uncaughtException", function( err ) {

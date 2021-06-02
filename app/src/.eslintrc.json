@@ -5,7 +5,6 @@
   },
 
   "rules": {
-    // Too many violations
-//    "strict": [ "error", "function" ]
+    "strict": [ "error", "function" ]
   }
 }

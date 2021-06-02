@@ -9,6 +9,8 @@
  * http://jquery.org/license
  */
 ( function( $, Hash, JST, Model, QueryString, undefined ) {
+	"use strict";
+
 	var farbtasticTriggerChangeDelay, model, reloadRollYourOwn, skipHashChange, theme, Theme,
 		focusedEl = null,
 		openGroups = [],

@@ -1,3 +1,5 @@
+"use strict";
+
 var JqueryUi = require( "../lib/jquery-ui" ),
 	semver = require( "semver" );
 

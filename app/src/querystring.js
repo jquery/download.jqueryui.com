@@ -8,6 +8,8 @@
  * http://jquery.org/license
  */
 ( function( exports, $, undefined ) {
+	"use strict";
+
 	var QueryString = exports.QueryString = {};
 
 	QueryString.encode = function( obj ) {

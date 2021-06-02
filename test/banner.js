@@ -1,3 +1,5 @@
+"use strict";
+
 var banner = require( "../lib/banner" ),
   dateformat = require( "dateformat" );
 

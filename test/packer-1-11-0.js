@@ -1,3 +1,5 @@
+"use strict";
+
 var Builder = require( "../lib/builder" ),
 	JqueryUi = require( "../lib/jquery-ui" ),
 	Packer = require( "../lib/packer" ),

@@ -1,3 +1,5 @@
+"use strict";
+
 var async = require( "async" ),
 	fs = require( "fs" ),
 	path = require( "path" ),
@@ -6,7 +8,6 @@ var async = require( "async" ),
 
 module.exports = function( grunt ) {
 
-"use strict";
 grunt.loadNpmTasks( "grunt-check-modules" );
 grunt.loadNpmTasks( "grunt-contrib-clean" );
 grunt.loadNpmTasks( "grunt-contrib-copy" );

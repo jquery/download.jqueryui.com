@@ -9,6 +9,7 @@
  * http://jquery.org/license
  */
 ( function( $, Hash, JST, Model, undefined ) {
+	"use strict";
 
 	var dependencies, dependents, model,
 		componentsLoad = $.Deferred(),
