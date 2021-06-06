@@ -1,4 +1,4 @@
-/*jshint jquery: true, browser: true */
+/* eslint-env jquery, browser */
 /*global Hash: false, JST: false, Model: false, QueryString: false */
 /*!
  * jQuery UI ThemeRoller client-side JavaScript file
@@ -8,7 +8,9 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, JST, Model, QueryString, undefined ) {
+( function( $, Hash, JST, Model, QueryString, undefined ) {
+	"use strict";
+
 	var farbtasticTriggerChangeDelay, model, reloadRollYourOwn, skipHashChange, theme, Theme,
 		focusedEl = null,
 		openGroups = [],
@@ -25,15 +27,17 @@
 
 	// Returns texture url
 	function textureUrl( type, width, height ) {
+
 		// ui-bg_<type>_<opacity>_<color>_<width>x<height>.png
 		return downloadJqueryuiHost + "/themeroller/images/ui-bg_" + type.replace( /_/g, "-" ) + "_100_555_" + width + "x" + height + ".png";
 	}
 
 	function isHexColor( value ) {
-		if ( (/[^#a-fA-F0-9]/g).test( value ) ) {
+		if ( ( /[^#a-fA-F0-9]/g ).test( value ) ) {
 			return false;
 		}
 		if ( value.lastIndexOf( "#" ) !== 0 ) {
+
 			// If # in any position but 0.
 			return false;
 		}
@@ -45,11 +49,12 @@
 
 	// Function to append a new theme stylesheet with the new style changes
 	function updateCSS() {
-		$( "body" ).append( "<link href=\"" + model.parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />");
+		$( "body" ).append( "<link href=\"" + model.parsethemeUrl() + "\" type=\"text/css\" rel=\"Stylesheet\" />" );
 		var links = $( "link[href*=parsetheme\\.css]" );
 		if ( links.length > 1 ) {
+
 			// Wait a few seconds before removing previous theme(s) to avoid FOUW
-			setTimeout(function() {
+			setTimeout( function() {
 				links.not( ":last" ).remove();
 			}, 5000 );
 		}
@@ -65,42 +70,44 @@
 	farbtasticTriggerChangeDelay = 200;
 	function updateDisplay( fb, e ) {
 		return function() {
+
 			// Markers
 			var angle = fb.hsl[ 0 ] * 6.28;
-			$( ".h-marker", e ).css({
+			$( ".h-marker", e ).css( {
 				left: Math.round( Math.sin( angle ) * fb.radius + fb.width / 2 ) + "px",
 				top: Math.round( -Math.cos( angle ) * fb.radius + fb.width / 2 ) + "px"
-			});
+			} );
 
-			$( ".sl-marker", e ).css({
+			$( ".sl-marker", e ).css( {
 				left: Math.round( fb.square * ( 0.5 - fb.hsl[ 1 ] ) + fb.width / 2 ) + "px",
 				top: Math.round( fb.square * ( 0.5 - fb.hsl[ 2 ] ) + fb.width / 2 ) + "px"
-			});
+			} );
 
 			// Saturation/Luminance gradient
 			$( ".color", e ).css( "backgroundColor", fb.pack( fb.HSLToRGB( [ fb.hsl[ 0 ], 1, 0.5 ] ) ) );
 
 			// Linked elements or callback
 			if ( typeof fb.callback === "object" ) {
+
 				// Set background/foreground color
-				$( fb.callback ).css({
+				$( fb.callback ).css( {
 					backgroundColor: fb.color,
 					color: fb.hsl[ 2 ] > 0.5 ? "#000" : "#fff"
-				});
+				} );
 
 				// Change linked value
-				$( fb.callback ).each(function() {
+				$( fb.callback ).each( function() {
 					if ( this.value && this.value !== fb.color ) {
 						var element = $( this );
 						element.val( fb.color );
-						if( fb.triggerChange ) {
+						if ( fb.triggerChange ) {
 							clearInterval( fb.triggerChange );
 						}
-						fb.triggerChange = setTimeout(function() {
+						fb.triggerChange = setTimeout( function() {
 							element.trigger( "change" );
-						}, farbtasticTriggerChangeDelay);
+						}, farbtasticTriggerChangeDelay );
 					}
-				});
+				} );
 			} else if ( typeof fb.callback === "function" ) {
 				fb.callback.call( fb, fb.color );
 			}
@@ -121,14 +128,14 @@
 				$this.removeClass( "corner-top" ).addClass( "corner-all" );
 			}
 			event.preventDefault();
-		});
+		} );
 	};
 
 	// Color pickers setup (sets bg color of inputs)
 	$.fn.applyFarbtastic = function() {
-		return this.each(function() {
+		return this.each( function() {
 			$( "<div/>" ).farbtastic( this ).remove();
-		});
+		} );
 	};
 
 	// TODO move this away into an external themeRoller helper.
@@ -140,13 +147,13 @@
 				font: function( attributes ) {
 					return {
 						isFontType: true,
-						options: $.map([ "normal", "bold" ], function( type ) {
+						options: $.map( [ "normal", "bold" ], function( type ) {
 							return {
 								name: type,
 								type: type,
 								selected: type === attributes.fwDefault ? " selected" : ""
 							};
-						})
+						} )
 					};
 				},
 				corner: function( attributes ) {
@@ -178,15 +185,15 @@
 							title: titles[ attributes.name ],
 							"class": classes[ attributes.name ]
 						};
-					$.each([ "bgColor", "bgImgOpacity", "borderColor", "fc", "iconColor" ], function() {
+					$.each( [ "bgColor", "bgImgOpacity", "borderColor", "fc", "iconColor" ], function() {
 						var attr = this;
 						extension[ attr + "Name" ] = attr + attributes.name;
 						extension[ attr + "Value" ] = attributes[ attr + attributes.name ];
-					});
-					$.each([ "bgColor", "borderColor", "fc", "iconColor" ], function() {
+					} );
+					$.each( [ "bgColor", "borderColor", "fc", "iconColor" ], function() {
 						var attr = this;
 						extension[ attr + "Value" ] = hashColor( extension[ attr + "Value" ] );
-					});
+					} );
 					extension.bgTextureName = "bgTexture" + attributes.name;
 					extension.bgTextureOptions = textureOptions( attributes[ "bgTexture" + attributes.name ] );
 					return extension;
@@ -210,7 +217,7 @@
 			};
 			return $.map( groups, function( group ) {
 				return $.extend( group, fns[ group.type ]( group ) );
-			});
+			} );
 		};
 
 		// Add '#' in the beginning of the colors if needed
@@ -228,37 +235,39 @@
 				var texture = this,
 					name = texture.type,
 					selected = texture.type === select ? " selected=\"selected\"" : "";
+
 				// Large images need hard coded icon sizes to be useful
 				if ( texture.width * texture.height >= 360000 ) {
 					texture.width = texture.height = 16;
 				}
+
 				// Tall panel element (content, overlay, shadow, etc), don't allow glass texture
 				if ( panel === "true" ) {
-					if( texture.type !== "glass" ) {
-						optSet.push({
+					if ( texture.type !== "glass" ) {
+						optSet.push( {
 							type: texture.type,
 							selected: selected,
 							width: texture.width,
 							height: texture.height,
 							name: name
-						});
+						} );
 					}
 				} else {
-					optSet.push({
+					optSet.push( {
 						type: texture.type,
 						selected: selected,
 						width: texture.width,
 						height: texture.height,
 						name: name
-					});
+					} );
 				}
-			});
+			} );
 			return optSet;
 		};
 
 		return {
 			host: downloadJqueryuiHost,
-			groups: augmentGroups([{
+			groups: augmentGroups( [ {
 				type: "font",
 				ffDefault: attributes.ffDefault,
 				fsDefault: attributes.fsDefault,
@@ -345,37 +354,38 @@
 				offsetTopShadow: attributes.offsetTopShadow,
 				offsetLeftShadow: attributes.offsetLeftShadow,
 				cornerRadiusShadow: attributes.cornerRadiusShadow
-			}])
+			} ] )
 		};
 	}
 
 	function rollYourOwnInit() {
 		$( "#rollYourOwn" ).html( JST[ "rollyourown.html" ]( rollYourOwnObject() ) );
-		model.downloadUrl(function( url ) {
+		model.downloadUrl( function( url ) {
 			$( "#downloadTheme" ).attr( "href", url );
-		});
-		$( "#downloadTheme" ).on({
+		} );
+		$( "#downloadTheme" ).on( {
 			"click": function() {
 				var form = $( this ).parent().find( "form" );
 				if ( form.find( ".state-error" ).length ) {
+
 					// TODO: tell user submit has been cancelled, because there are errors!
 					return false;
 				}
 			}
-		});
+		} );
 
 		// Hover class toggles in app panel
 		themeroller.find( "li.state-default, div.state-default" )
-			.mouseenter(function() {
+			.mouseenter( function() {
 				$( this ).addClass( "state-hover" );
-			})
-			.mouseleave(function() {
+			} )
+			.mouseleave( function() {
 				$( this ).removeClass( "state-hover" );
-			});
+			} );
 
 		// Hex inputs
 		themeroller.find( "input.hex" )
-			.on({
+			.on( {
 				"change": function() {
 					$( this ).trigger( "validate" );
 				},
@@ -397,6 +407,7 @@
 					event.preventDefault();
 				},
 				"validate": function() {
+
 					// Validate hex colors
 					if ( isHexColor( $( this ).val() ) ) {
 						$( this ).removeClass( "state-error" );
@@ -404,23 +415,23 @@
 						$( this ).addClass( "state-error" );
 					}
 				}
-			})
+			} )
 			.trigger( "validate" )
 			.wrap( "<div class=\"hasPicker\"></div>" )
 			.applyFarbtastic();
 
 		// Focus and blur classes in form
 		themeroller.find( "input, select" )
-		.focus(function() {
+		.focus( function() {
 			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
 			$( this ).addClass( "focus" );
-		})
-		.blur(function() {
+		} )
+		.blur( function() {
 			$( this ).removeClass( "focus" );
-		});
+		} );
 
 		// Texture pickers from select menus
-		themeroller.find( "select.texture" ).each(function() {
+		themeroller.find( "select.texture" ).each( function() {
 
 			$( this ).after( "<div class=\"texturePicker\"><a href=\"#\"></a><ul></ul></div>" );
 			var texturePicker = $( this ).next(),
@@ -429,20 +440,20 @@
 				sIndex = texturePicker.prev().get( 0 ).selectedIndex;
 
 			// Scrape options
-			$( this ).find( "option" ).each(function() {
+			$( this ).find( "option" ).each( function() {
 				ul.append( "<li class=\"" + $( this ).attr( "value" ) + "\" data-texturewidth=\"" + $( this ).attr( "data-texturewidth" ) + "\" data-textureheight=\"" + $( this ).attr( "data-textureheight" ) + "\" style=\"background: #555555 url(" +  textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat\"><a href=\"#\" title=\"" + $( this ).text() + "\">" + $( this ).text() + "</a></li>" );
-				if( $( this ).get( 0 ).index === sIndex ) {
+				if ( $( this ).get( 0 ).index === sIndex ) {
 					texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "value" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
 				}
-			});
+			} );
 
 			ul.find( "li" ).on( "click", function( event ) {
-				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value="+ $( this ).attr( "class" ).replace( /\./g, "\\." ) +"]" ).get( 0 ).index;
+				texturePicker.prev().get( 0 ).selectedIndex = texturePicker.prev().find( "option[value=" + $( this ).attr( "class" ).replace( /\./g, "\\." ) + "]" ).get( 0 ).index;
 				texturePicker.attr( "title", $( this ).text() ).css( "background", "#555555 url(" + textureUrl( $( this ).attr( "class" ), $( this ).attr( "data-texturewidth" ), $( this ).attr( "data-textureheight" ) ) + ") 50% 50% repeat" );
 				ul.fadeOut( 100 );
 				formChange();
 				event.preventDefault();
-			});
+			} );
 
 			// Hide the menu and select el
 			ul.hide();
@@ -462,14 +473,14 @@
 				}
 
 				event.preventDefault();
-			});
-		});
+			} );
+		} );
 
 		// Ensures numbers only are entered for opacity inputs
 		themeroller.find( "input.opacity" ).on( "change", function() {
 			var withinThreshold,
 				number = parseInt( $( this ).val(), 10 );
-			if( isNaN( number ) ) {
+			if ( isNaN( number ) ) {
 				$( this ).val( "" );
 			} else {
 				withinThreshold = Math.max( 0, Math.min( 100, number ) );
@@ -477,13 +488,13 @@
 					$( this ).val( withinThreshold );
 				}
 			}
-		});
+		} );
 
 		// Spindowns in TR panel
 		themeroller.find( "div.theme-group .theme-group-header" ).addClass( "corner-all" ).spinDown();
 
 		// Change event in form
-		themeroller.find( ".application form" ).on({
+		themeroller.find( ".application form" ).on( {
 			"change": function( event ) {
 				formChange();
 				event.preventDefault();
@@ -499,40 +510,41 @@
 					$( "#downloadTheme" ).removeClass( "ui-state-disabled" );
 				}
 			}
-		});
+		} );
 
 		if ( openGroups.length > 0 ) {
 			$.each( openGroups, function() {
 				themeroller.find( ".theme-group-content:eq( " + this + " )" ).prev().trigger( "click" );
-			});
+			} );
 		}
-		if( focusedEl ) {
+		if ( focusedEl ) {
 			themeroller.find( "form" ).find( "input, select, .texturePicker" ).eq( focusedEl ).click();
 		}
 	}
 
 	function updateThemeGalleryDownloadLink() {
-		$( "#themeGallery a.download" ).each(function() {
+		$( "#themeGallery a.download" ).each( function() {
 			var elem = $( this );
-			model.downloadUrl(function( url ) {
+			model.downloadUrl( function( url ) {
 				elem.attr( "href", url );
 			}, elem.parent().find( "a:first-child" ).data( "z-theme-params" ) );
-		});
+		} );
 	}
 
 	function themeGalleryInit() {
+
 		// Loading and viewing gallery themes
 		$( "#themeGallery a" )
 			.on( "click", function( event ) {
 				model.set( QueryString.decode( this.href.split( "?" )[ 1 ] ) );
 				event.preventDefault();
-			})
+			} )
 			.attr( "title", "Click to preview this theme" )
-			.each(function() {
+			.each( function() {
 				$( this ).after(
 					"<a href=\"#\" class=\"download\" title=\"Download this theme\">Download</a>" +
 					"<a href=\"#\" class=\"edit\" title=\"Customize this theme\">Edit</a>" );
-			})
+			} )
 			.parent()
 			.find( "a.edit" )
 			.on( "click", function( event ) {
@@ -540,75 +552,80 @@
 				model.set( QueryString.decode( $( this ).parent().find( "a:first-child" ).attr( "href" ).split( "?" )[ 1 ] ) );
 				$( "#rollerTabs" ).tabs( "option", "active", 0 );
 				event.preventDefault();
-			});
+			} );
 		updateThemeGalleryDownloadLink();
 	}
 
 	function demoInit() {
+
 		// Accordion
-		$( "#accordion" ).accordion({ header: "h3" });
+		$( "#accordion" ).accordion( { header: "h3" } );
 
 		// Autocomplete
-		$( "#autocomplete" ).autocomplete({
+		$( "#autocomplete" ).autocomplete( {
 			source: [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "python", "c", "scala", "groovy", "haskell", "perl" ]
-		});
+		} );
 
 		$( "#button" ).button();
-		$( "#button-icon" ).button({
+		$( "#button-icon" ).button( {
 			icon: "ui-icon-gear",
 			showLabel: false
-		});
-		$( "#radioset input").checkboxradio();
-		$( "#controlgroup").controlgroup();
+		} );
+		$( "#radioset input" ).checkboxradio();
+		$( "#controlgroup" ).controlgroup();
 
 		// Tabs
 		$( "#tabs" ).tabs();
 
 		// Dialog
-		$( "#dialog" ).dialog({
+		$( "#dialog" ).dialog( {
 			autoOpen: false,
 			width: 600,
 			buttons: [
 				{
 					text: "Ok",
-					click: function() { $( this ).dialog( "close" ); }
+					click: function() {
+ $( this ).dialog( "close" );
+}
 				}, {
 					text: "Cancel",
-					click: function() { $( this ).dialog( "close" ); }
+					click: function() {
+ $( this ).dialog( "close" );
+}
 				}
 			]
-		});
+		} );
 
 		// Dialog Link
 		$( "#dialog-link" ).on( "click", function( event ) {
 			$( "#dialog" ).dialog( "open" );
 			event.preventDefault();
-		});
+		} );
 
 		// Datepicker
-		$( "#datepicker" ).datepicker({
+		$( "#datepicker" ).datepicker( {
 			inline: true
-		});
+		} );
 
 		// Slider
-		$( "#slider" ).slider({
+		$( "#slider" ).slider( {
 			range: true,
 			values: [ 17, 67 ]
-		});
+		} );
 
 		// Progressbar
-		$( "#progressbar" ).progressbar({
+		$( "#progressbar" ).progressbar( {
 			value: 20
-		});
+		} );
 
 		// Hover states on the static widgets
 		$( "#dialog-link, #icons li" )
-			.mouseenter(function() {
+			.mouseenter( function() {
 				$( this ).addClass( "ui-state-hover" );
-			})
-			.mouseleave(function() {
+			} )
+			.mouseleave( function() {
 				$( this ).removeClass( "ui-state-hover" );
-			});
+			} );
 
 		// Spinner
 		$( "#spinner" ).spinner();
@@ -617,31 +634,32 @@
 		$( "#menu" ).menu();
 
 		// Selectmenu
-		$( "#selectmenu" ).selectmenu({
+		$( "#selectmenu" ).selectmenu( {
 			width: 150
-		});
+		} );
 
 		// Tooltip
 		$( "#tooltip" ).tooltip();
 	}
 
 	function rollYourOwnLoad() {
+
 		// Roll Your Own:
 		// Remember which groups are open
 		openGroups = [];
-		$( "div.theme-group-content" ).each(function( i ) {
+		$( "div.theme-group-content" ).each( function( i ) {
 			if ( $( this ).is( ":visible" ) ) {
 				openGroups.push( i );
 			}
-		});
+		} );
 
 		// Remember any focused element
 		focusedEl = null;
-		themeroller.find( "form" ).find( "input, select, .texturePicker" ).each(function( i ) {
+		themeroller.find( "form" ).find( "input, select, .texturePicker" ).each( function( i ) {
 			if ( $( this ).is( ".focus" ) ) {
 				focusedEl = i;
 			}
-		});
+		} );
 
 		rollYourOwnInit();
 	}
@@ -650,6 +668,7 @@
 	 * App
 	 */
 	function appInit() {
+
 		/* jqueryui.com site overrides for TR */
 		$( "#content" ).attr( "id", "themeroller-content" );
 
@@ -666,37 +685,37 @@
 			$( "#picker" ).remove();
 			themeroller.find( "input.focus, select.focus" ).removeClass( "focus" );
 			themeroller.find( "div.texturePicker ul:visible" ).hide().parent().css( "position", "static" );
-		});
+		} );
 
 		// Links to roll your own from help tab
 		$( "#help a[href=\"#rollYourOwn\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "option", "active", 0 );
 			event.preventDefault();
-		});
+		} );
 
 		// Links to theme gallery from help tab
 		$( "#help a[href=\"#themeGallery\"]" ).on( "click", function( event ) {
 			$( "#rollerTabs" ).tabs( "option", "active", 1 );
 			event.preventDefault();
-		});
+		} );
 
 		$( "#reverse-background" ).on( "click", function() {
 			var maskArea = themeroller,
 				textElems = themeroller.find( ".demoHeaders, #demo-options" );
 			if ( $( this ).is( ":checked" ) ) {
-				maskArea.css({ background: "#333" });
-				textElems.css({ color: "#CCC" });
+				maskArea.css( { background: "#333" } );
+				textElems.css( { color: "#CCC" } );
 			} else {
-				maskArea.css({ background: "#FFF" });
-				textElems.css({ color: "#000" });
+				maskArea.css( { background: "#FFF" } );
+				textElems.css( { color: "#000" } );
 			}
-		});
+		} );
 	}
 
-	model = new Model.ThemeRoller({
+	model = new Model.ThemeRoller( {
 		baseVars: baseVars,
 		host: downloadJqueryuiHost
-	});
+	} );
 
 	// Update textureVars from previous filename format (eg. 02_glass.png) to type-only format (eg. glass). Changed on images generation rewrite (port to nodejs).
 	function oldImagesBackCompat( changed ) {
@@ -713,13 +732,13 @@
 					modified = true;
 				}
 			}
-		});
+		} );
 		if ( modified ) {
 			return true;
 		}
 	}
 
-	model.on( "change", function ( changed ) {
+	model.on( "change", function( changed ) {
 		if ( oldImagesBackCompat( changed ) ) {
 			return;
 		}
@@ -729,29 +748,29 @@
 		if ( reloadRollYourOwn && !( "zThemeParams" in changed ) ) {
 			reloadRollYourOwn = false;
 			rollYourOwnLoad();
-			model.downloadUrl(function( url ) {
+			model.downloadUrl( function( url ) {
 				$( "#downloadTheme" ).attr( "href", url );
-			});
+			} );
 		}
-		model.downloadUrl(function( url ) {
+		model.downloadUrl( function( url ) {
 			$( "#downloadTheme" ).attr( "href", url );
-		});
+		} );
 		updateCSS();
 		if ( skipHashChange ) {
 			skipHashChange = false;
 		} else {
-			model.querystring().done(function( querystring ) {
+			model.querystring().done( function( querystring ) {
 				Hash.update( querystring, {
 					ignoreChange: true
-				});
-			});
+				} );
+			} );
 		}
-	});
+	} );
 
 	Hash.on( "change", function( hash ) {
 		reloadRollYourOwn = true;
 		model.parseHash( hash );
-	});
+	} );
 
 	skipHashChange = true;
 	model.set( baseVars );
@@ -761,4 +780,4 @@
 	demoInit();
 	Hash.init();
 
-}( jQuery, Hash, JST, Model, QueryString ) );
+} )( jQuery, Hash, JST, Model, QueryString );

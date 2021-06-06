@@ -1,4 +1,7 @@
+"use strict";
+
 module.exports = {
+
 	/**
 	 * The Builder class.
 	 */
@@ -31,7 +34,7 @@ module.exports = {
 	 * Returns a frontend instance.
 	 */
 	frontend: function( options ) {
-		return new ( require( "./frontend" ) )( options );
+		return new( require( "./frontend" ) )( options );
 	},
 
 	/**

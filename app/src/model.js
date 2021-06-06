@@ -1,4 +1,4 @@
-/*jshint jquery: true, browser: true */
+/* eslint-env jquery, browser */
 /*global EventEmitter: false, LZMA: false, QueryString: false */
 /*!
  * jQuery UI helper JavaScript file for DownloadBuilder and ThemeRoller models
@@ -8,7 +8,9 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
+( function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
+	"use strict";
+
 	var Model, DownloadBuilderModel, ThemeRollerModel, lzmaInterval,
 		lzma = new LZMA( $( "[data-lzma-worker]" ).data( "lzma-worker" ) ),
 		lzmaLoad = $.Deferred();
@@ -18,7 +20,7 @@
 		var string = "";
 		$.each( array, function( i, val ) {
 			string += val ? "1" : "0";
-		});
+		} );
 		return string;
 	}
 
@@ -27,7 +29,7 @@
 		var array = [];
 		$.each( string.split( "" ), function( i, val ) {
 			array.push( val === "0" ? false : true );
-		});
+		} );
 		return array;
 	}
 
@@ -48,7 +50,7 @@
 			if ( key in obj ) {
 				copy[ key ] = obj[ key ];
 			}
-		});
+		} );
 		return copy;
 	}
 
@@ -64,17 +66,17 @@
 
 		// Split string into an array of hexes
 		data = [];
-		while( zipped.length ) {
+		while ( zipped.length ) {
 			data.push( zipped.slice( -2 ) );
 			zipped = zipped.slice( 0, -2 );
 		}
 		data = data.reverse();
 
-		lzmaLoad.done(function() {
+		lzmaLoad.done( function() {
 			lzma.decompress( $.map( data, intoDec ), function( unzipped ) {
 				callback( JSON.parse( unzipped ) );
-			});
-		});
+			} );
+		} );
 	}
 
 	function zip( obj, callback ) {
@@ -95,11 +97,11 @@
 
 				return hex;
 			};
-		lzmaLoad.done(function() {
+		lzmaLoad.done( function() {
 			lzma.compress( data, 0, function( zipped ) {
 				callback( $.map( zipped, intoHex ).join( "" ) );
-			});
-		});
+			} );
+		} );
 	}
 
 	function zParam( paramName, attributes, callback ) {
@@ -113,7 +115,7 @@
 				shortenAttributes[ paramName ] = zipped;
 				shorten = QueryString.encode( shortenAttributes ).length;
 				callback( shorten < original ? shortenAttributes : attributes );
-			});
+			} );
 		}
 	}
 
@@ -136,12 +138,12 @@
 			$.each( attributes, function( name ) {
 				if ( self.attributes[ name ] !== attributes[ name ] ) {
 					changedAttributes[ name ] = changed = true;
-					if ( !(name in self.attributes) ) {
+					if ( !( name in self.attributes ) ) {
 						createdAttributes[ name ] = true;
 					}
 					self.attributes[ name ] = attributes[ name ];
 				}
-			});
+			} );
 			if ( changed ) {
 				this.emitter.trigger( "change:before", [ changedAttributes, createdAttributes ] );
 				this.emitter.trigger( "change", [ changedAttributes, createdAttributes ] );
@@ -183,11 +185,12 @@
 				if ( concurrencyDelay ) {
 					clearTimeout( concurrencyDelay );
 				}
+
 				// This is an expensive computation, so avoiding two consecutive calls
-				concurrencyDelay = setTimeout(function() {
+				concurrencyDelay = setTimeout( function() {
 					self._shorten.call( self, self._relevantAttributes.call( self, attributes ), function( shortened ) {
 						dfd.resolve( QueryString.encode( shortened ) );
-					});
+					} );
 				}, 200 );
 			}
 			return dfd;
@@ -215,7 +218,7 @@
 		_change: function( changed ) {
 			var self = this;
 			if ( "components" in changed ) {
-				this.orderedComponentsDfd.done(function() {
+				this.orderedComponentsDfd.done( function() {
 					var booleansArray, hash;
 					delete changed.components;
 					booleansArray = booleansDecode( self.get.call( self, "components" ) );
@@ -223,23 +226,24 @@
 					hash = {};
 					$.each( self.orderedComponents, function( i, component ) {
 						hash[ component ] = booleansArray[ i ];
-					});
+					} );
 					self.set.call( self, hash );
-				});
+				} );
 			}
 			if ( "zThemeParams" in changed ) {
 				this.themeParamsUnzipping = $.Deferred();
 				delete changed.zThemeParams;
 				unzip( this.get( "zThemeParams" ), function( unzipped ) {
+
 					// Make sure there's no zThemeParams attribute in unzipped object, due to former bug #171 fixed by 1633bad.
 					delete unzipped.zThemeParams;
 
 					delete self.attributes.zThemeParams;
 					self.set.call( self, {
 						themeParams: QueryString.encode( unzipped )
-					});
+					} );
 					self.themeParamsUnzipping.resolve();
-				});
+				} );
 			}
 		},
 
@@ -250,7 +254,7 @@
 				if ( attributes[ varName ] === defaults[ varName ] ) {
 					irrelevantAttributes.push( varName );
 				}
-			});
+			} );
 
 			// Exception rule: if any component is set, make sure version is shown.
 			if ( $.inArray( "version", irrelevantAttributes ) !== -1 && !$.isEmptyObject( omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ) ) ) {
@@ -271,41 +275,43 @@
 				df2 = $.Deferred();
 
 			// themeParams / zThemeParams
-			this.themeParamsUnzipping.done(function() {
+			this.themeParamsUnzipping.done( function() {
 				if ( "themeParams" in attributes && attributes.themeParams !== "none" ) {
 					zParam( "zThemeParams", QueryString.decode( attributes.themeParams ), function( zThemeParams ) {
 						$.extend( shortened, zThemeParams );
 						df1.resolve();
-					});
+					} );
 				} else {
 					if ( "themeParams" in attributes ) {
 						shortened.themeParams = attributes.themeParams;
 					}
 					df1.resolve();
 				}
-			});
+			} );
 
 			// components
 			if ( !this.orderedComponents && this.get( "components" ) ) {
+
 				// We have unprocessed components, so use it an shortned.
 				shortened.components = this.get( "components" );
 				df2.resolve();
 			} else if ( $.isEmptyObject( omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ) ) ) {
 				df2.resolve();
 			} else {
-				this.orderedComponentsDfd.done(function() {
+				this.orderedComponentsDfd.done( function() {
 					var booleansArray = $.map( self.orderedComponents, function( component, i ) {
+
 						// Each component is true by default.
 						return !( component in attributes ) ? true : attributes[ component ];
-					});
+					} );
 					shortened.components = booleansEncode( booleansArray );
 					df2.resolve();
-				});
+				} );
 			}
 
-			$.when( df1, df2 ).done(function() {
+			$.when( df1, df2 ).done( function() {
 				callback( shortened );
-			});
+			} );
 		},
 
 		setOrderedComponents: function( orderedComponents ) {
@@ -324,54 +330,54 @@
 
 		url: function( callback ) {
 			var self = this;
-			this.themeParamsUnzipping.done(function() {
+			this.themeParamsUnzipping.done( function() {
 				self.querystring.call( self, {
 					concurrencyDelay: self._urlQuerystringDelay
-				}).done(function( querystring ) {
+				} ).done( function( querystring ) {
 					callback( "/download/" + ( querystring.length ? "?" + querystring : "" ) );
-				});
-			});
+				} );
+			} );
 		},
 
 		themerollerUrl: function( callback ) {
 			var self = this, themeParams,
 				attributes = this.attributes;
 
-			this.themeParamsUnzipping.done(function() {
+			this.themeParamsUnzipping.done( function() {
 				themeParams = ( self.has.call( self, "themeParams" ) && self.get.call( self, "themeParams" ) !== "none" ? QueryString.decode( self.get.call( self, "themeParams" ) ) : {} );
 
 				// 1: Skip folderName, because it will be updated based on theme selection anyway.
 				self.querystring.call( self, {
 					concurrencyDelay: self._themerollerUrlQuerystringDelay,
 					omit: [ "folderName" /* 1 */, "themeParams" ]
-				}).done(function( querystring ) {
+				} ).done( function( querystring ) {
 					var attributes = themeParams,
-						themeRollerModel = new ThemeRollerModel({
+						themeRollerModel = new ThemeRollerModel( {
 							baseVars: self.baseVars,
 							host: self.host
-						});
+						} );
 					if ( querystring.length ) {
 						attributes.downloadParams = querystring;
 					}
 					themeRollerModel.set( attributes );
 					themeRollerModel.url( callback );
-				});
-			});
+				} );
+			} );
 		},
 
 		themeUrl: function( callback ) {
 			var self = this;
-			this.themeParamsUnzipping.done(function() {
+			this.themeParamsUnzipping.done( function() {
 				self.querystring.call( self, {
 					concurrencyDelay: self._themeUrlQuerystringDelay,
 					pick: [ "themeParams" ],
 					shorten: false
-				}).done(function( querystring ) {
+				} ).done( function( querystring ) {
 					callback( self.host + "/download/theme" + ( querystring.length ? "?" + querystring : "" ) );
-				});
-			});
+				} );
+			} );
 		}
-	});
+	} );
 
 
 	/**
@@ -396,13 +402,14 @@
 				unzip( this.get( "zThemeParams" ), function( unzipped ) {
 					delete self.attributes.zThemeParams;
 					self.set.call( self, unzipped );
-				});
+				} );
 			}
 		},
 
 		_relevantAttributes: function( attributes ) {
 			var i,
 				isBaseVars = true;
+
 			// If theme is baseVars, omit it in the querystring.
 			for ( i in this.baseVars ) {
 				if ( attributes[ i ] !== this.baseVars[ i ] ) {
@@ -414,7 +421,7 @@
 				return omit( attributes,
 					$.map( this.baseVars, function( value, varName ) {
 						return varName;
-					})
+					} )
 				);
 			} else {
 				return attributes;
@@ -427,10 +434,10 @@
 			zParam( "zThemeParams", omit( attributes, [ "downloadParams" ] ), function( zThemeParams ) {
 				$.extend( shortened, zThemeParams );
 				df1.resolve();
-			});
-			df1.done(function() {
+			} );
+			df1.done( function() {
 				callback( shortened );
-			});
+			} );
 		},
 
 		parseHash: function( hash ) {
@@ -438,11 +445,11 @@
 		},
 
 		url: function( callback ) {
-			this.querystring({
+			this.querystring( {
 				concurrencyDelay: this._urlQuerystringDelay
-			}).done(function( querystring ) {
+			} ).done( function( querystring ) {
 				callback( "/themeroller/" + ( querystring.length ? "?" + querystring : "" ) );
-			});
+			} );
 		},
 
 		downloadUrl: function( callback, zThemeParams ) {
@@ -458,12 +465,12 @@
 				if ( themeParams.length ) {
 					attributes.themeParams = themeParams;
 				}
-				downloadBuilderModel = new DownloadBuilderModel({
+				downloadBuilderModel = new DownloadBuilderModel( {
 					host: this.host
-				});
-				downloadBuilderModel.set( attributes ).url(function( url ) {
+				} );
+				downloadBuilderModel.set( attributes ).url( function( url ) {
 					callback( url );
-				});
+				} );
 			}
 		},
 
@@ -485,10 +492,10 @@
 			}
 			return this.host + "/themeroller/rollyourown" + ( attributes == null ? "" : "?" + QueryString.encode( attributes ) );
 		}
-	});
+	} );
 
 	// Workaround to handle asynchronous worker load lzma-bug.
-	lzmaInterval = setInterval(function() {
+	lzmaInterval = setInterval( function() {
 		if ( ( ( typeof Worker === "function" || typeof Worker === "object" ) && Worker.prototype.postMessage != null ) || window.onmessage != null ) {
 			lzmaLoad.resolve();
 			clearInterval( lzmaInterval );
@@ -500,4 +507,4 @@
 		ThemeRoller: ThemeRollerModel
 	};
 
-}( this, jQuery, EventEmitter, LZMA, QueryString ) );
+} )( this, jQuery, EventEmitter, LZMA, QueryString );

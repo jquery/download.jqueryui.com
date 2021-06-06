@@ -1,3 +1,5 @@
+"use strict";
+
 var Builder = require( "../lib/builder" ),
 	JqueryUi = require( "../lib/jquery-ui" ),
 	Packer = require( "../lib/packer" ),
@@ -11,29 +13,29 @@ var Builder = require( "../lib/builder" ),
 
 function filePresent( files, filepath ) {
 	var filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
-	return files.filter(function( build_filepath ) {
+	return files.filter( function( build_filepath ) {
 		return filepathRe.test( build_filepath );
-	}).length > 0;
+	} ).length > 0;
 }
 
 function pack( jqueryUi, components, theme, callback ) {
 	var builder = new Builder( jqueryUi, components ),
 		packer = new Packer( builder, theme );
-	packer.pack(function( err, files ) {
+	packer.pack( function( err, files ) {
 		if ( err ) {
 			callback( err, null );
 		} else {
-			callback( null, files.map(function( build_item ) {
+			callback( null, files.map( function( build_item ) {
 				return build_item.path.split( "/" ).slice( 1 ).join( "/" );
-			}));
+			} ) );
 		}
-	});
+	} );
 }
 
 function replace( variable, value ) {
 	return function( filepath ) {
 		if ( filepath instanceof RegExp ) {
-			filepath = filepath.toString().replace(/^\//, "").replace(/\/$/, "");
+			filepath = filepath.toString().replace( /^\//, "" ).replace( /\/$/, "" );
 			return new RegExp( filepath.replace( "\\{" + variable + "\\}", value ) );
 		}
 		return filepath.replace( "{" + variable + "}", value );
@@ -114,12 +116,12 @@ var skipFiles = [
 ];
 var COMMON_FILES_TESTCASES = commonFiles.length + skipFiles.length;
 function commonFilesCheck( test, files ) {
-	commonFiles.forEach(function( filepath ) {
+	commonFiles.forEach( function( filepath ) {
 		test.ok( filePresent( files, filepath ), "Missing a common file \"" + filepath + "\"." );
-	});
-	skipFiles.forEach(function( filepath ) {
+	} );
+	skipFiles.forEach( function( filepath ) {
 		test.ok( !filePresent( files, filepath ), "Should not include \"" + filepath + "\"." );
-	});
+	} );
 }
 
 
@@ -285,21 +287,21 @@ var componentFiles = {
 		"development-bundle/docs/transfer-effect.html"
 	]
 };
-var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce(function( sum, component ) {
+var COMPONENT_FILES_TESTCASES = Object.keys( componentFiles ).reduce( function( sum, component ) {
 	return sum + componentFiles.all.length + componentFiles[ component ].length;
 }, 0 );
 function componentFilesCheck( test, files, components ) {
-	Object.keys( componentFiles ).forEach(function( component ) {
+	Object.keys( componentFiles ).forEach( function( component ) {
 		if ( components.indexOf( component ) >= 0 ) {
-			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
+			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach( function( filepath ) {
 				test.ok( filePresent( files, filepath ), "Missing a \"" + component + "\" file \"" + filepath + "\"." );
-			});
+			} );
 		} else {
-			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach(function( filepath ) {
+			componentFiles.all.map( replace( "component", component ) ).concat( componentFiles[ component ] ).forEach( function( filepath ) {
 				test.ok( !filePresent( files, filepath ), "Should not include a \"" + component + "\" file \"" + filepath + "\"." );
-			});
+			} );
 		}
-	});
+	} );
 }
 
 
@@ -328,32 +330,33 @@ function themeComponentOnly( component ) {
 	return themeComponentsRe.test( component );
 }
 var THEME_FILES_TESTCASES = function( components ) {
-	return Object.keys( themeFiles ).reduce(function( sum, group ) {
-		return sum + themeFiles[ group ].reduce(function( sum, themeFile ) {
-			return sum + ( (/\{component\}/).test( themeFile.toString() ) ? components.filter( themeComponentOnly ).length : 1 );
-		}, 0);
+	return Object.keys( themeFiles ).reduce( function( sum, group ) {
+		return sum + themeFiles[ group ].reduce( function( sum, themeFile ) {
+			return sum + ( ( /\{component\}/ ).test( themeFile.toString() ) ? components.filter( themeComponentOnly ).length : 1 );
+		}, 0 );
 	}, 0 );
 };
 function themeFilesCheck( test, files, components, theme ) {
 	var expandComponents = function( themeFile ) {
+
 		// For every themeFile that has a {component} variable, replicate themeFile for each component (expanding each component).
-		if ( (/\{component\}/).test( themeFile.toString() ) ) {
-			return components.filter( themeComponentOnly ).map(function( component ) {
+		if ( ( /\{component\}/ ).test( themeFile.toString() ) ) {
+			return components.filter( themeComponentOnly ).map( function( component ) {
 				return replace( "component", component )( themeFile );
-			});
+			} );
 		}
 		return themeFile;
 	};
-	themeFiles.all.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
+	themeFiles.all.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach( function( filepath ) {
 			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
-	});
-	themeFiles.anyTheme.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach(function( filepath ) {
+	} );
+	themeFiles.anyTheme.map( replace( "folder_name", theme.folderName() ) ).map( expandComponents ).reduce( flatten, [] ).forEach( function( filepath ) {
 		if ( theme.isNull ) {
 			test.ok( !filePresent( files, filepath ), "Should not include the theme file \"" + filepath + "\"." );
 		} else {
 			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 		}
-	});
+	} );
 }
 
 
@@ -373,7 +376,7 @@ var tests = {
 					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
-			});
+			} );
 		},
 		"with a named theme": function( test ) {
 			var components = this.allComponents,
@@ -389,7 +392,7 @@ var tests = {
 					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
-			});
+			} );
 		},
 		"no theme": function( test ) {
 			var components = this.allComponents,
@@ -405,7 +408,7 @@ var tests = {
 					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
-			});
+			} );
 		}
 	},
 	"test: select all widgets": function( test ) {
@@ -420,7 +423,7 @@ var tests = {
 				componentFilesCheck( test, files, components );
 				test.done();
 			}
-		});
+		} );
 	},
 	"test: select all effects": function( test ) {
 		var components = this.allEffects;
@@ -434,7 +437,7 @@ var tests = {
 				componentFilesCheck( test, files, components );
 				test.done();
 			}
-		});
+		} );
 	},
 	"test: select some widgets (1)": {
 		"with a theme": function( test ) {
@@ -451,7 +454,7 @@ var tests = {
 					themeFilesCheck( test, files, components, theme );
 					test.done();
 				}
-			});
+			} );
 		},
 		"with a named theme": function( test ) {
 			var components = someWidgets1,
@@ -467,10 +470,9 @@ var tests = {
 					themeFilesCheck( test, files, components, namedTheme );
 					test.done();
 				}
-			});
+			} );
 		},
-		"no theme":
-		 function( test ) {
+		"no theme": function( test ) {
 			var components = someWidgets1,
 				noTheme = this.noTheme;
 			test.expect( COMMON_FILES_TESTCASES + COMPONENT_FILES_TESTCASES + THEME_FILES_TESTCASES( components ) );
@@ -484,7 +486,7 @@ var tests = {
 					themeFilesCheck( test, files, components, noTheme );
 					test.done();
 				}
-			});
+			} );
 		}
 	},
 	"test: select some widgets (2)": function( test ) {
@@ -499,7 +501,7 @@ var tests = {
 				componentFilesCheck( test, files, components );
 				test.done();
 			}
-		});
+		} );
 	},
 	"test: select no components": function( test ) {
 		var components = noComponents;
@@ -513,7 +515,7 @@ var tests = {
 				componentFilesCheck( test, files, components );
 				test.done();
 			}
-		});
+		} );
 	},
 	"test: unique files": function( test ) {
 		var components = this.allComponents,
@@ -523,16 +525,16 @@ var tests = {
 			var anyDuplicate,
 				duplicates = [],
 				marked = {};
-			files.forEach(function( filepath ) {
-				if( marked[ filepath ] ) {
+			files.forEach( function( filepath ) {
+				if ( marked[ filepath ] ) {
 					duplicates.push( filepath );
 					anyDuplicate = true;
 				}
 				marked[ filepath ] = true;
-			});
+			} );
 			test.ok( !anyDuplicate, "Duplicate files found:\n" + duplicates.join( ",\n" ) );
 			test.done();
-		});
+		} );
 	}
 };
 
@@ -540,51 +542,53 @@ var tests = {
 module.exports = {};
 
 // Build tests for each jqueryUi release
-JqueryUi.all().filter(function( jqueryUi ) {
+JqueryUi.all().filter( function( jqueryUi ) {
+
 	// Filter supported releases only
 	return semver.lt( jqueryUi.pkg.version, "1.10.0" );
-}).forEach(function( jqueryUi ) {
+} ).forEach( function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
-		Object.keys( tests ).forEach(function( i ) {
+		Object.keys( tests ).forEach( function( i ) {
 			if ( typeof tests[ i ] === "object" ) {
 				obj[ i ] = {};
 				deepTestBuild( obj[ i ], tests[ i ] );
 			} else {
 				obj[ i ] = function( test ) {
-					tests[ i ].call({
+					tests[ i ].call( {
 						jqueryUi: jqueryUi,
-						theme: new ThemeRoller({ version: jqueryUi.pkg.version }),
-						namedTheme: new ThemeRoller({
+						theme: new ThemeRoller( { version: jqueryUi.pkg.version } ),
+						namedTheme: new ThemeRoller( {
 							vars: { folderName: "mytheme" },
 							version: jqueryUi.pkg.version
-						}),
-						noTheme: new ThemeRoller({
+						} ),
+						noTheme: new ThemeRoller( {
 							vars: null,
 							version: jqueryUi.pkg.version
-						}),
-						allComponents: jqueryUi.components().map(function( component ) {
+						} ),
+						allComponents: jqueryUi.components().map( function( component ) {
 							return component.name;
-						}),
-						allWidgets: jqueryUi.components().filter(function( component ) {
+						} ),
+						allWidgets: jqueryUi.components().filter( function( component ) {
 							return component.category === "widget";
-						}).map(function( component ) {
+						} ).map( function( component ) {
 							return [ component.name ].concat( component.dependencies );
-						}).reduce(function( flat, arr ) {
+						} ).reduce( function( flat, arr ) {
 							return flat.concat( arr );
-						}, [] ).sort().filter(function( element, i, arr ) {
+						}, [] ).sort().filter( function( element, i, arr ) {
+
 							// unique
 							return i === arr.indexOf( element );
-						}),
-						allEffects: jqueryUi.components().filter(function( component ) {
-							return (/effect/).test( component.name );
-						}).map(function( component ) {
+						} ),
+						allEffects: jqueryUi.components().filter( function( component ) {
+							return ( /effect/ ).test( component.name );
+						} ).map( function( component ) {
 							return component.name;
-						})
+						} )
 					}, test );
 				};
 			}
-		});
+		} );
 	}
-	module.exports[ jqueryUi.pkg.version] = {};
-	deepTestBuild( module.exports[ jqueryUi.pkg.version], tests );
-});
+	module.exports[ jqueryUi.pkg.version ] = {};
+	deepTestBuild( module.exports[ jqueryUi.pkg.version ], tests );
+} );

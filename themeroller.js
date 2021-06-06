@@ -1,3 +1,5 @@
+"use strict";
+
 var _ = require( "underscore" ),
 	fs = require( "fs" ),
 	Handlebars = require( "handlebars" ),
@@ -9,24 +11,24 @@ var _ = require( "underscore" ),
 	ThemeRoller = require( "./lib/themeroller" );
 
 function renderImage( filename, response, callback ) {
-	new Image( filename ).get(function( err, filename, data ) {
+	new Image( filename ).get( function( err, filename, data ) {
 		if ( err ) {
 			return callback( err );
 		}
 		response.setHeader( "Content-Type", "image/png" );
 		response.end( data );
 		callback();
-	});
+	} );
 }
 
 // Returns 'selected="selected"' if param == value
 Handlebars.registerHelper( "selected", function( param, value ) {
 	return new Handlebars.SafeString( param === value ? "selected=\"selected\"" : "" );
-});
+} );
 
 Handlebars.registerHelper( "themeParams", function( serializedVars ) {
 	return serializedVars.length > 0 ? "?themeParams=" + querystring.escape( serializedVars ) : "";
-});
+} );
 
 var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/appinterface.html", "utf8" ) ),
 	demoTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/demo.html", "utf8" ) ),
@@ -38,8 +40,8 @@ var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/te
 
 var Frontend = function( args ) {
 	_.extend( this, args, {
-		jqueryUiForThemeroller: JqueryUi.find(args.resources.jqueryuiVersionForThemeroller)
-	});
+		jqueryUiForThemeroller: JqueryUi.find( args.resources.jqueryuiVersionForThemeroller )
+	} );
 };
 
 Frontend.prototype = {
@@ -48,47 +50,47 @@ Frontend.prototype = {
 			delete vars.zThemeParams;
 		}
 		var production = this.env.toLowerCase() === "production",
-			theme = new ThemeRoller({
+			theme = new ThemeRoller( {
 				vars: vars
-			});
+			} );
 		options = options || {};
 		if ( options.wrap ) {
-			options = _.defaults({
+			options = _.defaults( {
 				wrap: false
 			}, options );
-			return wrapTemplate({
+			return wrapTemplate( {
 				body: this.index( vars, options ),
 				resources: this.resources
-			});
+			} );
 		}
-		return indexTemplate({
-			appinterface: appinterfaceTemplate({
+		return indexTemplate( {
+			appinterface: appinterfaceTemplate( {
 				help: helpTemplate(),
-				themegallery: themegalleryTemplate({
+				themegallery: themegalleryTemplate( {
 					production: production,
 					themeGallery: themeGallery
-				})
-			}),
+				} )
+			} ),
 			baseVars: themeGallery[ 0 ].serializedVars,
-			demo: demoTemplate({
+			demo: demoTemplate( {
 				production: production
-			}),
+			} ),
 			host: this.host,
 			lzmaWorker: production ? "/resources/external/lzma_worker.min.js" : "/node_modules/lzma/src/lzma_worker.js",
 			production: production,
 			resources: this.resources,
 			textures: JSON.stringify( textures )
-		});
+		} );
 	},
 
 	css: function( vars ) {
-		var theme = new ThemeRoller({
+		var theme = new ThemeRoller( {
 			jqueryUi: this.jqueryUiForThemeroller,
-			vars: _.extend({
+			vars: _.extend( {
 				dynamicImage: true,
 				dynamicImageHost: this.host
 			}, vars )
-		});
+		} );
 		return theme.css();
 	},
 
@@ -97,7 +99,7 @@ Frontend.prototype = {
 			if ( err ) {
 				error( err, response );
 			}
-		});
+		} );
 	},
 
 	texture: function( filename, response, error ) {
@@ -105,7 +107,7 @@ Frontend.prototype = {
 			if ( err ) {
 				error( err, response );
 			}
-		});
+		} );
 	}
 };
 

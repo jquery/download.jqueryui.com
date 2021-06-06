@@ -1,3 +1,5 @@
+"use strict";
+
 var _ = require( "underscore" ),
 	config = require( "./config" ),
 	Download = require( "./download" ),

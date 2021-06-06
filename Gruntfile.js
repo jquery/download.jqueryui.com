@@ -1,3 +1,5 @@
+"use strict";
+
 var async = require( "async" ),
 	fs = require( "fs" ),
 	path = require( "path" ),
@@ -6,22 +8,23 @@ var async = require( "async" ),
 
 module.exports = function( grunt ) {
 
-"use strict";
 grunt.loadNpmTasks( "grunt-check-modules" );
 grunt.loadNpmTasks( "grunt-contrib-clean" );
 grunt.loadNpmTasks( "grunt-contrib-copy" );
 grunt.loadNpmTasks( "grunt-contrib-handlebars" );
-grunt.loadNpmTasks( "grunt-contrib-jshint" );
 grunt.loadNpmTasks( "grunt-contrib-uglify" );
+grunt.loadNpmTasks( "grunt-eslint" );
 
-grunt.initConfig({
+grunt.initConfig( {
 	pkg: grunt.file.readJSON( "package.json" ),
 	handlebars: {
 		options: {
+
 			// Use basename as the key for the precompiled object.
 			processName: function( filepath ) {
 				return path.basename( filepath );
 			},
+
 			// Wrap preprocessed template functions in Handlebars.template function.
 			wrapped: true
 		},
@@ -32,11 +35,8 @@ grunt.initConfig({
 			}
 		}
 	},
-	jshint: {
-		all: [ "*.js", "test/*js", "lib/**/*.js", "app/src/*.js" ],
-		options: {
-			jshintrc: true
-		}
+	eslint: {
+		all: [ "*.js", "test/*js", "lib/**/*.js", "app/src/*.js" ]
 	},
 	copy: {
 		appExternalFarbtastic: {
@@ -66,11 +66,13 @@ grunt.initConfig({
 		options: {
 			preserveComments: "some"
 		},
+
 		// DownloadBuilder minified frontend bundle
 		download: {
 			src: [ "node_modules/wolfy87-eventemitter/EventEmitter.js", "node_modules/handlebars/dist/handlebars.runtime.js", "tmp/app/template/download.js", "node_modules/lzma/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/download.js" ],
 			dest: "app/dist/download.all.min.js"
 		},
+
 		// ThemeRoller minified frontend bundle
 		themeroller: {
 			src: [ "node_modules/wolfy87-eventemitter/EventEmitter.js", "node_modules/handlebars/dist/handlebars.runtime.js", "tmp/app/template/themeroller.js", "external/farbtastic/farbtastic.js", "node_modules/lzma/src/lzma.js", "app/src/hash.js", "app/src/querystring.js", "app/src/model.js", "app/src/themeroller.js" ],
@@ -84,7 +86,7 @@ grunt.initConfig({
 	clean: {
 		appDist: [ "app/dist" ]
 	}
-});
+} );
 
 function log( callback, successMsg, errorMsg ) {
 	return function( error, result, code ) {
@@ -93,7 +95,7 @@ function log( callback, successMsg, errorMsg ) {
 			grunt.log.error( error );
 			grunt.log.error( result.stdout );
 			grunt.log.error( result.stderr );
-		} else if ( ! error && successMsg ) {
+		} else if ( !error && successMsg ) {
 			grunt.log.ok( successMsg );
 		}
 		callback( error, result, code );
@@ -101,15 +103,15 @@ function log( callback, successMsg, errorMsg ) {
 }
 
 function cloneOrFetch( callback ) {
-	async.series([
+	async.series( [
 		function( callback ) {
 			if ( fs.existsSync( "tmp/jquery-ui" ) ) {
 				grunt.log.writeln( "Fetch updates for jquery-ui repo" );
-				async.series([
+				async.series( [
 
 					// Fetch branch heads (even if not referenced by tags), see c08cf67.
 					function( callback ) {
-						grunt.util.spawn({
+						grunt.util.spawn( {
 							cmd: "git",
 							args: [ "fetch" ],
 							opts: {
@@ -120,7 +122,7 @@ function cloneOrFetch( callback ) {
 
 					// Fetch tags not referenced by heads. Yes, we need both.
 					function( callback ) {
-						grunt.util.spawn({
+						grunt.util.spawn( {
 							cmd: "git",
 							args: [ "fetch", "-t" ],
 							opts: {
@@ -131,7 +133,7 @@ function cloneOrFetch( callback ) {
 				], log( callback, "Fetched repo", "Error fetching repo" ) );
 			} else {
 				grunt.log.writeln( "Cloning jquery-ui repo" );
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "git",
 					args: [ "clone", "git://github.com/jquery/jquery-ui.git", "jquery-ui" ],
 					opts: {
@@ -143,7 +145,7 @@ function cloneOrFetch( callback ) {
 		function() {
 			if ( fs.existsSync( "tmp/api.jqueryui.com" ) ) {
 				grunt.log.writeln( "Fetch updates for api.jqueryui.com repo" );
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "git",
 					args: [ "fetch" ],
 					opts: {
@@ -152,7 +154,7 @@ function cloneOrFetch( callback ) {
 				}, log( callback, "Fetched repo", "Error fetching repo" ) );
 			} else {
 				grunt.log.writeln( "Cloning api.jqueryui.com repo" );
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "git",
 					args: [ "clone", "git://github.com/jquery/api.jqueryui.com.git", "api.jqueryui.com" ],
 					opts: {
@@ -161,17 +163,18 @@ function cloneOrFetch( callback ) {
 				}, log( callback, "Cloned repo", "Error cloning repo" ) );
 			}
 		}
-	]);
+	] );
 }
 
 function checkout( jqueryUi ) {
 	var ref = jqueryUi.ref;
 	return function( callback ) {
-		async.series([
+		async.series( [
+
 			// Check out jquery-ui
 			function( next ) {
 				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "git",
 					args: [ "checkout", "-f", ref ],
 					opts: {
@@ -179,18 +182,22 @@ function checkout( jqueryUi ) {
 					}
 				}, log( jqueryUi.docs ? next : callback, "Done with checkout", "Error checking out" ) );
 			},
+
 			// Check out api.jqueryui.com
 			function() {
 				var docRef = "origin/master";
-				async.series([
+				async.series( [
+
 					// Get the correct documentation for jquery-ui version
 					function( callback ) {
+
 						// If ref is a branch, then get documentation "master" branch.
-						if ( !(/^\d+.\d+/).test( ref ) ) {
+						if ( !( /^\d+.\d+/ ).test( ref ) ) {
 							return callback();
 						}
+
 						// If ref is a tag, then get its corresponding <major>-<minor> branch, if available or "master".
-						grunt.util.spawn({
+						grunt.util.spawn( {
 							cmd: "git",
 							args: [ "branch", "-a" ],
 							opts: {
@@ -212,11 +219,11 @@ function checkout( jqueryUi ) {
 								}
 								callback();
 							}
-						});
+						} );
 					},
 					function() {
 						grunt.log.writeln( "Checking out api.jqueryui.com branch/tag: " + docRef );
-						grunt.util.spawn({
+						grunt.util.spawn( {
 							cmd: "git",
 							args: [ "checkout", "-f", docRef ],
 							opts: {
@@ -224,21 +231,21 @@ function checkout( jqueryUi ) {
 							}
 						}, log( callback, "Done with checkout", "Error checking out" ) );
 					}
-				]);
+				] );
 			}
-		]);
+		] );
 	};
 }
 
 function install( jqueryUi ) {
 	return function( callback ) {
-		async.series([
+		async.series( [
 			function( next ) {
 				if ( !jqueryUi.docs ) {
 					return next();
 				}
 				grunt.log.writeln( "Installing api.jqueryui.com npm modules" );
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "npm",
 					args: [ "prune" ],
 					opts: {
@@ -250,7 +257,7 @@ function install( jqueryUi ) {
 				if ( !jqueryUi.docs ) {
 					return callback();
 				}
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "npm",
 					args: [ "install" ],
 					opts: {
@@ -258,13 +265,13 @@ function install( jqueryUi ) {
 					}
 				}, log( callback, "Installed npm modules", "Error installing npm modules" ) );
 			}
-		]);
+		] );
 	};
 }
 
 function prepare( jqueryUi ) {
 	return function( callback ) {
-		async.series([
+		async.series( [
 			function() {
 				if ( !jqueryUi.docs ) {
 					return callback();
@@ -275,7 +282,7 @@ function prepare( jqueryUi ) {
 					grunt.log.writeln( "Copied config-sample.json to config.json" );
 				}
 				rimraf.sync( "tmp/api.jqueryui.com/dist" );
-				grunt.util.spawn({
+				grunt.util.spawn( {
 					cmd: "grunt",
 					args: [ "build", "--stack" ],
 					opts: {
@@ -283,7 +290,7 @@ function prepare( jqueryUi ) {
 					}
 				}, log( callback, "Done building documentation", "Error building documentation" ) );
 			}
-		]);
+		] );
 	};
 }
 
@@ -293,7 +300,7 @@ function copy( jqueryUi ) {
 		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
 			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
 		grunt.file.mkdir( "jquery-ui" );
-		async.series([
+		async.series( [
 			function( next ) {
 				if ( fs.existsSync( "jquery-ui/" + ref ) ) {
 					grunt.log.writeln( "Cleaning up existing jquery-ui/" + ref );
@@ -309,8 +316,8 @@ function copy( jqueryUi ) {
 				try {
 					grunt.file.recurse( from, function( filepath ) {
 							grunt.file.copy( filepath, filepath.replace( new RegExp( "^" + from ), to ) );
-					});
-				} catch( e ) {
+					} );
+				} catch ( e ) {
 					grunt.log.error( "Error copying", e.toString() );
 					return ( jqueryUi.docs ? next : callback )( e );
 				}
@@ -321,12 +328,13 @@ function copy( jqueryUi ) {
 				var srcpath = "tmp/api.jqueryui.com/dist/wordpress",
 					destpath = "jquery-ui/" + ref + "/docs/";
 				grunt.log.writeln( "Copying API documentation for jQuery UI over to " + destpath );
-				[ srcpath + "/posts/post", srcpath + "/posts/page" ].forEach(function( srcpath ) {
-					grunt.file.expand({ filter: "isFile" }, srcpath + "/**" ).forEach(function( file ) {
+				[ srcpath + "/posts/post", srcpath + "/posts/page" ].forEach( function( srcpath ) {
+					grunt.file.expand( { filter: "isFile" }, srcpath + "/**" ).forEach( function( file ) {
+
 						// OBS: No overwrite check is needed, because the posts/pages basenames must be unique among themselves.
-						grunt.file.copy( file, file.replace( srcpath, destpath ));
-					});
-				});
+						grunt.file.copy( file, file.replace( srcpath, destpath ) );
+					} );
+				} );
 				callback();
 			},
 			function() {
@@ -334,7 +342,7 @@ function copy( jqueryUi ) {
 				grunt.log.writeln( "Cleaning up copied jQuery UI" );
 				rimraf( "jquery-ui/" + removePath, log( callback, "Removed jquery-ui/" + removePath, "Error removing jquery-ui/" + removePath ) );
 			}
-		]);
+		] );
 	};
 }
 
@@ -342,22 +350,24 @@ function prepareAll( callback ) {
 	var config = require( "./lib/config" )();
 
 	async.forEachSeries( config.jqueryUi, function( jqueryUi, callback ) {
-		async.series([
+		async.series( [
 			checkout( jqueryUi ),
 			install( jqueryUi ),
 			prepare( jqueryUi ),
 			copy( jqueryUi )
 		], function( err ) {
+
 			// Go to next ref
 			callback( err );
-		});
+		} );
 	}, function( err ) {
+
 		// Done
 		callback( err );
-	});
+	} );
 }
 
-function packagerZip(packageModule, zipBasedir, themeVars, folder, jqueryUi, callback) {
+function packagerZip( packageModule, zipBasedir, themeVars, folder, jqueryUi, callback ) {
 	var Package = require( packageModule );
 	var Packager = require( "node-packager" );
 	var filename = path.join( folder, zipBasedir + ".zip" );
@@ -399,7 +409,7 @@ function buildPackages( folder, callback ) {
 	async.forEachSeries( JqueryUi.all(), function( jqueryUi, callback ) {
 		var builder = new Builder( jqueryUi, ":all:" );
 
-		async.series([
+		async.series( [
 
 			// (a) Build jquery-ui-[VERSION].zip;
 			function( callback ) {
@@ -410,7 +420,7 @@ function buildPackages( folder, callback ) {
 				}
 				var stream,
 					theme = new ThemeGallery( jqueryUi )[ 0 ],
-					packer = new Packer( builder, theme, { bundleSuffix: "" }),
+					packer = new Packer( builder, theme, { bundleSuffix: "" } ),
 					filename = path.join( folder, packer.filename() );
 				grunt.log.ok( "Building \"" + filename + "\"" );
 				if ( fs.existsSync( filename ) ) {
@@ -423,7 +433,7 @@ function buildPackages( folder, callback ) {
 						return callback( error );
 					}
 					return callback();
-				});
+				} );
 			},
 
 			// (b) Build themes package jquery-ui-themes-[VERSION].zip;
@@ -447,7 +457,7 @@ function buildPackages( folder, callback ) {
 						return callback( error );
 					}
 					return callback();
-				});
+				} );
 			}
 
 		], function( error ) {
@@ -455,51 +465,53 @@ function buildPackages( folder, callback ) {
 				grunt.log.error( error.message );
 			}
 			return callback();
-		});
+		} );
 	}, callback );
 }
 
-grunt.registerTask( "default", [ "check-modules", "jshint", "test" ] );
+grunt.registerTask( "default", [ "check-modules", "eslint", "test" ] );
 
 grunt.registerTask( "build-app", [ "clean", "handlebars", "copy", "uglify" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();
 	buildPackages( folder, function( err ) {
+
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
-  });
-});
+  } );
+} );
 
 grunt.registerTask( "mkdirs", "Create directories", function() {
-	[ "log", "tmp" ].forEach(function( dir ) {
+	[ "log", "tmp" ].forEach( function( dir ) {
 		if ( !fs.existsSync( dir ) ) {
 			grunt.file.mkdir( dir );
 		}
-	});
-});
+	} );
+} );
 
 grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-jquery-ui", "build-app" ] );
 
 grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
-	async.series([
+	async.series( [
 		cloneOrFetch,
 		prepareAll
 	], function( err ) {
+
 		// Make grunt to quit properly. Here, a proper error message should have been printed already.
 		// 1: true on success, false on error
 		done( !err /* 1 */ );
-	});
-});
+	} );
+} );
 
 grunt.registerTask( "test", "Runs npm test", function() {
 	var done = this.async();
-	grunt.util.spawn({
+	grunt.util.spawn( {
 		cmd: "npm",
 		args: [ "test" ]
 	}, done );
-});
+} );
 
 };

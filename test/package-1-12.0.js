@@ -1,3 +1,5 @@
+"use strict";
+
 var commonFiles, COMMON_FILES_TESTCASES, defaultTheme, newPackage, someWidgets1, someWidgets2, tests, themeFiles, THEME_FILES_TESTCASES,
 	async = require( "async" ),
 	JqueryUi = require( "../lib/jquery-ui" ),
@@ -8,9 +10,9 @@ var commonFiles, COMMON_FILES_TESTCASES, defaultTheme, newPackage, someWidgets1,
 
 function filePresent( files, filepath ) {
 	var filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
-	return Object.keys( files ).some(function( filepath ) {
+	return Object.keys( files ).some( function( filepath ) {
 		return filepathRe.test( filepath );
-	});
+	} );
 }
 
 defaultTheme = themeGallery[ 0 ].vars;
@@ -29,9 +31,9 @@ commonFiles = [
 ];
 COMMON_FILES_TESTCASES = commonFiles.length;
 function commonFilesCheck( test, files ) {
-	commonFiles.forEach(function( filepath ) {
+	commonFiles.forEach( function( filepath ) {
 		test.ok( filePresent( files, filepath ), "Missing a common file \"" + filepath + "\"." );
-	});
+	} );
 }
 
 themeFiles = [
@@ -41,13 +43,13 @@ themeFiles = [
 ];
 THEME_FILES_TESTCASES = themeFiles.length;
 function themeFilesCheck( test, files, theme ) {
-	themeFiles.forEach(function( filepath ) {
+	themeFiles.forEach( function( filepath ) {
 		if ( theme ) {
 			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
 		} else {
 			test.ok( !filePresent( files, filepath ), "Should not include the theme file \"" + filepath + "\"." );
 		}
-	});
+	} );
 }
 
 tests = {
@@ -56,31 +58,31 @@ tests = {
 			var pkg = new Packager( this.files, Package, {
 				components: this.allComponents,
 				themeVars: defaultTheme
-			});
+			} );
 			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
-			pkg.toJson(function( error, files ) {
-				if (error) {
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
 					return test.done( error );
 				}
 				commonFilesCheck( test, files );
 				themeFilesCheck( test, files, true );
 				test.done();
-			});
+			} );
 		},
 		"with a different theme": function( test ) {
 			var pkg = new Packager( this.files, Package, {
 				components: this.allComponents,
 				themeVars: themeGallery[ 1 ].vars
-			});
+			} );
 			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
-			pkg.toJson(function( error, files ) {
-				if (error) {
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
 					return test.done( error );
 				}
 				commonFilesCheck( test, files );
 				themeFilesCheck( test, files, true );
 				test.done();
-			});
+			} );
 		}
 	},
 	"test: select all widgets": function( test ) {
@@ -88,11 +90,11 @@ tests = {
 		var pkg = new Packager( this.files, Package, {
 			components: allWidgets,
 			themeVars: defaultTheme
-		});
+		} );
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
 		test.equal( allWidgets.length, 15 );
-		pkg.toJson(function( error, files ) {
-			if (error) {
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
@@ -103,33 +105,33 @@ tests = {
 			test.equal( includes[ 1 ].split( "," ).length, 18, allWidgets + " -> " + includes[ 1 ] );
 
 			test.done();
-		});
+		} );
 	},
 	"test: select all effects": function( test ) {
 		var pkg = new Packager( this.files, Package, {
 			components: this.allEffects,
 			themeVars: null
-		});
+		} );
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 		test.equal( this.allEffects.length, 16 );
-		pkg.toJson(function( error, files ) {
-			if (error) {
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, false );
 			test.done();
-		});
+		} );
 	},
 	"test: select some widgets (1)": function( test ) {
 		var pkg = new Packager( this.files, Package, {
 			components: someWidgets1,
 			themeVars: defaultTheme
-		});
+		} );
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
 		test.equal( someWidgets1.length, 9 );
-		pkg.toJson(function( error, files ) {
-			if (error) {
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
@@ -141,17 +143,17 @@ tests = {
 			test.equal( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
 
 			test.done();
-		});
+		} );
 	},
 	"test: select some widgets (2)": function( test ) {
 		var pkg = new Packager( this.files, Package, {
 			components: someWidgets2,
 			themeVars: defaultTheme
-		});
+		} );
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
 		test.equal( someWidgets2.length, 11 );
-		pkg.toJson(function( error, files ) {
-			if (error) {
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
 				return test.done( error );
 			}
 			commonFilesCheck( test, files );
@@ -163,7 +165,7 @@ tests = {
 			test.equal( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
 
 			test.done();
-		});
+		} );
 	},
 	"test: scope widget CSS": function( test ) {
 		var pkg,
@@ -177,51 +179,53 @@ tests = {
 			components: this.allComponents,
 			themeVars: defaultTheme,
 			scope: scope
-		});
+		} );
 		test.expect( filesToCheck.length );
-		pkg.toJson(function( error, files ) {
-			if (error) {
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
 				return test.done( error );
 			}
-			filesToCheck.forEach(function( filepath ) {
+			filesToCheck.forEach( function( filepath ) {
 				test.ok( scopeRe.test( files[ filepath ] ), "Missing scope selector on \"" + filepath + "\"." );
-			});
+			} );
 			test.done();
-		});
+		} );
 	}
 };
 
-JqueryUi.all().filter(function( jqueryUi ) {
+JqueryUi.all().filter( function( jqueryUi ) {
+
 	// Filter supported releases only
 	return semver.gte( jqueryUi.pkg.version, "1.12.0-a" );
-}).forEach(function( jqueryUi ) {
+} ).forEach( function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
-		var allComponents = jqueryUi.components().map(function( component ) {
+		var allComponents = jqueryUi.components().map( function( component ) {
 				return component.name;
-			}),
-			allEffects = jqueryUi.components().filter(function( component ) {
+			} ),
+			allEffects = jqueryUi.components().filter( function( component ) {
 				return component.category === "Effects";
-			}).map(function( component ) {
+			} ).map( function( component ) {
 				return component.name;
-			}),
-			allWidgets = jqueryUi.components().filter(function( component ) {
+			} ),
+			allWidgets = jqueryUi.components().filter( function( component ) {
 				return component.category === "Widgets";
-			}).map(function( component ) {
+			} ).map( function( component ) {
 				return [ component.name ];
-			}).reduce(function( flat, arr ) {
+			} ).reduce( function( flat, arr ) {
 				return flat.concat( arr );
-			}, [] ).sort().filter(function( element, i, arr ) {
+			}, [] ).sort().filter( function( element, i, arr ) {
+
 				// unique
 				return i === arr.indexOf( element );
-			}),
+			} ),
 			files = jqueryUi.files().cache;
-		Object.keys( tests ).forEach(function( i ) {
+		Object.keys( tests ).forEach( function( i ) {
 			if ( typeof tests[ i ] === "object" ) {
 				obj[ i ] = {};
 				deepTestBuild( obj[ i ], tests[ i ] );
 			} else {
 				obj[ i ] = function( test ) {
-					tests[ i ].call({
+					tests[ i ].call( {
 						allComponents: allComponents,
 						allEffects: allEffects,
 						allWidgets: allWidgets,
@@ -229,8 +233,8 @@ JqueryUi.all().filter(function( jqueryUi ) {
 					}, test );
 				};
 			}
-		});
+		} );
 	}
 	module.exports[ jqueryUi.pkg.version ] = {};
 	deepTestBuild( module.exports[ jqueryUi.pkg.version ], tests );
-});
+} );

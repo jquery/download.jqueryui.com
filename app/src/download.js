@@ -1,4 +1,4 @@
-/*jshint jquery: true, browser: true */
+/* eslint-env jquery, browser */
 /*global Hash: false, JST: false, Model: false */
 /*!
  * jQuery UI DownloadBuilder client-side JavaScript file
@@ -8,7 +8,8 @@
  * Released under the MIT license.
  * http://jquery.org/license
  */
-(function( $, Hash, JST, Model, undefined ) {
+( function( $, Hash, JST, Model, undefined ) {
+	"use strict";
 
 	var dependencies, dependents, model,
 		componentsLoad = $.Deferred(),
@@ -22,7 +23,7 @@
 	if ( /^stage\./.test( location.host ) ) {
 		$( "#download-builder form" ).attr( "action", function( index, href ) {
 			return href.replace( /(download\.)/, "stage.$1" );
-		});
+		} );
 		downloadJqueryuiHost = downloadJqueryuiHost.replace( /(download\.)/, "stage.$1" );
 	}
 
@@ -36,25 +37,25 @@
 			data: {
 				version: model.get( "version" )
 			}
-		});
+		} );
 	}
 
 	function renderServiceStatus( xhr ) {
-		var element = $( JST[ "service_status.html" ]({
+		var element = $( JST[ "service_status.html" ]( {
 			status: xhr.status,
 			statusText: xhr.statusText,
 			responseText: xhr.responseText
-		}));
+		} ) );
 		$( "#service-status" ).html( element );
 	}
 
 	function themeFetch() {
 		var dfd = $.Deferred();
-		model.themeUrl(function( url ) {
+		model.themeUrl( function( url ) {
 			$.ajax( url, {
 				dataType: "jsonp"
-			}).done( dfd.resolve ).fail( dfd.reject );
-		});
+			} ).done( dfd.resolve ).fail( dfd.reject );
+		} );
 		return dfd;
 	}
 
@@ -79,17 +80,19 @@
 			depElem = $();
 		options = options || {};
 
-		elem.each(function() {
+		elem.each( function() {
 			var elem = $( this ),
 				name = elem.attr( "name" );
 
 			// Handle dependencies
 			if ( value && !options.skipDependencies ) {
 				if ( dependencies[ name ] ) {
+
 					// Whenever a checkbox is activated, also activate all dependencies
 					depElem = depElem.add( dependencies[ name ] );
 				}
 			} else if ( dependents[ name ] && !options.skipDependencies ) {
+
 				// Whenever a checkbox is deactivated, also deactivate all dependents
 				depElem = depElem.add( dependents[ name ] );
 			}
@@ -97,7 +100,7 @@
 			elem.prop( "checked", value );
 
 			modelUpdates[ name ] = value;
-		});
+		} );
 
 		// Update dependencies
 		if ( depElem.length ) {
@@ -106,22 +109,26 @@
 
 		// Update toggle all
 		if ( value ) {
+
 			// Set group toggle all if all components of its group are checked
 			if ( !allGroup( elem ).filter( ":not(:checked)" ).length ) {
 				$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", true );
 			}
+
 			// Set toggle all if all components are checked
 			if ( !allComponents().filter( ":not(:checked)" ).length ) {
 				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", true );
 			}
 		} else {
+
 			// Unset group toggle all if no components of its group are checked
 			if ( !allGroup( elem ).filter( ":checked" ).length ) {
 				$( elem ).closest( ".component-group" ).find( ".toggle input[type=checkbox]" ).prop( "checked", false );
 			}
+
 			// Unset toggle all if no components are checked
 			if ( !allComponents().filter( ":checked" ).length ) {
-				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false);
+				$( elem ).closest( ".components" ).prev().find( ".toggleAll input[type=checkbox]" ).prop( "checked", false );
 			}
 		}
 
@@ -136,13 +143,13 @@
 		if ( !value ) {
 			consolidatedDependents = $();
 			consolidatedNames = [];
-			elem.each(function() {
+			elem.each( function() {
 				var name = $( this ).attr( "name" );
 				if ( dependents[ name ] && dependents[ name ].filter( ":checked" ).not( elem ).length > 0 ) {
 					consolidatedNames.push( name );
 					consolidatedDependents = consolidatedDependents.add( dependents[ name ].filter( ":checked" ).not( elem ) );
 				}
-			});
+			} );
 
 			// Validate if uncheck is allowed when it has dependents
 			if ( consolidatedDependents.length > 0 ) {
@@ -151,12 +158,12 @@
 					.attr( "title", "Remove " + consolidatedNames.join( ", " ) + "?" )
 					.append(
 						$( "<p>" ).html(
-							"Are you sure you want to remove <b>" + consolidatedNames.join( ", " ) + "</b>? The following " + pluralize( consolidatedDependents.length, "component", "components" ) + " " + pluralize( consolidatedDependents.length, "depends", "depend" ) + " on it and will be removed: " + consolidatedDependents.map(function() {
+							"Are you sure you want to remove <b>" + consolidatedNames.join( ", " ) + "</b>? The following " + pluralize( consolidatedDependents.length, "component", "components" ) + " " + pluralize( consolidatedDependents.length, "depends", "depend" ) + " on it and will be removed: " + consolidatedDependents.map( function() {
 								return "<b>" + this.name + "</b>";
-							}).toArray().join( ", " ) + "."
+							} ).toArray().join( ", " ) + "."
 						)
 					)
-					.dialog({
+					.dialog( {
 						modal: true,
 						buttons: {
 							"Remove": function() {
@@ -167,7 +174,7 @@
 								$( this ).remove();
 							}
 						}
-					})
+					} )
 					.dialog( "widget" ).addClass( "download-builder-dialog" );
 			} else {
 				_check( elem, value, options );
@@ -198,13 +205,13 @@
 		$( "#download-builder .components-area" ).html( JST[ "components.html" ]( components ) );
 
 		model.setOrderedComponents(
-			$( "#download-builder .components-area input[type=checkbox]" ).map(function() {
+			$( "#download-builder .components-area input[type=checkbox]" ).map( function() {
 				return this.name;
-			})
+			} )
 		);
 
 		// Initializes dependencies and dependents auxiliary variables.
-		$( "#download-builder input[type=checkbox]" ).each(function() {
+		$( "#download-builder input[type=checkbox]" ).each( function() {
 			var checkbox = $( this ),
 				thisDependencies = checkbox.data( "dependencies" ),
 				thisName = checkbox.attr( "name" );
@@ -215,7 +222,7 @@
 
 			// Adjust path prefixes to match names
 			var path = thisName.match( /^(.+)\// );
-			thisDependencies = thisDependencies.split( "," ).map(function( dependency ) {
+			thisDependencies = thisDependencies.split( "," ).map( function( dependency ) {
 				if ( !path ) {
 					return dependency;
 				}
@@ -223,7 +230,7 @@
 					return dependency.replace( /^.+\//, "" );
 				}
 				return path[ 1 ] + "/" + dependency;
-			});
+			} );
 
 			dependencies[ thisName ] = $();
 			$.each( thisDependencies, function() {
@@ -234,8 +241,8 @@
 					dependents[ dependecy ] = $();
 				}
 				dependents[ dependecy ] = dependents[ dependecy ].add( checkbox );
-			});
-		});
+			} );
+		} );
 
 		// Generating toggle all checkboxes
 		if ( !( toggleAll = $( "#download-builder .toggleAll" ) ).length ) {
@@ -247,20 +254,20 @@
 			- If a component is checked/unchecked, it should keep its check-state in a subsequent version-change or page-load;
 			- If a component is loaded in the page and there is no previous check-state for it, it should be checked unless it has an unchecked dependency;
 		*/
-		allComponents().each(function() {
+		allComponents().each( function() {
 			var elem = $( this ),
 				name = elem.attr( "name" );
 			if ( model.has( name ) && model.get( name ) === false ) {
 				_check( elem, false );
 			}
-		});
+		} );
 
 		// Binds click handlers on components checkboxes
 		toggleAll.find( "input[type=checkbox]" ).on( "click", function( event ) {
 			check( event, allComponents(), $( this ).prop( "checked" ), {
 				skipDependencies: true
-			});
-		});
+			} );
+		} );
 		$( "#download-builder .components-area input[type=checkbox]" ).on( "click", function( event ) {
 			var target = $( event.target );
 			if ( target.parent().is( ".toggle" ) ) {
@@ -268,16 +275,16 @@
 			} else {
 				check( event, $( this ), $( this ).prop( "checked" ) );
 			}
-		});
+		} );
 
 		componentsLoad.resolve();
 	}
 
-	model = new Model.DownloadBuilder({
+	model = new Model.DownloadBuilder( {
 		baseVars: baseVars,
 		host: downloadJqueryuiHost
-	});
-	model.defaults[ "version" ] = $( "#download-builder [name=version][checked]" ).val();
+	} );
+	model.defaults.version = $( "#download-builder [name=version][checked]" ).val();
 
 	model.on( "change", function( changed, created ) {
 		var versionElement;
@@ -290,7 +297,7 @@
 			delete model.attributes.scope;
 			delete changed.scope;
 		}
-		themesLoad.done(function() {
+		themesLoad.done( function() {
 			var themeOption;
 			if ( "folderName" in changed ) {
 				$( "#theme-folder-name" ).val( model.get( "folderName" ) ).trigger( "change" );
@@ -304,16 +311,18 @@
 					themeOption.prop( "selected", true ).trigger( "change" );
 				}
 			}
-			model.themerollerUrl(function( url ) {
+			model.themerollerUrl( function( url ) {
 				$( "#download-builder .download-builder-header a.themeroller-link" ).attr( "href", url );
-			});
-		});
+			} );
+		} );
 
-		componentsLoad.done(function() {
+		componentsLoad.done( function() {
 			$.each( changed, function( attribute ) {
 				var value = model.get( attribute );
+
 				// If attribute is a component.
-				$( "#download-builder .component-group-list input[name=\"" + attribute + "\"]" ).each(function() {
+				$( "#download-builder .component-group-list input[name=\"" + attribute + "\"]" ).each( function() {
+
 					// "false" -> false, TODO: this should be handled at History() level.
 					if ( value === "false" ) {
 						model.attributes[ attribute ] = value = false;
@@ -321,50 +330,51 @@
 					if ( value === false && $( this ).prop( "checked" ) !== value ) {
 						_check( $( this ), false );
 					}
+
 					// Ignore checked-components in the model
 					if ( value ) {
 						delete model.attributes[ attribute ];
 					}
-				});
-			});
-		});
+				} );
+			} );
+		} );
 
 		if ( "version" in changed ) {
 			versionElement = $( "#download-builder input[type=radio][name=version][value=\"" + model.get( "version" ) + "\"]" );
 			versionElement.trigger( "click" );
-			themesLoad.done(function() {
+			themesLoad.done( function() {
 				$( ".advanced-settings .folder-name-area" ).toggle( !versionElement.data( "no-theme-folder" ) );
-			});
+			} );
 			if ( created.version ) {
 				initComponents( initialComponents );
 			} else {
 				model.unsetOrderedComponents();
-				componentsFetch().done(function( components ) {
+				componentsFetch().done( function( components ) {
 					initComponents( components );
-				}).fail( renderServiceStatus );
+				} ).fail( renderServiceStatus );
 				componentsLoad = $.Deferred();
 			}
 		}
 
-		model.querystring().done(function( querystring ) {
+		model.querystring().done( function( querystring ) {
 			Hash.update( querystring, {
 				ignoreChange: true
-			});
-		});
-	});
+			} );
+		} );
+	} );
 
 	Hash.on( "change", function( hash ) {
 		model.parseHash( hash );
-	});
+	} );
 
 	// Binds click on version selection
 	$( "#download-builder [name=version]" ).on( "change", function() {
-		model.set({ version: $( this ).val() });
-	});
+		model.set( { version: $( this ).val() } );
+	} );
 
-	model.set({
-		version: model.defaults[ "version" ]
-	});
+	model.set( {
+		version: model.defaults.version
+	} );
 
 	Hash.init();
 
@@ -372,44 +382,44 @@
 	$( "#content" ).attr( "id", "download-builder-content" );
 
 	// Loads theme section.
-	themeFetch().done(function( theme ) {
+	themeFetch().done( function( theme ) {
 		$( "#download-builder .theme-area" ).html( JST[ "theme.html" ]( theme ) );
 
 		if ( !model.has( "themeParams" ) && !model.has( "zThemeParams" ) ) {
-			model.defaults[ "themeParams" ] = $( "#theme option:nth-child(2)" ).val();
-			model.set({ themeParams: $( "#theme option:selected" ).val() });
+			model.defaults.themeParams = $( "#theme option:nth-child(2)" ).val();
+			model.set( { themeParams: $( "#theme option:selected" ).val() } );
 		}
 
 		$( "#theme" ).on( "change", function() {
 			var selected = $( this ).find( "option:selected" ),
 				folderName = selected.text().toLowerCase().replace( " ", "-" );
-			model.defaults[ "folderName" ] = folderName;
-			model.set({
+			model.defaults.folderName = folderName;
+			model.set( {
 				folderName: folderName,
 				themeParams: selected.val()
-			});
+			} );
 			downloadOnOff();
-		});
+		} );
 
-		$( "#download-builder .advanced-settings input" ).each(function() {
+		$( "#download-builder .advanced-settings input" ).each( function() {
 			var content = $( this ).next().detach();
-			$( this ).tooltip({
+			$( this ).tooltip( {
 				items: "*",
 				content: function() {
 					return content;
 				}
-			});
-		});
+			} );
+		} );
 
-		$( "#scope" ).on("change", function() {
+		$( "#scope" ).on( "change", function() {
 			if ( !$( "#theme-folder-name" ).data( "edited" ) ) {
 				$( "#theme-folder-name" ).data( "suggestedEdit", true );
-				model.set({ folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) });
+				model.set( { folderName: $( this ).val().replace( /[ \/\\]/g, "-" ).replace( /[\.\#]/g, "" ) } );
 			}
-			model.set({ scope: $( this ).val() });
-		});
+			model.set( { scope: $( this ).val() } );
+		} );
 
-		$( "#theme-folder-name" ).on({
+		$( "#theme-folder-name" ).on( {
 			"blur": function() {
 				if ( $( this ).val() === "" ) {
 					$( "#theme-folder-name" ).removeData( "edited" );
@@ -421,14 +431,14 @@
 				$( this ).data( "edited", true );
 				$( "#theme-folder-name" ).removeData( "suggestedEdit" );
 				if ( escapedVal !== val ) {
-					model.set({ folderName: escapedVal });
+					model.set( { folderName: escapedVal } );
 				} else {
-					model.set({ folderName: $( this ).val() });
+					model.set( { folderName: $( this ).val() } );
 				}
 			}
-		});
+		} );
 
 		themesLoad.resolve();
-	}).fail( renderServiceStatus );
+	} ).fail( renderServiceStatus );
 
-}( jQuery, Hash, JST, Model ) );
+} )( jQuery, Hash, JST, Model );

@@ -1,8 +1,10 @@
+"use strict";
+
 var banner = require( "../lib/banner" ),
   dateformat = require( "dateformat" );
 
-function today(format) {
-	return dateformat(new Date(), format);
+function today( format ) {
+	return dateformat( new Date(), format );
 }
 
 var pkg = {
