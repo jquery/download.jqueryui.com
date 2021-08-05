@@ -196,7 +196,8 @@ tests = {
 JqueryUi.all().filter( function( jqueryUi ) {
 
 	// Filter supported releases only
-	return semver.gte( jqueryUi.pkg.version, "1.12.0-a" );
+	return semver.gte( jqueryUi.pkg.version, "1.12.0-a" ) &&
+		semver.lt( jqueryUi.pkg.version, "1.13.0-a" );
 } ).forEach( function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		var allComponents = jqueryUi.components().map( function( component ) {

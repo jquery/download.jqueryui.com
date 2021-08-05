@@ -151,7 +151,11 @@ Frontend.prototype = {
 
 			// The new way to generate a package.
 			} else {
-				Package = require( "./lib/package-1-12" );
+				if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {
+					Package = require( "./lib/package-1-13" );
+				} else {
+					Package = require( "./lib/package-1-12" );
+				}
 				packager = new Packager( jqueryUi.files().cache, Package, {
 					components: components,
 					themeVars: themeVars,
