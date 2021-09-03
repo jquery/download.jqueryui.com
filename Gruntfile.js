@@ -283,7 +283,7 @@ function prepare( jqueryUi ) {
 				}
 				rimraf.sync( "tmp/api.jqueryui.com/dist" );
 				grunt.util.spawn( {
-					cmd: "grunt",
+					cmd: "node_modules/.bin/grunt",
 					args: [ "build", "--stack" ],
 					opts: {
 						cwd: "tmp/api.jqueryui.com"
