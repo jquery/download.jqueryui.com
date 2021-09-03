@@ -1,9 +1,14 @@
 {
 	"themeroller": {
-		"jquery": "1.7",
-		"jqueryUi": "1.12.1"
+		"jquery": "3.6.0",
+		"jqueryUi": "1.13.0-rc.2"
 	},
 	"jqueryUi": [
+		{
+			"version": "1.13.0-rc.2",
+			"dependsOn": "jQuery1.8+",
+			"label": "Unstable"
+		},
 		{
 			"version": "1.12.1",
 			"dependsOn": "jQuery1.7+",
@@ -28,5 +33,5 @@
 			"docs": true
 		}
 	],
-	"jquery": "1.9.1"
+	"jquery": "3.6.0"
 }
