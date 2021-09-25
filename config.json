@@ -1,11 +1,11 @@
 {
 	"themeroller": {
 		"jquery": "3.6.0",
-		"jqueryUi": "1.13.0-rc.2"
+		"jqueryUi": "1.13.0-rc.3"
 	},
 	"jqueryUi": [
 		{
-			"version": "1.13.0-rc.2",
+			"version": "1.13.0-rc.3",
 			"dependsOn": "jQuery1.8+",
 			"label": "Unstable"
 		},
