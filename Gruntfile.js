@@ -501,7 +501,13 @@ grunt.registerTask( "mkdirs", "Create directories", function() {
 	} );
 } );
 
-grunt.registerTask( "prepare", [ "check-modules", "mkdirs", "prepare-jquery-ui", "build-app" ] );
+grunt.registerTask( "prepare", [
+	"check-modules",
+	"eslint",
+	"mkdirs",
+	"prepare-jquery-ui",
+	"build-app"
+] );
 
 grunt.registerTask( "prepare-jquery-ui", "Fetches and builds jQuery UI releases specified in config file", function() {
 	var done = this.async();
