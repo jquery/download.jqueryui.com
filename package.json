@@ -17,7 +17,7 @@
     "fast-glob": "3.2.7",
     "formidable": "1.2.2",
     "gm": "1.23.1",
-    "grunt": "1.4.1",
+    "grunt": "1.5.2",
     "grunt-check-modules": "1.1.0",
     "grunt-cli": "1.4.3",
     "grunt-contrib-clean": "2.0.0",
