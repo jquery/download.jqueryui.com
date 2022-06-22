@@ -14,6 +14,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Install xsltproc
+      run: |
+        sudo apt-get install xsltproc
+
+    - name: Use Node.js ${{ matrix.NODE_VERSION }}
+      uses: actions/setup-node@v2.1.2
+      with:
+        node-version: ${{ matrix.NODE_VERSION }}
+
     - name: Cache
       uses: actions/cache@v2
       with:
@@ -21,24 +30,19 @@ jobs:
         key: ${{ runner.os }}-node-${{ matrix.NODE_VERSION }}-npm-lock-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-${{ matrix.NODE_VERSION }}-npm-lock-
-
-    - name: Use Node.js ${{ matrix.NODE_VERSION }}
-      uses: actions/setup-node@v2.1.2
-      with:
-        node-version: ${{ matrix.NODE_VERSION }}
+          ${{ runner.os }}-node-${{ matrix.NODE_VERSION }}-
+          ${{ runner.os }}-node-
+          ${{ runner.os }}-
+    
 
     - name: Install dependencies
       run: |
         npm ci
 
-    - name: Lint
+    - name: Prepare for tests
       run: |
-        ./node_modules/.bin/grunt eslint
+        ./node_modules/.bin/grunt prepare
 
-#    - name: Prepare for tests
-#      run: |
-#        ./node_modules/.bin/grunt prepare
-#
-#    - name: Run tests
-#      run: |
-#        npm test
+    - name: Run tests
+      run: |
+        npm test

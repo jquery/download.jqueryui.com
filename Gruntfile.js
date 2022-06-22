@@ -135,7 +135,7 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Cloning jquery-ui repo" );
 				grunt.util.spawn( {
 					cmd: "git",
-					args: [ "clone", "git://github.com/jquery/jquery-ui.git", "jquery-ui" ],
+					args: [ "clone", "https://github.com/jquery/jquery-ui.git", "jquery-ui" ],
 					opts: {
 						cwd: "tmp"
 					}
@@ -156,7 +156,11 @@ function cloneOrFetch( callback ) {
 				grunt.log.writeln( "Cloning api.jqueryui.com repo" );
 				grunt.util.spawn( {
 					cmd: "git",
-					args: [ "clone", "git://github.com/jquery/api.jqueryui.com.git", "api.jqueryui.com" ],
+					args: [
+						"clone",
+						"https://github.com/jquery/api.jqueryui.com.git",
+						"api.jqueryui.com"
+					],
 					opts: {
 						cwd: "tmp"
 					}
