@@ -301,8 +301,7 @@ function prepare( jqueryUi ) {
 function copy( jqueryUi ) {
 	var ref = jqueryUi.ref;
 	return function( callback ) {
-		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version,
-			dir = require( "path" ).basename( "tmp/jquery-ui/dist/jquery-ui-" + version );
+		var version = grunt.file.readJSON( "tmp/jquery-ui/package.json" ).version;
 		grunt.file.mkdir( "jquery-ui" );
 		async.series( [
 			function( next ) {
