@@ -318,7 +318,13 @@ function copy( jqueryUi ) {
 				grunt.log.writeln( "Copying jQuery UI " + version + " over to jquery-ui/" + ref );
 				try {
 					grunt.file.recurse( from, function( filepath ) {
+
+						// Skip files from the `.git` directory; we don't need them,
+						// there may be a lot of them and them may include IPC files
+						// that cannot be copied.
+						if ( filepath.indexOf( "/.git/" ) === -1 ) {
 							grunt.file.copy( filepath, filepath.replace( new RegExp( "^" + from ), to ) );
+						}
 					} );
 				} catch ( e ) {
 					grunt.log.error( "Error copying", e.toString() );
