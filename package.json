@@ -33,7 +33,7 @@
     "qs": "6.10.3",
     "requirejs": "2.3.6",
     "rimraf": "3.0.2",
-    "semver": "7.3.5",
+    "semver": "7.5.2",
     "sqwish": "0.2.2",
     "uglify-js": "3.14.1",
     "underscore": "1.13.1",
