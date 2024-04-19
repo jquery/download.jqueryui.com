@@ -15,7 +15,7 @@ var frontend,
 	async = require( "async" ),
 	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
-	formidable = require( "formidable" ),
+	{ default: formidable } = require( "formidable" ),
 	Frontend = require( "./frontend" ),
 	httpHost = argv.host || "0.0.0.0",
 	Image = require( "./lib/themeroller-image" ),
@@ -76,11 +76,19 @@ function route( app ) {
 		} ) );
 	} );
 	app.post( routes.download, function( request, response ) {
-		var form = new formidable.IncomingForm();
-		form.parse( request, function( err, fields, files ) {
+		var form = formidable( {} );
+		form.parse( request, function( err, arrFields, files ) {
 			if ( err ) {
 				return error( err, response );
 			}
+
+			const fields = Object.create( null );
+			for ( const key in arrFields ) {
+				fields[ key ] = arrFields[ key ].length > 1 ?
+					arrFields[ key ] :
+					arrFields[ key ][ 0 ];
+			}
+
 			frontend.download.create( fields, response, function( err ) {
 				if ( err ) {
 					return error( err, response );

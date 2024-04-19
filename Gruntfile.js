@@ -1,9 +1,9 @@
 "use strict";
 
 var async = require( "async" ),
-	fs = require( "fs" ),
-	path = require( "path" ),
-	rimraf = require( "rimraf" ),
+	fs = require( "node:fs" ),
+	fsp = require( "node:fs/promises" ),
+	path = require( "node:path" ),
 	semver = require( "semver" );
 
 module.exports = function( grunt ) {
@@ -285,7 +285,7 @@ function prepare( jqueryUi ) {
 					grunt.file.copy( "tmp/api.jqueryui.com/config-sample.json", "tmp/api.jqueryui.com/config.json" );
 					grunt.log.writeln( "Copied config-sample.json to config.json" );
 				}
-				rimraf.sync( "tmp/api.jqueryui.com/dist" );
+				fs.rmSync( "tmp/api.jqueryui.com/dist", { recursive: true, force: true } );
 				grunt.util.spawn( {
 					cmd: "node_modules/.bin/grunt",
 					args: [ "build", "--stack" ],
@@ -307,7 +307,14 @@ function copy( jqueryUi ) {
 			function( next ) {
 				if ( fs.existsSync( "jquery-ui/" + ref ) ) {
 					grunt.log.writeln( "Cleaning up existing jquery-ui/" + ref );
-					rimraf( "jquery-ui/" + ref, log( next, "Cleaned", "Error cleaning" ) );
+					const rmCallback = log( next, "Cleaned", "Error cleaning" );
+					fsp.rm( `jquery-ui/${ ref }`, { recursive: true, force: true } )
+						.then( () => {
+							rmCallback( null, "OK", 0 );
+						} )
+						.catch( error => {
+							rmCallback( error, null, 1 );
+						} );
 				} else {
 					next();
 				}
@@ -349,7 +356,14 @@ function copy( jqueryUi ) {
 			function() {
 				var removePath = ref + "/node_modules";
 				grunt.log.writeln( "Cleaning up copied jQuery UI" );
-				rimraf( "jquery-ui/" + removePath, log( callback, "Removed jquery-ui/" + removePath, "Error removing jquery-ui/" + removePath ) );
+				const rmCallback = log( callback, `Removed jquery-ui/${ removePath }`, `Error removing jquery-ui/${ removePath }` );
+				fsp.rm( `jquery-ui/${ removePath }`, { recursive: true, force: true } )
+					.then( () => {
+						rmCallback( null, "OK", 0 );
+					} )
+					.catch( error => {
+						rmCallback( error, null, 1 );
+					} );
 			}
 		] );
 	};

@@ -7,39 +7,37 @@
   },
   "license": "MIT",
   "dependencies": {
-    "archiver": "5.3.0",
-    "async": "3.2.2",
+    "archiver": "7.0.1",
+    "async": "3.2.5",
     "builder-amd": "0.0.3",
     "builder-jquery-css": "0.0.4",
-    "dateformat": "4.5.1",
-    "eslint-config-jquery": "3.0.0",
+    "eslint-config-jquery": "3.0.2",
     "express": "4.19.2",
-    "fast-glob": "3.2.7",
-    "formidable": "1.2.2",
-    "gm": "1.23.1",
-    "grunt": "1.5.3",
+    "fast-glob": "3.3.2",
+    "formidable": "3.5.1",
+    "gm": "1.25.0",
+    "grunt": "1.6.1",
     "grunt-check-modules": "1.1.0",
     "grunt-cli": "1.4.3",
-    "grunt-contrib-clean": "2.0.0",
+    "grunt-contrib-clean": "2.0.1",
     "grunt-contrib-copy": "1.0.0",
-    "grunt-contrib-handlebars": "2.0.0",
-    "grunt-contrib-uglify": "5.0.1",
-    "grunt-eslint": "23.0.0",
-    "handlebars": "4.7.7",
+    "grunt-contrib-handlebars": "3.0.0",
+    "grunt-contrib-uglify": "5.2.2",
+    "grunt-eslint": "24.3.0",
+    "handlebars": "4.7.8",
     "jquery-ui-themeroller": "0.0.5",
     "lzma": "2.3.2",
-    "node-packager": "0.0.6",
+    "node-packager": "0.0.7",
     "q": "1.5.1",
-    "qs": "6.10.3",
+    "qs": "6.12.1",
     "requirejs": "2.3.6",
-    "rimraf": "3.0.2",
-    "semver": "7.5.2",
+    "semver": "7.6.0",
     "sqwish": "0.2.2",
-    "uglify-js": "3.14.1",
-    "underscore": "1.13.1",
-    "winston": "3.3.3",
+    "uglify-js": "3.17.4",
+    "underscore": "1.13.6",
+    "winston": "3.13.0",
     "wolfy87-eventemitter": "5.2.9",
-    "yargs": "16.2.0"
+    "yargs": "17.7.2"
   },
   "optionalDependencies": {
     "modern-syslog": "1.2.0"
@@ -52,6 +50,6 @@
     "test": "nodeunit test"
   },
   "engines": {
-    "node": "10 || 12 || 14"
+    "node": "18 || 20"
   }
 }

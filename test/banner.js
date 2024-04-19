@@ -1,10 +1,9 @@
 "use strict";
 
-var banner = require( "../lib/banner" ),
-  dateformat = require( "dateformat" );
+var banner = require( "../lib/banner" );
 
-function today( format ) {
-	return dateformat( new Date(), format );
+function todayDate() {
+	return new Date().toISOString().replace( /T.*$$/, "" );
 }
 
 var pkg = {
@@ -24,7 +23,7 @@ var pkg = {
 		]
 	},
 	fileNames = [ "jquery.ui.autocomplete.js", "jquery.ui.accordion.js" ],
-	output = "/*! jQuery UI - v1.9.0 - " + today( "isoDate" ) + "\n" +
+	output = "/*! jQuery UI - v1.9.0 - " + todayDate() + "\n" +
 		"* http://jqueryui.com\n" +
 		"* Includes: jquery.ui.autocomplete.js, jquery.ui.accordion.js\n" +
 		"* Copyright jQuery Foundation and other contributors; Licensed MIT, GPL */\n\n";
