@@ -11,9 +11,8 @@
 ( function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
 	"use strict";
 
-	var Model, DownloadBuilderModel, ThemeRollerModel, lzmaInterval,
-		lzma = new LZMA( $( "[data-lzma-worker]" ).data( "lzma-worker" ) ),
-		lzmaLoad = $.Deferred();
+	var Model, DownloadBuilderModel, ThemeRollerModel,
+		lzma = new LZMA( $( "[data-lzma-worker]" ).data( "lzma-worker" ) );
 
 	// Encodes an Array of booleans [ true, false, ... ] into a string sequence "10...".
 	function booleansEncode( array ) {
@@ -72,10 +71,8 @@
 		}
 		data = data.reverse();
 
-		lzmaLoad.done( function() {
-			lzma.decompress( $.map( data, intoDec ), function( unzipped ) {
-				callback( JSON.parse( unzipped ) );
-			} );
+		lzma.decompress( $.map( data, intoDec ), function( unzipped ) {
+			callback( JSON.parse( unzipped ) );
 		} );
 	}
 
@@ -97,10 +94,8 @@
 
 				return hex;
 			};
-		lzmaLoad.done( function() {
-			lzma.compress( data, 0, function( zipped ) {
-				callback( $.map( zipped, intoHex ).join( "" ) );
-			} );
+		lzma.compress( data, 0, function( zipped ) {
+			callback( $.map( zipped, intoHex ).join( "" ) );
 		} );
 	}
 
@@ -493,14 +488,6 @@
 			return this.host + "/themeroller/rollyourown" + ( attributes == null ? "" : "?" + QueryString.encode( attributes ) );
 		}
 	} );
-
-	// Workaround to handle asynchronous worker load lzma-bug.
-	lzmaInterval = setInterval( function() {
-		if ( ( ( typeof Worker === "function" || typeof Worker === "object" ) && Worker.prototype.postMessage != null ) || window.onmessage != null ) {
-			lzmaLoad.resolve();
-			clearInterval( lzmaInterval );
-		}
-	}, 200 );
 
 	exports.Model = {
 		DownloadBuilder: DownloadBuilderModel,
