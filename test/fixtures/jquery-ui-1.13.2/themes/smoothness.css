@@ -438,7 +438,7 @@ a.ui-button:active,
 .ui-widget-overlay {
 	background: #aaaaaa;
 	opacity: .3;
-	-ms-filter: Alpha(Opacity=30); /* support: IE8 */
+	-ms-filter: "alpha(opacity=30)"; /* support: IE8 */
 }
 .ui-widget-shadow {
 	-webkit-box-shadow: -8px -8px 8px #aaaaaa;
