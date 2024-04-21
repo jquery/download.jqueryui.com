@@ -1,6 +1,6 @@
 "use strict";
 
-var fs = require( "fs" ),
+var fs = require( "node:fs/promises" ),
 	ThemeRoller = require( "../lib/themeroller" );
 
 module.exports = {
@@ -38,3 +38,52 @@ module.exports = {
 		}
 	}
 };
+
+const themeRollerTests = module.exports[ "test: ThemeRoller" ] = {};
+
+( function() {
+	function dropThemeUrl( cssSource ) {
+		return cssSource.replace( /\n\s*\* To view and modify this theme, visit http:\/\/jqueryui\.com\/themeroller\/[^\n]+\n/, "\n" );
+	}
+
+	[ "1.12.1", "1.13.2" ].forEach( ( jQueryUiVersion ) => {
+		let theme;
+
+		themeRollerTests[ `with jQuery UI ${ jQueryUiVersion }` ] = {
+			async setUp( callback ) {
+				const varsString = await fs.readFile( `${ __dirname }/fixtures/vars/smoothness.json`, "utf-8" );
+				const vars = JSON.parse( varsString );
+
+				theme = new ThemeRoller( { vars, version: jQueryUiVersion } );
+				callback();
+			},
+
+			async [ "should instantiate" ]( test ) {
+				test.ok( theme instanceof ThemeRoller );
+				test.done();
+			},
+
+			async [ "should generate the theme CSS" ]( test ) {
+				const smoothnessCssFixture = await fs.readFile( `${ __dirname }/fixtures/jquery-ui-${ jQueryUiVersion }/themes/smoothness.css`, "utf-8" );
+
+				test.equal(
+					dropThemeUrl( theme.css() ),
+					dropThemeUrl( smoothnessCssFixture )
+				);
+				test.done();
+			},
+
+			async [ "should generate images" ]( test ) {
+				theme.generateImages( function( error, images ) {
+					try {
+						test.strictEqual( error, null );
+						test.ok( images && typeof images === "object" );
+					} finally {
+						test.done();
+					}
+				} );
+			}
+		};
+	} );
+
+} )();
