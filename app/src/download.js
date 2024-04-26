@@ -2,11 +2,11 @@
 /*global Hash: false, JST: false, Model: false */
 /*!
  * jQuery UI DownloadBuilder client-side JavaScript file
- * http://jqueryui.com/download/
+ * https://jqueryui.com/download/
  *
  * Copyright jQuery Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 ( function( $, Hash, JST, Model, undefined ) {
 	"use strict";

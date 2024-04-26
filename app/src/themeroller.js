@@ -2,11 +2,11 @@
 /*global Hash: false, JST: false, Model: false, QueryString: false */
 /*!
  * jQuery UI ThemeRoller client-side JavaScript file
- * http://jqueryui.com/themeroller/
+ * https://jqueryui.com/themeroller/
  *
  * Copyright jQuery Foundation and other contributors
  * Released under the MIT license.
- * http://jquery.org/license
+ * https://jquery.org/license
  */
 ( function( $, Hash, JST, Model, QueryString, undefined ) {
 	"use strict";

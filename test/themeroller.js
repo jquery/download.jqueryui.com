@@ -43,7 +43,7 @@ const themeRollerTests = module.exports[ "test: ThemeRoller" ] = {};
 
 ( function() {
 	function dropThemeUrl( cssSource ) {
-		return cssSource.replace( /\n\s*\* To view and modify this theme, visit http:\/\/jqueryui\.com\/themeroller\/[^\n]+\n/, "\n" );
+		return cssSource.replace( /\n\s*\* To view and modify this theme, visit https?:\/\/jqueryui\.com\/themeroller\/[^\n]+\n/, "\n" );
 	}
 
 	[ "1.12.1", "1.13.2" ].forEach( ( jQueryUiVersion ) => {

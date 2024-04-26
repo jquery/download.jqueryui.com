@@ -1,6 +1,6 @@
 /*! {{title}} - v{{version}} - {{date}}
 * {{homepage}}{{#if fileNames}}
 * Includes: {{fileNames}}{{/if}}{{#if customThemeUrl}}
-* To view and modify this theme, visit http://jqueryui.com{{{customThemeUrl}}}{{/if}}
+* To view and modify this theme, visit https://jqueryui.com{{{customThemeUrl}}}{{/if}}
 * Copyright {{authorName}}; Licensed {{licenses}} */
 

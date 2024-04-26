@@ -81,10 +81,10 @@ $ cd <local jqueryui.com path>
 $ npm link download.jqueryui.com
 ```
 
-Temporarily change its `Gruntfile.js` to use localhost instead of http://download.jqueryui.com.
+Temporarily change its `Gruntfile.js` to use localhost instead of https://download.jqueryui.com.
 ```diff
                 var frontend = require( "download.jqueryui.com" ).frontend({
--                               host: "http://download.jqueryui.com"
+-                               host: "https://download.jqueryui.com"
 +                               host: "http://localhost:8088",
                                 env: "production"
                         }),
@@ -99,11 +99,8 @@ $ grunt deploy
 
 ### Compile and install ImageMagick from source
 
-Commands:
+Follow instructions from https://legacy.imagemagick.org/script/install-source.php to install ImageMagic `6.6.9-10`. Then, in the ImageMagick directory, invoke:
 ```
-$ wget http://www.imagemagick.org/download/legacy/ImageMagick-6.6.9-10.tar.gz
-$ tar -xzf ImageMagick-6.6.9-10.tar.gz
-$ cd ImageMagick-6.6.9-10
 $ ./configure CFLAGS=-O5 CXXFLAGS=-O5 --prefix=/opt --enable-static --with-png --disable-shared
 ```
 
