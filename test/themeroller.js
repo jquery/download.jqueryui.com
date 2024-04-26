@@ -46,7 +46,7 @@ const themeRollerTests = module.exports[ "test: ThemeRoller" ] = {};
 		return cssSource.replace( /\n\s*\* To view and modify this theme, visit https?:\/\/jqueryui\.com\/themeroller\/[^\n]+\n/, "\n" );
 	}
 
-	[ "1.12.1", "1.13.2" ].forEach( ( jQueryUiVersion ) => {
+	[ "1.12.1", "1.13.3" ].forEach( ( jQueryUiVersion ) => {
 		let theme;
 
 		themeRollerTests[ `with jQuery UI ${ jQueryUiVersion }` ] = {
