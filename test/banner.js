@@ -8,25 +8,18 @@ function todayDate() {
 
 var pkg = {
 		title: "jQuery UI",
-		version: "1.9.0",
-		homepage: "http://jqueryui.com",
+		version: "1.13.3",
+		homepage: "https://jqueryui.com",
 		author: {
-			name: "jQuery Foundation and other contributors"
+			name: "OpenJS Foundation and other contributors"
 		},
-		licenses: [
-			{
-				type: "MIT"
-			},
-			{
-				type: "GPL"
-			}
-		]
+		license: "MIT"
 	},
-	fileNames = [ "jquery.ui.autocomplete.js", "jquery.ui.accordion.js" ],
-	output = "/*! jQuery UI - v1.9.0 - " + todayDate() + "\n" +
-		"* http://jqueryui.com\n" +
-		"* Includes: jquery.ui.autocomplete.js, jquery.ui.accordion.js\n" +
-		"* Copyright jQuery Foundation and other contributors; Licensed MIT, GPL */\n\n";
+	fileNames = [ "widgets/accordion.js", "widgets/autocomplete.js" ],
+	output = "/*! jQuery UI - v1.13.3 - " + todayDate() + "\n" +
+		"* https://jqueryui.com\n" +
+		"* Includes: widgets/accordion.js, widgets/autocomplete.js\n" +
+		"* Copyright OpenJS Foundation and other contributors; Licensed MIT */\n\n";
 
 module.exports = {
 	"test: case 1": function( test ) {

@@ -13,16 +13,11 @@ var frontend,
 	argv = require( "yargs" ).argv,
 	express = require( "express" ),
 	async = require( "async" ),
-	Builder = require( "./lib/builder" ),
 	Cache = require( "./lib/cache" ),
 	{ default: formidable } = require( "formidable" ),
 	Frontend = require( "./frontend" ),
 	httpHost = argv.host || "0.0.0.0",
-	Image = require( "./lib/themeroller-image" ),
-	JqueryUi = require( "./lib/jquery-ui" ),
-	Packer = require( "./lib/packer" ),
 	querystring = require( "querystring" ),
-	ThemeRoller = require( "./lib/themeroller" ),
 	httpPort = argv.port || 8080,
 	routes = {
 		home: "/",
@@ -39,7 +34,6 @@ var frontend,
 frontend = new Frontend();
 if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	Cache.on( 60000 * 60 );
-	Packer.cacheThemeGalleryImages();
 
 	// Cache jquery-ui-themeroller images as well
 	async.forEachSeries( require( "./lib/themeroller-themegallery" )(), function( theme, callback ) {

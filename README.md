@@ -4,7 +4,6 @@ jQuery UI DownloadBuilder & ThemeRoller backend and frontend application.
 - [node >= 18 and npm](https://nodejs.org/en/download/)
 - ImageMagick 6.6.x. ([see below for instructions to compile it from source](#compile-and-install-imagemagick-from-source))
 - grunt-cli: `npm install -g grunt-cli`
-- [api.jqueryui.com](https://github.com/jquery/api.jqueryui.com#requirements) requirements.
 
 ## Getting Started
 
@@ -33,14 +32,14 @@ Use the config file to define which jQueryUI version DownloadBuilder should serv
 ```
 "jqueryUi": [
   {
-    "version": "1.10.0"
-    "dependsOn": "jQuery 1.7+",
+    "version": "1.14.0"
+    "dependsOn": "jQuery 1.12+",
     "label": "Stable",
     "stable": true
   },
   {
-    "version": "1.9.1"
-    "dependsOn": "jQuery 1.6+",
+    "version": "1.13.3"
+    "dependsOn": "jQuery 1.8+",
     "label": "Legacy"
   }
 }
