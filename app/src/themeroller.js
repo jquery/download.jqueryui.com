@@ -11,7 +11,7 @@
 ( function( $, Hash, JST, Model, QueryString, undefined ) {
 	"use strict";
 
-	var farbtasticTriggerChangeDelay, model, reloadRollYourOwn, skipHashChange, theme, Theme,
+	var farbtasticTriggerChangeDelay, model, reloadRollYourOwn, skipHashChange,
 		focusedEl = null,
 		openGroups = [],
 		textureVars = "bgTextureDefault bgTextureHover bgTextureActive bgTextureHeader bgTextureContent bgTextureHighlight bgTextureError bgTextureOverlay bgTextureShadow".split( " " ),

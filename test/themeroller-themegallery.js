@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require( "node:fs" );
 const zParams = require( "../lib/zparams" );
 const { themeGalleryData } = require( "../lib/themeroller-themegallery" );
 

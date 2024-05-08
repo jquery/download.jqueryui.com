@@ -3,7 +3,7 @@
 var cache, downloadLogger, jqueryUis,
 	_ = require( "underscore" ),
 	Cache = require( "./lib/cache" ),
-	fs = require( "fs" ),
+	fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
 	logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" ),

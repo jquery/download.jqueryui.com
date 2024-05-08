@@ -1,7 +1,7 @@
 "use strict";
 
 var _ = require( "underscore" ),
-	fs = require( "fs" ),
+	fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
 	Image = require( "./lib/themeroller-image" ),
 	JqueryUi = require( "./lib/jquery-ui" ),

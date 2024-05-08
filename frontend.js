@@ -3,7 +3,7 @@
 var _ = require( "underscore" ),
 	config = require( "./config" ),
 	Download = require( "./download" ),
-	fs = require( "fs" ),
+	fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
 	ThemeRoller = require( "./themeroller" );
