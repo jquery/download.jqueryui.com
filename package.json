@@ -31,7 +31,6 @@
 		"semver": "7.6.0",
 		"sqwish": "0.2.2",
 		"uglify-js": "3.17.4",
-		"underscore": "1.13.6",
 		"winston": "3.13.0",
 		"wolfy87-eventemitter": "5.2.9"
 	},

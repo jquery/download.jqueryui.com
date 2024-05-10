@@ -1,7 +1,6 @@
 "use strict";
 
-var _ = require( "underscore" ),
-	config = require( "./config" ),
+var config = require( "./config" ),
 	Download = require( "./download" ),
 	fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
@@ -22,7 +21,7 @@ var errorTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/
  *
  */
 var Frontend = function( options ) {
-	this.options = options = _.extend( {}, Frontend.defaults, options );
+	this.options = options = Object.assign( {}, Frontend.defaults, options );
 	if ( options.config && typeof options.config === "object" ) {
 		require( "./lib/config" ).get = function() {
 			return options.config;

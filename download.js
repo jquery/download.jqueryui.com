@@ -1,7 +1,6 @@
 "use strict";
 
 var cache, downloadLogger, jqueryUis,
-	_ = require( "underscore" ),
 	Cache = require( "./lib/cache" ),
 	fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
@@ -42,7 +41,7 @@ var indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/download/wrap.html", "utf8" ) );
 
 var Frontend = function( args ) {
-	_.extend( this, args );
+	Object.assign( this, args );
 };
 
 Frontend.prototype = {
@@ -50,9 +49,10 @@ Frontend.prototype = {
 		var production = this.env.toLowerCase() === "production";
 		options = options || {};
 		if ( options.wrap ) {
-			options = _.defaults( {
+			options = {
+				...options,
 				wrap: false
-			}, options );
+			};
 			return wrapTemplate( {
 				body: this.index( params, options ),
 				resources: this.resources
@@ -106,7 +106,14 @@ Frontend.prototype = {
 				themeVars.folderName = fields[ "theme-folder-name" ] || themeVars.folderName;
 				themeVars.scope = fields.scope || themeVars.scope;
 			}
-			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
+			components = Object
+				.keys( fields )
+				.filter( key => ![
+					"scope",
+					"theme",
+					"theme-folder-name",
+					"version"
+				].includes( key ) );
 			jqueryUi = JqueryUi.find( fields.version );
 
 			if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {

@@ -1,7 +1,6 @@
 "use strict";
 
-var _ = require( "underscore" ),
-	fs = require( "node:fs" ),
+var fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
 	Image = require( "./lib/themeroller-image" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
@@ -38,7 +37,7 @@ var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/te
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/wrap.html", "utf8" ) );
 
 var Frontend = function( args ) {
-	_.extend( this, args, {
+	Object.assign( this, args, {
 		jqueryUiForThemeroller: JqueryUi.find( args.resources.jqueryuiVersionForThemeroller )
 	} );
 };
@@ -51,9 +50,10 @@ Frontend.prototype = {
 		var production = this.env.toLowerCase() === "production";
 		options = options || {};
 		if ( options.wrap ) {
-			options = _.defaults( {
+			options = {
+				...options,
 				wrap: false
-			}, options );
+			};
 			return wrapTemplate( {
 				body: this.index( vars, options ),
 				resources: this.resources
@@ -82,7 +82,7 @@ Frontend.prototype = {
 	css: function( vars ) {
 		var theme = new ThemeRoller( {
 			jqueryUi: this.jqueryUiForThemeroller,
-			vars: _.extend( {
+			vars: Object.assign( {
 				dynamicImage: true,
 				dynamicImageHost: this.host
 			}, vars )
