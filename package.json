@@ -8,7 +8,6 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"archiver": "7.0.1",
 		"async": "3.2.5",
 		"builder-amd": "0.0.3",
 		"builder-jquery-css": "0.0.4",
