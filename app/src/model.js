@@ -475,16 +475,6 @@
 				attributes.version = downloadParams.version;
 			}
 			return this.host + "/themeroller/parsetheme.css?" + QueryString.encode( attributes );
-		},
-
-		rollYourOwnUrl: function() {
-			var attributes;
-			if ( !$.isEmptyObject( omit( this.attributes, [ "downloadParams" ] ) ) ) {
-				attributes = {
-					themeParams: QueryString.encode( omit( this.attributes, [ "downloadParams" ] ) )
-				};
-			}
-			return this.host + "/themeroller/rollyourown" + ( attributes == null ? "" : "?" + QueryString.encode( attributes ) );
 		}
 	} );
 
