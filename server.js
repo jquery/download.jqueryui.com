@@ -10,7 +10,24 @@ process.on( "uncaughtException", function( err ) {
 } );
 
 var frontend,
-	argv = require( "yargs" ).argv,
+	{ parseArgs } = require( "node:util" ),
+	{ values: argv } = parseArgs( {
+		options: {
+			console: {
+				type: "boolean"
+			},
+			nocache: {
+				type: "boolean"
+			},
+			host: {
+				type: "string"
+			},
+			port: {
+				type: "string"
+			}
+		},
+		strict: false
+	} ),
 	express = require( "express" ),
 	async = require( "async" ),
 	Cache = require( "./lib/cache" ),
@@ -32,7 +49,7 @@ var frontend,
 	app = express();
 
 frontend = new Frontend();
-if ( process.argv.indexOf( "--nocache" ) === -1 ) {
+if ( !argv.nocache ) {
 	Cache.on( 60000 * 60 );
 
 	// Cache jquery-ui-themeroller images as well

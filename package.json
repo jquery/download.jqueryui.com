@@ -34,8 +34,7 @@
 		"uglify-js": "3.17.4",
 		"underscore": "1.13.6",
 		"winston": "3.13.0",
-		"wolfy87-eventemitter": "5.2.9",
-		"yargs": "17.7.2"
+		"wolfy87-eventemitter": "5.2.9"
 	},
 	"optionalDependencies": {
 		"modern-syslog": "1.2.0"
