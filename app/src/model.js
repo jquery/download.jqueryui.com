@@ -182,7 +182,7 @@
 				}
 
 				// This is an expensive computation, so avoiding two consecutive calls
-				concurrencyDelay = setTimeout( function() {
+				this.querystringDelay = setTimeout( function() {
 					self._shorten.call( self, self._relevantAttributes.call( self, attributes ), function( shortened ) {
 						dfd.resolve( QueryString.encode( shortened ) );
 					} );
