@@ -8,7 +8,7 @@
  * Released under the MIT license.
  * https://jquery.org/license
  */
-( function( $, Hash, JST, Model, QueryString, undefined ) {
+( function( $, Hash, JST, Model, QueryString ) {
 	"use strict";
 
 	var farbtasticTriggerChangeDelay, model, reloadRollYourOwn, skipHashChange,
@@ -156,7 +156,7 @@
 						} )
 					};
 				},
-				corner: function( attributes ) {
+				corner: function() {
 					return {
 						isCornerType: true
 					};
@@ -435,7 +435,6 @@
 
 			$( this ).after( "<div class=\"texturePicker\"><a href=\"#\"></a><ul></ul></div>" );
 			var texturePicker = $( this ).next(),
-				a = texturePicker.find( "a" ),
 				ul = texturePicker.find( "ul" ),
 				sIndex = texturePicker.prev().get( 0 ).selectedIndex;
 

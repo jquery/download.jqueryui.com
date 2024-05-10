@@ -7,7 +7,7 @@
  * Released under the MIT license.
  * https://jquery.org/license
  */
-( function( exports, $, EventEmitter, undefined ) {
+( function( exports, $, EventEmitter ) {
 	"use strict";
 
 	var emitter = new EventEmitter(),

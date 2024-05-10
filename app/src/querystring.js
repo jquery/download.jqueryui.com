@@ -1,5 +1,4 @@
 /* eslint-env jquery, browser */
-/*global EventEmitter: false */
 /*!
  * jQuery UI helper JavaScript file for QueryString support
  *
@@ -7,7 +6,7 @@
  * Released under the MIT license.
  * https://jquery.org/license
  */
-( function( exports, $, undefined ) {
+( function( exports, $ ) {
 	"use strict";
 
 	var QueryString = exports.QueryString = {};

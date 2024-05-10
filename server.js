@@ -38,7 +38,7 @@ if ( process.argv.indexOf( "--nocache" ) === -1 ) {
 	// Cache jquery-ui-themeroller images as well
 	async.forEachSeries( require( "./lib/themeroller-themegallery" )(), function( theme, callback ) {
 		theme = new( require( "jquery-ui-themeroller" ) )( "", theme.vars );
-		theme.generateImages( function( error, imageFiles ) {
+		theme.generateImages( function( error ) {
 			if ( error ) {
 				error.message = "Caching theme images (2): " + error.message;
 				callback( error );
@@ -71,7 +71,7 @@ function route( app ) {
 	} );
 	app.post( routes.download, function( request, response ) {
 		var form = formidable( {} );
-		form.parse( request, function( err, arrFields, files ) {
+		form.parse( request, function( err, arrFields ) {
 			if ( err ) {
 				return error( err, response );
 			}

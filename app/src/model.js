@@ -8,7 +8,7 @@
  * Released under the MIT license.
  * https://jquery.org/license
  */
-( function( exports, $, EventEmitter, LZMA, QueryString, undefined ) {
+( function( exports, $, EventEmitter, LZMA, QueryString ) {
 	"use strict";
 
 	var Model, DownloadBuilderModel, ThemeRollerModel,
@@ -294,7 +294,7 @@
 				df2.resolve();
 			} else {
 				this.orderedComponentsDfd.done( function() {
-					var booleansArray = $.map( self.orderedComponents, function( component, i ) {
+					var booleansArray = $.map( self.orderedComponents, function( component ) {
 
 						// Each component is true by default.
 						return !( component in attributes ) ? true : attributes[ component ];
@@ -335,8 +335,7 @@
 		},
 
 		themerollerUrl: function( callback ) {
-			var self = this, themeParams,
-				attributes = this.attributes;
+			var self = this, themeParams;
 
 			this.themeParamsUnzipping.done( function() {
 				themeParams = ( self.has.call( self, "themeParams" ) && self.get.call( self, "themeParams" ) !== "none" ? QueryString.decode( self.get.call( self, "themeParams" ) ) : {} );

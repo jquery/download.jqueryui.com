@@ -8,7 +8,7 @@
  * Released under the MIT license.
  * https://jquery.org/license
  */
-( function( $, Hash, JST, Model, undefined ) {
+( function( $, Hash, JST, Model ) {
 	"use strict";
 
 	var dependencies, dependents, model,

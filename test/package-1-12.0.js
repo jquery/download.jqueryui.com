@@ -1,6 +1,6 @@
 "use strict";
 
-var commonFiles, COMMON_FILES_TESTCASES, defaultTheme, newPackage, someWidgets1, someWidgets2, tests, themeFiles, THEME_FILES_TESTCASES,
+var commonFiles, COMMON_FILES_TESTCASES, defaultTheme, someWidgets1, someWidgets2, tests, themeFiles, THEME_FILES_TESTCASES,
 	JqueryUi = require( "../lib/jquery-ui" ),
 	Package = require( "../lib/package-1-12" ),
 	Packager = require( "node-packager" ),

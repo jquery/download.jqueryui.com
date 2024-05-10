@@ -34,7 +34,6 @@ var appinterfaceTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/te
 	demoTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/demo.html", "utf8" ) ),
 	helpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/help.html", "utf8" ) ),
 	indexTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/index.html", "utf8" ) ),
-	jsonpTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/jsonp.js", "utf8" ) ),
 	themegalleryTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/themegallery.html", "utf8" ) ),
 	wrapTemplate = Handlebars.compile( fs.readFileSync( __dirname + "/template/themeroller/wrap.html", "utf8" ) );
 
@@ -49,10 +48,7 @@ Frontend.prototype = {
 		if ( vars && "zThemeParams" in vars ) {
 			delete vars.zThemeParams;
 		}
-		var production = this.env.toLowerCase() === "production",
-			theme = new ThemeRoller( {
-				vars: vars
-			} );
+		var production = this.env.toLowerCase() === "production";
 		options = options || {};
 		if ( options.wrap ) {
 			options = _.defaults( {

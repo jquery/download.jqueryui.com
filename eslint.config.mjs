@@ -39,7 +39,7 @@ export default [
 			// Too many violations
 			"camelcase": "off",
 			"max-len": "off",
-			"no-unused-vars": "off"
+			"no-unused-vars": "error"
 		}
 	},
 
@@ -64,6 +64,7 @@ export default [
 	{
 		files: [ "app/src/**/*.js" ],
 		languageOptions: {
+
 			// No need to keep IE support, so we could bump it to ES2022 as well,
 			// but we need to switch the minifier to something other than UglifJS
 			// which is ES5-only.
