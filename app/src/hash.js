@@ -75,7 +75,7 @@
 	}
 
 	function clean( hash ) {
-		return hash.replace( /^[\?#]+/g, "" );
+		return hash.replace( /^[?#]+/g, "" );
 	}
 
 	function currSearch() {

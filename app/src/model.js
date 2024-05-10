@@ -160,7 +160,7 @@
 		 * - options.concurrencyDelay; TimeoutID that should be cleared on this request. It's used to avoid concurrency of a certain group of calls/requests.
 		 * - options.omit: Array of attributes to omit. Use pick or omit. Default: omit none;
 		 * - options.pick: Array of attributes to pick. Use pick or omit. Default: pick all attributes;
-		 * - options.shorten: A boolean whether or not to shorten the querystring. Default: true.
+		 * - options.shorten: A boolean whether to shorten the querystring. Default: true.
 		 */
 		querystring: function( options ) {
 			var self = this,
@@ -287,7 +287,7 @@
 			// components
 			if ( !this.orderedComponents && this.get( "components" ) ) {
 
-				// We have unprocessed components, so use it an shortned.
+				// We have unprocessed components, so use it as shortened.
 				shortened.components = this.get( "components" );
 				df2.resolve();
 			} else if ( $.isEmptyObject( omit( attributes, [ "folderName", "scope", "themeParams", "version" ] ) ) ) {
