@@ -103,65 +103,55 @@ function log( callback, successMsg, errorMsg ) {
 }
 
 function cloneOrFetch( callback ) {
-	async.series( [
-		function() {
-			if ( fs.existsSync( "tmp/jquery-ui" ) ) {
-				grunt.log.writeln( "Fetch updates for jquery-ui repo" );
-				async.series( [
+	if ( fs.existsSync( "tmp/jquery-ui" ) ) {
+		grunt.log.writeln( "Fetch updates for jquery-ui repo" );
+		async.series( [
 
-					// Fetch branch heads (even if not referenced by tags), see c08cf67.
-					function( callback ) {
-						grunt.util.spawn( {
-							cmd: "git",
-							args: [ "fetch" ],
-							opts: {
-								cwd: "tmp/jquery-ui"
-							}
-						}, callback );
-					},
-
-					// Fetch tags not referenced by heads. Yes, we need both.
-					function( callback ) {
-						grunt.util.spawn( {
-							cmd: "git",
-							args: [ "fetch", "-t" ],
-							opts: {
-								cwd: "tmp/jquery-ui"
-							}
-						}, callback );
-					}
-				], log( callback, "Fetched repo", "Error fetching repo" ) );
-			} else {
-				grunt.log.writeln( "Cloning jquery-ui repo" );
+			// Fetch branch heads (even if not referenced by tags), see c08cf67.
+			function( callback ) {
 				grunt.util.spawn( {
 					cmd: "git",
-					args: [ "clone", "https://github.com/jquery/jquery-ui.git", "jquery-ui" ],
+					args: [ "fetch" ],
 					opts: {
-						cwd: "tmp"
+						cwd: "tmp/jquery-ui"
 					}
-				}, log( callback, "Cloned repo", "Error cloning repo" ) );
+				}, callback );
+			},
+
+			// Fetch tags not referenced by heads. Yes, we need both.
+			function( callback ) {
+				grunt.util.spawn( {
+					cmd: "git",
+					args: [ "fetch", "-t" ],
+					opts: {
+						cwd: "tmp/jquery-ui"
+					}
+				}, callback );
 			}
-		}
-	] );
+		], log( callback, "Fetched repo", "Error fetching repo" ) );
+	} else {
+		grunt.log.writeln( "Cloning jquery-ui repo" );
+		grunt.util.spawn( {
+			cmd: "git",
+			args: [ "clone", "https://github.com/jquery/jquery-ui.git", "jquery-ui" ],
+			opts: {
+				cwd: "tmp"
+			}
+		}, log( callback, "Cloned repo", "Error cloning repo" ) );
+	}
 }
 
 function checkout( jqueryUi ) {
 	var ref = jqueryUi.ref;
 	return function( callback ) {
-		async.series( [
-
-			// Check out jquery-ui
-			function() {
-				grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
-				grunt.util.spawn( {
-					cmd: "git",
-					args: [ "checkout", "-f", ref ],
-					opts: {
-						cwd: "tmp/jquery-ui"
-					}
-				}, log( callback, "Done with checkout", "Error checking out" ) );
+		grunt.log.writeln( "Checking out jquery-ui branch/tag: " + ref );
+		grunt.util.spawn( {
+			cmd: "git",
+			args: [ "checkout", "-f", ref ],
+			opts: {
+				cwd: "tmp/jquery-ui"
 			}
-		] );
+		}, log( callback, "Done with checkout", "Error checking out" ) );
 	};
 }
 
