@@ -4,7 +4,7 @@
  * jQuery UI ThemeRoller client-side JavaScript file
  * https://jqueryui.com/themeroller/
  *
- * Copyright jQuery Foundation and other contributors
+ * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license.
  * https://jquery.org/license
  */
