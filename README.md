@@ -33,7 +33,7 @@ Use the config file to define which jQueryUI version DownloadBuilder should serv
 "jqueryUi": [
   {
     "version": "1.14.0"
-    "dependsOn": "jQuery 1.12+",
+    "dependsOn": "jQuery 1.12+ / 2.2+ / 3.6+ / 4.0+",
     "label": "Stable",
     "stable": true
   },
