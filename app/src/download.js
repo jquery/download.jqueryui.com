@@ -342,9 +342,6 @@
 		if ( "version" in changed ) {
 			versionElement = $( "#download-builder input[type=radio][name=version][value=\"" + model.get( "version" ) + "\"]" );
 			versionElement.trigger( "click" );
-			themesLoad.done( function() {
-				$( ".advanced-settings .folder-name-area" ).toggle( !versionElement.data( "no-theme-folder" ) );
-			} );
 			if ( created.version ) {
 				initComponents( initialComponents );
 			} else {

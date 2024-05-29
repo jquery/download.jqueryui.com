@@ -12,8 +12,6 @@ var cache, downloadLogger, jqueryUis,
 	semver = require( "semver" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
-	ToBeDeprecatedBuilder = require( "./lib/builder" ),
-	ToBeDeprecatedPacker = require( "./lib/packer" ),
 	winston = require( "winston" );
 
 cache = new Cache( "Built Packages Cache" );
@@ -31,10 +29,6 @@ jqueryUis = JqueryUi.all();
 
 Handlebars.registerHelper( "isVersionChecked", function( jqueryUi ) {
 	return JqueryUi.getStable().pkg.version === jqueryUi.pkg.version ? " checked=\"checked\"" : "";
-} );
-
-Handlebars.registerHelper( "isThereThemeFolder", function( jqueryUi ) {
-	return semver.gte( jqueryUi.pkg.version, "1.11.0-a" ) ? " data-no-theme-folder=\"true\"" : "";
 } );
 
 Handlebars.registerHelper( "join", function( array, sep, options ) {
@@ -116,74 +110,38 @@ Frontend.prototype = {
 			components = Object.keys( _.omit( fields, "scope", "theme", "theme-folder-name", "version" ) );
 			jqueryUi = JqueryUi.find( fields.version );
 
-			// The old way to generate a package (to be deprecated when jQuery UI support baseline is UI 1.12).
-			if ( semver.lt( jqueryUi.pkg.version, "1.12.0-a" ) ) {
-				start = new Date();
-				theme = new ThemeRoller( {
-					vars: themeVars,
-					version: fields.version
-				} );
-				builder = new ToBeDeprecatedBuilder( jqueryUi, components, {
-					scope: fields.scope
-				} );
-				packer = new ToBeDeprecatedPacker( builder, theme, {
-					scope: fields.scope
-				} );
-				response.setHeader( "Content-Type", "application/zip" );
-				response.setHeader( "Content-Disposition", "attachment; filename=" + packer.filename() );
-				packer.zipTo( response, function( err, written ) {
-					if ( err ) {
-						return callback( err );
-					}
-
-					// Log statistics
-					downloadLogger.info(
-						JSON.stringify( {
-							build_size: written,
-							build_time: new Date() - start,
-							components: components,
-							theme_name: theme && theme.name || "n/a",
-							version: jqueryUi.pkg.version
-						} )
-					);
-					return callback();
-				} );
-
-			// The new way to generate a package.
+			if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {
+				Package = require( "./lib/package-1-13" );
 			} else {
-				if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {
-					Package = require( "./lib/package-1-13" );
-				} else {
-					Package = require( "./lib/package-1-12" );
-				}
-				packager = new Packager( jqueryUi.files().cache, Package, {
-					components: components,
-					themeVars: themeVars,
-					scope: fields.scope
-				}, { cache: cache } );
-				response.setHeader( "Content-Type", "application/zip" );
-				response.setHeader( "Content-Disposition", "attachment; filename=" + packager.pkg.zipFilename );
-				packager.toZip( response, {
-					basedir: packager.pkg.zipBasedir
-				}, function( error ) {
-					if ( error ) {
-						return callback( error );
-					}
-
-					// Log statistics
-					var toZip = packager.stats.toZip;
-
-					downloadLogger.info(
-						JSON.stringify( {
-							build_size: toZip && toZip.hasOwnProperty( "size" ) ? toZip.size : "unknown",
-							build_time: packager.stats.build.time + ( toZip && toZip.hasOwnProperty( "time" ) ? toZip.time : 0 ),
-							components: components,
-							version: jqueryUi.pkg.version
-						} )
-					);
-					return callback();
-				} );
+				Package = require( "./lib/package-1-12" );
 			}
+			packager = new Packager( jqueryUi.files().cache, Package, {
+				components: components,
+				themeVars: themeVars,
+				scope: fields.scope
+			}, { cache: cache } );
+			response.setHeader( "Content-Type", "application/zip" );
+			response.setHeader( "Content-Disposition", "attachment; filename=" + packager.pkg.zipFilename );
+			packager.toZip( response, {
+				basedir: packager.pkg.zipBasedir
+			}, function( error ) {
+				if ( error ) {
+					return callback( error );
+				}
+
+				// Log statistics
+				var toZip = packager.stats.toZip;
+
+				downloadLogger.info(
+					JSON.stringify( {
+						build_size: toZip && toZip.hasOwnProperty( "size" ) ? toZip.size : "unknown",
+						build_time: packager.stats.build.time + ( toZip && toZip.hasOwnProperty( "time" ) ? toZip.time : 0 ),
+						components: components,
+						version: jqueryUi.pkg.version
+					} )
+				);
+				return callback();
+			} );
 		} catch ( err ) {
 			return callback( err );
 		}

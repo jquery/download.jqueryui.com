@@ -14,23 +14,6 @@
 			"version": "1.12.1",
 			"dependsOn": "jQuery1.7+",
 			"label": "Legacy"
-		},
-		{
-			"version": "1.11.4",
-			"dependsOn": "jQuery1.6+",
-			"label": "Legacy"
-		},
-		{
-			"version": "1.10.4",
-			"dependsOn": "jQuery1.6+",
-			"label": "Legacy",
-			"docs": true
-		},
-		{
-			"version": "1.9.2",
-			"dependsOn": "jQuery1.6+",
-			"label": "Legacy",
-			"docs": true
 		}
 	],
 	"jquery": "3.7.1"

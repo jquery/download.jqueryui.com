@@ -20,7 +20,7 @@
 			{{#each jqueryUis}}
 				<div class="field-pair">
 					<label class="clearfix">
-						<input type="radio" id="version-{{this.pkg.version}}" value="{{this.pkg.version}}" name="version"{{{isVersionChecked this}}}{{{isThereThemeFolder this}}}>
+						<input type="radio" id="version-{{this.pkg.version}}" value="{{this.pkg.version}}" name="version"{{{isVersionChecked this}}}>
 						<span class="version-title">{{this.pkg.version}}</span>
 						<span class="version-label">({{this.label}}, for {{this.dependsOn}})</span>
 					</label>
