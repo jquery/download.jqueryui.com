@@ -52,9 +52,9 @@ frontend = new Frontend();
 if ( !argv.nocache ) {
 	Cache.on( 60000 * 60 );
 
-	// Cache jquery-ui-themeroller images as well
+	// Cache themeroller images as well
 	async.forEachSeries( require( "./lib/themeroller-themegallery" )(), function( theme, callback ) {
-		theme = new( require( "jquery-ui-themeroller" ) )( "", theme.vars );
+		theme = new( require( "./lib/themeroller" ) )( { vars: theme.vars } );
 		theme.generateImages( function( error ) {
 			if ( error ) {
 				error.message = "Caching theme images (2): " + error.message;

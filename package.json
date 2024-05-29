@@ -25,7 +25,6 @@
 		"grunt-contrib-uglify": "5.2.2",
 		"grunt-eslint": "25.0.0",
 		"handlebars": "4.7.8",
-		"jquery-ui-themeroller": "0.0.8",
 		"lzma": "2.3.2",
 		"node-packager": "0.0.7",
 		"semver": "7.6.2",
