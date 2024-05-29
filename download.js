@@ -8,7 +8,6 @@ var cache, downloadLogger, jqueryUis,
 	logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" ),
 	Packager = require( "node-packager" ),
 	querystring = require( "querystring" ),
-	semver = require( "semver" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
 	ThemeRoller = require( "./lib/themeroller" ),
 	winston = require( "winston" );
@@ -116,11 +115,8 @@ Frontend.prototype = {
 				].includes( key ) );
 			jqueryUi = JqueryUi.find( fields.version );
 
-			if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {
-				Package = require( "./lib/package-1-13" );
-			} else {
-				Package = require( "./lib/package-1-12" );
-			}
+			Package = require( "./lib/package" );
+
 			packager = new Packager( jqueryUi.files().cache, Package, {
 				components: components,
 				themeVars: themeVars,

@@ -3,8 +3,7 @@
 var async = require( "async" ),
 	fs = require( "node:fs" ),
 	fsp = require( "node:fs/promises" ),
-	path = require( "node:path" ),
-	semver = require( "semver" );
+	path = require( "node:path" );
 
 module.exports = function( grunt ) {
 
@@ -259,24 +258,14 @@ function buildPackages( folder, callback ) {
 
 			// (a) Build jquery-ui-[VERSION].zip;
 			function( callback ) {
-				if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {
-					packagerZip( "./lib/package-1-13", "jquery-ui-" + jqueryUi.pkg.version,
-						new ThemeGallery( jqueryUi )[ 0 ].vars, folder, jqueryUi, callback );
-				} else {
-					packagerZip( "./lib/package-1-12", "jquery-ui-" + jqueryUi.pkg.version,
-						new ThemeGallery( jqueryUi )[ 0 ].vars, folder, jqueryUi, callback );
-				}
+				packagerZip( "./lib/package", "jquery-ui-" + jqueryUi.pkg.version,
+					new ThemeGallery( jqueryUi )[ 0 ].vars, folder, jqueryUi, callback );
 			},
 
 			// (b) Build themes package jquery-ui-themes-[VERSION].zip;
 			function( callback ) {
-				if ( semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) ) {
-					packagerZip( "./lib/package-1-13-themes", "jquery-ui-themes-" + jqueryUi.pkg.version,
-						null, folder, jqueryUi, callback );
-				} else {
-					packagerZip( "./lib/package-1-12-themes", "jquery-ui-themes-" + jqueryUi.pkg.version,
-						null, folder, jqueryUi, callback );
-				}
+				packagerZip( "./lib/package-themes", "jquery-ui-themes-" + jqueryUi.pkg.version,
+					null, folder, jqueryUi, callback );
 			}
 
 		], function( error ) {

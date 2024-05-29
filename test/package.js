@@ -2,9 +2,8 @@
 
 var commonFiles, COMMON_FILES_TESTCASES, defaultTheme, someWidgets1, someWidgets2, tests, themeFiles, THEME_FILES_TESTCASES,
 	JqueryUi = require( "../lib/jquery-ui" ),
-	Package = require( "../lib/package-1-13" ),
+	Package = require( "../lib/package" ),
 	Packager = require( "node-packager" ),
-	semver = require( "semver" ),
 	themeGallery = require( "../lib/themeroller-themegallery" )();
 
 function filePresent( files, filepath ) {
@@ -192,12 +191,7 @@ tests = {
 	}
 };
 
-JqueryUi.all().filter( function( jqueryUi ) {
-
-	// Filter supported releases only
-	return semver.gte( jqueryUi.pkg.version, "1.13.0-a" ) &&
-		semver.lt( jqueryUi.pkg.version, "1.14.0-a" );
-} ).forEach( function( jqueryUi ) {
+JqueryUi.all().forEach( function( jqueryUi ) {
 	function deepTestBuild( obj, tests ) {
 		var allComponents = jqueryUi.components().map( function( component ) {
 				return component.name;
