@@ -14,8 +14,8 @@ function filePresent( files, filepath ) {
 }
 
 defaultTheme = themeGallery[ 0 ].vars;
-someWidgets1 = "widget core position widgets/autocomplete widgets/button widgets/menu widgets/progressbar widgets/spinner widgets/tabs".split( " " );
-someWidgets2 = "widget core widgets/mouse position widgets/draggable widgets/resizable widgets/button widgets/datepicker widgets/dialog widgets/slider widgets/tooltip".split( " " );
+someWidgets1 = "widget position widgets/autocomplete widgets/button widgets/menu widgets/progressbar widgets/spinner widgets/tabs".split( " " );
+someWidgets2 = "widget widgets/mouse position widgets/draggable widgets/resizable widgets/button widgets/datepicker widgets/dialog widgets/slider widgets/tooltip".split( " " );
 
 commonFiles = [
 	"external/jquery/jquery.js",
@@ -127,7 +127,7 @@ tests = {
 			themeVars: defaultTheme
 		} );
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( someWidgets1.length, 9 );
+		test.equal( someWidgets1.length, 8 );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
 				return test.done( error );
@@ -135,7 +135,7 @@ tests = {
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
 
-			// 9 components selected, 6 have CSS, plus core, theme,
+			// 8 components selected, 6 have CSS, plus core, theme,
 			// checkboxradio, controlgroup (tmp button dependencies)
 			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
 			test.equal( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
@@ -149,7 +149,7 @@ tests = {
 			themeVars: defaultTheme
 		} );
 		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( someWidgets2.length, 11 );
+		test.equal( someWidgets2.length, 10 );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
 				return test.done( error );
@@ -157,7 +157,7 @@ tests = {
 			commonFilesCheck( test, files );
 			themeFilesCheck( test, files, true );
 
-			// 11 components selected, 7 have CSS, plus core, theme,
+			// 10 components selected, 7 have CSS, plus core, theme,
 			// checkboxradio, controlgroup (tmp button dependencies)
 			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
 			test.equal( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
