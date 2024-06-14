@@ -120,6 +120,7 @@ Frontend.prototype = {
 			packager = new Packager( jqueryUi.files().cache, Package, {
 				components: components,
 				themeVars: themeVars,
+				jQueryUiVersion: jqueryUi.pkg.version,
 				scope: fields.scope
 			}, { cache: cache } );
 			response.setHeader( "Content-Type", "application/zip" );
