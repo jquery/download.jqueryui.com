@@ -57,142 +57,140 @@ function runTests( context, jQueryUiVersion ) {
 	QUnit.test( `[${ jQueryUiVersion }]: select all components with the default theme`, function( assert ) {
 		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 
-		const done = assert.async();
-
-		const pkg = new Packager( context.files, Package, {
-			components: context.allComponents,
-			themeVars: defaultTheme
-		} );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			commonFilesCheck( assert, files );
-			themeFilesCheck( assert, files, true );
-			done();
+		return new Promise( ( resolve, reject ) => {
+			const pkg = new Packager( context.files, Package, {
+				components: context.allComponents,
+				themeVars: defaultTheme
+			} );
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				commonFilesCheck( assert, files );
+				themeFilesCheck( assert, files, true );
+				resolve();
+			} );
 		} );
 	} );
 
 	QUnit.test( `[${ jQueryUiVersion }]: select all components with a different theme`, function( assert ) {
 		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
 
-		const done = assert.async();
-
-		const pkg = new Packager( context.files, Package, {
-			components: context.allComponents,
-			themeVars: themeGallery[ 1 ].vars
-		} );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			commonFilesCheck( assert, files );
-			themeFilesCheck( assert, files, true );
-			done();
+		return new Promise( ( resolve, reject ) => {
+			const pkg = new Packager( context.files, Package, {
+				components: context.allComponents,
+				themeVars: themeGallery[ 1 ].vars
+			} );
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				commonFilesCheck( assert, files );
+				themeFilesCheck( assert, files, true );
+				resolve();
+			} );
 		} );
 	} );
 
 	QUnit.test( `[${ jQueryUiVersion }]: test: select all widgets`, function( assert ) {
 		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
 
-		const done = assert.async();
+		return new Promise( ( resolve, reject ) => {
+			const allWidgets = context.allWidgets;
+			const pkg = new Packager( context.files, Package, {
+				components: allWidgets,
+				themeVars: defaultTheme
+			} );
+			assert.strictEqual( allWidgets.length, 15, "All widgets count" );
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				commonFilesCheck( assert, files );
+				themeFilesCheck( assert, files, true );
 
-		const allWidgets = context.allWidgets;
-		const pkg = new Packager( context.files, Package, {
-			components: allWidgets,
-			themeVars: defaultTheme
-		} );
-		assert.strictEqual( allWidgets.length, 15, "All widgets count" );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			commonFilesCheck( assert, files );
-			themeFilesCheck( assert, files, true );
+				// 15 widgets, 14 have CSS, plus core, theme, draggable, resizable
+				const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+				assert.strictEqual( includes[ 1 ].split( "," ).length, 18, allWidgets + " -> " + includes[ 1 ] );
 
-			// 15 widgets, 14 have CSS, plus core, theme, draggable, resizable
-			const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			assert.strictEqual( includes[ 1 ].split( "," ).length, 18, allWidgets + " -> " + includes[ 1 ] );
-
-			done();
+				resolve();
+			} );
 		} );
 	} );
 
 	QUnit.test( `[${ jQueryUiVersion }]: test: select all effects`, function( assert ) {
 		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
 
-		const done = assert.async();
-
-		const pkg = new Packager( context.files, Package, {
-			components: context.allEffects,
-			themeVars: null
-		} );
-		assert.strictEqual( context.allEffects.length, 16, "All effects count" );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			commonFilesCheck( assert, files );
-			themeFilesCheck( assert, files, false );
-			done();
+		return new Promise( ( resolve, reject ) => {
+			const pkg = new Packager( context.files, Package, {
+				components: context.allEffects,
+				themeVars: null
+			} );
+			assert.strictEqual( context.allEffects.length, 16, "All effects count" );
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				commonFilesCheck( assert, files );
+				themeFilesCheck( assert, files, false );
+				resolve();
+			} );
 		} );
 	} );
 
 	QUnit.test( `[${ jQueryUiVersion }]: select some widgets (1)`, function( assert ) {
 		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
 
-		const done = assert.async();
+		return new Promise( ( resolve, reject ) => {
+			const pkg = new Packager( context.files, Package, {
+				components: someWidgets1,
+				themeVars: defaultTheme
+			} );
+			assert.strictEqual( someWidgets1.length, 8, "Some widgets count" );
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				commonFilesCheck( assert, files );
+				themeFilesCheck( assert, files, true );
 
-		const pkg = new Packager( context.files, Package, {
-			components: someWidgets1,
-			themeVars: defaultTheme
-		} );
-		assert.strictEqual( someWidgets1.length, 8, "Some widgets count" );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			commonFilesCheck( assert, files );
-			themeFilesCheck( assert, files, true );
+				// 8 components selected, 6 have CSS, plus core, theme,
+				// checkboxradio, controlgroup (tmp button dependencies)
+				const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+				assert.strictEqual( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
 
-			// 8 components selected, 6 have CSS, plus core, theme,
-			// checkboxradio, controlgroup (tmp button dependencies)
-			const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			assert.strictEqual( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
-
-			done();
+				resolve();
+			} );
 		} );
 	} );
 
 	QUnit.test( `[${ jQueryUiVersion }]: select some widgets (2)`, function( assert ) {
 		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
 
-		const done = assert.async();
+		return new Promise( ( resolve, reject ) => {
+			const pkg = new Packager( context.files, Package, {
+				components: someWidgets2,
+				themeVars: defaultTheme
+			} );
+			assert.strictEqual( someWidgets2.length, 10, "Some widgets count" );
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				commonFilesCheck( assert, files );
+				themeFilesCheck( assert, files, true );
 
-		const pkg = new Packager( context.files, Package, {
-			components: someWidgets2,
-			themeVars: defaultTheme
-		} );
-		assert.strictEqual( someWidgets2.length, 10, "Some widgets count" );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			commonFilesCheck( assert, files );
-			themeFilesCheck( assert, files, true );
+				// 10 components selected, 7 have CSS, plus core, theme,
+				// checkboxradio, controlgroup (tmp button dependencies)
+				const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+				assert.strictEqual( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
 
-			// 10 components selected, 7 have CSS, plus core, theme,
-			// checkboxradio, controlgroup (tmp button dependencies)
-			const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			assert.strictEqual( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
-
-			done();
+				resolve();
+			} );
 		} );
 	} );
 
 	QUnit.test( `[${ jQueryUiVersion }]: scope widget CSS`, function( assert ) {
-		const done = assert.async();
-
 		const filesToCheck = [
 			"jquery-ui.css",
 			"jquery-ui.min.css"
@@ -200,21 +198,23 @@ function runTests( context, jQueryUiVersion ) {
 
 		assert.expect( filesToCheck.length );
 
-		const scope = "#wrapper";
-		const scopeRe = new RegExp( scope );
-		const pkg = new Packager( context.files, Package, {
-			components: context.allComponents,
-			themeVars: defaultTheme,
-			scope: scope
-		} );
-		pkg.toJson( function( error, files ) {
-			if ( error ) {
-				return done( error );
-			}
-			filesToCheck.forEach( function( filepath ) {
-				assert.ok( scopeRe.test( files[ filepath ] ), "Scope selector on \"" + filepath + "\" present." );
+		return new Promise( ( resolve, reject ) => {
+			const scope = "#wrapper";
+			const scopeRe = new RegExp( scope );
+			const pkg = new Packager( context.files, Package, {
+				components: context.allComponents,
+				themeVars: defaultTheme,
+				scope: scope
 			} );
-			done();
+			pkg.toJson( function( error, files ) {
+				if ( error ) {
+					return reject( error );
+				}
+				filesToCheck.forEach( function( filepath ) {
+					assert.ok( scopeRe.test( files[ filepath ] ), "Scope selector on \"" + filepath + "\" present." );
+				} );
+				resolve();
+			} );
 		} );
 	} );
 }
