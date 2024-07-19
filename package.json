@@ -15,7 +15,7 @@
 		"express": "4.19.2",
 		"fast-glob": "3.3.2",
 		"formidable": "3.5.1",
-		"globals": "15.3.0",
+		"globals": "15.8.0",
 		"gm": "1.25.0",
 		"grunt": "1.6.1",
 		"grunt-check-modules": "1.1.0",
@@ -27,23 +27,22 @@
 		"handlebars": "4.7.8",
 		"lzma": "2.3.2",
 		"node-packager": "0.0.7",
-		"semver": "7.6.2",
+		"qunit": "2.21.0",
+		"semver": "7.6.3",
 		"sqwish": "0.2.2",
-		"uglify-js": "3.17.4",
-		"winston": "3.13.0",
+		"tap-diff": "0.1.1",
+		"uglify-js": "3.19.0",
+		"winston": "3.13.1",
 		"wolfy87-eventemitter": "5.2.9"
 	},
 	"optionalDependencies": {
 		"modern-syslog": "1.2.0"
 	},
-	"devDependencies": {
-		"nodeunit": "0.11.3"
-	},
 	"main": "main.js",
 	"scripts": {
-		"test": "nodeunit test"
+		"test": "qunit --require ./test/setup.js test"
 	},
 	"engines": {
-		"node": "18 || 20"
+		"node": "18 || 20 || 22"
 	}
 }
