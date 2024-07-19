@@ -1,13 +1,15 @@
 "use strict";
 
-var commonFiles, COMMON_FILES_TESTCASES, defaultTheme, someWidgets1, someWidgets2, tests, themeFiles, THEME_FILES_TESTCASES,
-	JqueryUi = require( "../lib/jquery-ui" ),
-	Package = require( "../lib/package" ),
-	Packager = require( "node-packager" ),
-	themeGallery = require( "../lib/themeroller-themegallery" )();
+QUnit.module( "package" );
+
+let commonFiles, COMMON_FILES_TESTCASES, defaultTheme, someWidgets1, someWidgets2, themeFiles, THEME_FILES_TESTCASES;
+const JqueryUi = require( "../lib/jquery-ui" );
+const Package = require( "../lib/package" );
+const Packager = require( "node-packager" );
+const themeGallery = require( "../lib/themeroller-themegallery" )();
 
 function filePresent( files, filepath ) {
-	var filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
+	const filepathRe = filepath instanceof RegExp ? filepath : new RegExp( filepath.replace( /\*/g, "[^\/]*" ).replace( /\./g, "\\." ).replace( /(.*)/, "^$1$" ) );
 	return Object.keys( files ).some( function( filepath ) {
 		return filepathRe.test( filepath );
 	} );
@@ -28,9 +30,9 @@ commonFiles = [
 	"jquery-ui.structure.min.css"
 ];
 COMMON_FILES_TESTCASES = commonFiles.length;
-function commonFilesCheck( test, files ) {
+function commonFilesCheck( assert, files ) {
 	commonFiles.forEach( function( filepath ) {
-		test.ok( filePresent( files, filepath ), "Missing a common file \"" + filepath + "\"." );
+		assert.ok( filePresent( files, filepath ), "A common file \"" + filepath + "\" present." );
 	} );
 }
 
@@ -40,195 +42,204 @@ themeFiles = [
 	"images/ui-icons*png"
 ];
 THEME_FILES_TESTCASES = themeFiles.length;
-function themeFilesCheck( test, files, theme ) {
+function themeFilesCheck( assert, files, theme ) {
 	themeFiles.forEach( function( filepath ) {
 		if ( theme ) {
-			test.ok( filePresent( files, filepath ), "Missing a theme file \"" + filepath + "\"." );
+			assert.ok( filePresent( files, filepath ), "A theme file \"" + filepath + "\" present." );
 		} else {
-			test.ok( !filePresent( files, filepath ), "Should not include the theme file \"" + filepath + "\"." );
+			assert.ok( !filePresent( files, filepath ), "The theme file \"" + filepath + "\" not included." );
 		}
 	} );
 }
 
-tests = {
-	"test: select all components": {
-		"with the default theme": function( test ) {
-			var pkg = new Packager( this.files, Package, {
-				components: this.allComponents,
-				themeVars: defaultTheme
-			} );
-			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
-			pkg.toJson( function( error, files ) {
-				if ( error ) {
-					return test.done( error );
-				}
-				commonFilesCheck( test, files );
-				themeFilesCheck( test, files, true );
-				test.done();
-			} );
-		},
-		"with a different theme": function( test ) {
-			var pkg = new Packager( this.files, Package, {
-				components: this.allComponents,
-				themeVars: themeGallery[ 1 ].vars
-			} );
-			test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
-			pkg.toJson( function( error, files ) {
-				if ( error ) {
-					return test.done( error );
-				}
-				commonFilesCheck( test, files );
-				themeFilesCheck( test, files, true );
-				test.done();
-			} );
-		}
-	},
-	"test: select all widgets": function( test ) {
-		var allWidgets = this.allWidgets;
-		var pkg = new Packager( this.files, Package, {
+function runTests( context, jQueryUiVersion ) {
+
+	QUnit.test( `[${ jQueryUiVersion }]: select all components with the default theme`, function( assert ) {
+		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
+
+		const done = assert.async();
+
+		const pkg = new Packager( context.files, Package, {
+			components: context.allComponents,
+			themeVars: defaultTheme
+		} );
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
+				return done( error );
+			}
+			commonFilesCheck( assert, files );
+			themeFilesCheck( assert, files, true );
+			done();
+		} );
+	} );
+
+	QUnit.test( `[${ jQueryUiVersion }]: select all components with a different theme`, function( assert ) {
+		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES );
+
+		const done = assert.async();
+
+		const pkg = new Packager( context.files, Package, {
+			components: context.allComponents,
+			themeVars: themeGallery[ 1 ].vars
+		} );
+		pkg.toJson( function( error, files ) {
+			if ( error ) {
+				return done( error );
+			}
+			commonFilesCheck( assert, files );
+			themeFilesCheck( assert, files, true );
+			done();
+		} );
+	} );
+
+	QUnit.test( `[${ jQueryUiVersion }]: test: select all widgets`, function( assert ) {
+		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
+
+		const done = assert.async();
+
+		const allWidgets = context.allWidgets;
+		const pkg = new Packager( context.files, Package, {
 			components: allWidgets,
 			themeVars: defaultTheme
 		} );
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( allWidgets.length, 15 );
+		assert.strictEqual( allWidgets.length, 15, "All widgets count" );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
-				return test.done( error );
+				return done( error );
 			}
-			commonFilesCheck( test, files );
-			themeFilesCheck( test, files, true );
+			commonFilesCheck( assert, files );
+			themeFilesCheck( assert, files, true );
 
 			// 15 widgets, 14 have CSS, plus core, theme, draggable, resizable
-			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			test.equal( includes[ 1 ].split( "," ).length, 18, allWidgets + " -> " + includes[ 1 ] );
+			const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+			assert.strictEqual( includes[ 1 ].split( "," ).length, 18, allWidgets + " -> " + includes[ 1 ] );
 
-			test.done();
+			done();
 		} );
-	},
-	"test: select all effects": function( test ) {
-		var pkg = new Packager( this.files, Package, {
-			components: this.allEffects,
+	} );
+
+	QUnit.test( `[${ jQueryUiVersion }]: test: select all effects`, function( assert ) {
+		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
+
+		const done = assert.async();
+
+		const pkg = new Packager( context.files, Package, {
+			components: context.allEffects,
 			themeVars: null
 		} );
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 1 );
-		test.equal( this.allEffects.length, 16 );
+		assert.strictEqual( context.allEffects.length, 16, "All effects count" );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
-				return test.done( error );
+				return done( error );
 			}
-			commonFilesCheck( test, files );
-			themeFilesCheck( test, files, false );
-			test.done();
+			commonFilesCheck( assert, files );
+			themeFilesCheck( assert, files, false );
+			done();
 		} );
-	},
-	"test: select some widgets (1)": function( test ) {
-		var pkg = new Packager( this.files, Package, {
+	} );
+
+	QUnit.test( `[${ jQueryUiVersion }]: select some widgets (1)`, function( assert ) {
+		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
+
+		const done = assert.async();
+
+		const pkg = new Packager( context.files, Package, {
 			components: someWidgets1,
 			themeVars: defaultTheme
 		} );
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( someWidgets1.length, 8 );
+		assert.strictEqual( someWidgets1.length, 8, "Some widgets count" );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
-				return test.done( error );
+				return done( error );
 			}
-			commonFilesCheck( test, files );
-			themeFilesCheck( test, files, true );
+			commonFilesCheck( assert, files );
+			themeFilesCheck( assert, files, true );
 
 			// 8 components selected, 6 have CSS, plus core, theme,
 			// checkboxradio, controlgroup (tmp button dependencies)
-			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			test.equal( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
+			const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+			assert.strictEqual( includes[ 1 ].split( "," ).length, 10, someWidgets1 + " -> " + includes[ 1 ] );
 
-			test.done();
+			done();
 		} );
-	},
-	"test: select some widgets (2)": function( test ) {
-		var pkg = new Packager( this.files, Package, {
+	} );
+
+	QUnit.test( `[${ jQueryUiVersion }]: select some widgets (2)`, function( assert ) {
+		assert.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
+
+		const done = assert.async();
+
+		const pkg = new Packager( context.files, Package, {
 			components: someWidgets2,
 			themeVars: defaultTheme
 		} );
-		test.expect( COMMON_FILES_TESTCASES + THEME_FILES_TESTCASES + 2 );
-		test.equal( someWidgets2.length, 10 );
+		assert.strictEqual( someWidgets2.length, 10, "Some widgets count" );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
-				return test.done( error );
+				return done( error );
 			}
-			commonFilesCheck( test, files );
-			themeFilesCheck( test, files, true );
+			commonFilesCheck( assert, files );
+			themeFilesCheck( assert, files, true );
 
 			// 10 components selected, 7 have CSS, plus core, theme,
 			// checkboxradio, controlgroup (tmp button dependencies)
-			var includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
-			test.equal( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
+			const includes = files[ "jquery-ui.min.css" ].match( /\* Includes: (.+)/ );
+			assert.strictEqual( includes[ 1 ].split( "," ).length, 11, someWidgets2 + " -> " + includes[ 1 ] );
 
-			test.done();
+			done();
 		} );
-	},
-	"test: scope widget CSS": function( test ) {
-		var pkg,
-			filesToCheck = [
-				"jquery-ui.css",
-				"jquery-ui.min.css"
-			],
-			scope = "#wrapper",
-			scopeRe = new RegExp( scope );
-		pkg = new Packager( this.files, Package, {
-			components: this.allComponents,
+	} );
+
+	QUnit.test( `[${ jQueryUiVersion }]: scope widget CSS`, function( assert ) {
+		const done = assert.async();
+
+		const filesToCheck = [
+			"jquery-ui.css",
+			"jquery-ui.min.css"
+		];
+
+		assert.expect( filesToCheck.length );
+
+		const scope = "#wrapper";
+		const scopeRe = new RegExp( scope );
+		const pkg = new Packager( context.files, Package, {
+			components: context.allComponents,
 			themeVars: defaultTheme,
 			scope: scope
 		} );
-		test.expect( filesToCheck.length );
 		pkg.toJson( function( error, files ) {
 			if ( error ) {
-				return test.done( error );
+				return done( error );
 			}
 			filesToCheck.forEach( function( filepath ) {
-				test.ok( scopeRe.test( files[ filepath ] ), "Missing scope selector on \"" + filepath + "\"." );
+				assert.ok( scopeRe.test( files[ filepath ] ), "Scope selector on \"" + filepath + "\" present." );
 			} );
-			test.done();
+			done();
 		} );
-	}
-};
+	} );
+}
 
 JqueryUi.all().forEach( function( jqueryUi ) {
-	function deepTestBuild( obj, tests ) {
-		var allComponents = jqueryUi.components().map( function( component ) {
-				return component.name;
-			} ),
-			allEffects = jqueryUi.components().filter( function( component ) {
-				return component.category === "Effects";
-			} ).map( function( component ) {
-				return component.name;
-			} ),
-			allWidgets = jqueryUi.components().filter( function( component ) {
-				return component.category === "Widgets";
-			} ).map( function( component ) {
-				return [ component.name ];
-			} ).reduce( function( flat, arr ) {
-				return flat.concat( arr );
-			}, [] ).sort().filter( function( element, i, arr ) {
+	const allComponents = jqueryUi.components().map( component => component.name );
 
-				// unique
-				return i === arr.indexOf( element );
-			} ),
-			files = jqueryUi.files().cache;
-		Object.keys( tests ).forEach( function( i ) {
-			if ( typeof tests[ i ] === "object" ) {
-				obj[ i ] = {};
-				deepTestBuild( obj[ i ], tests[ i ] );
-			} else {
-				obj[ i ] = function( test ) {
-					tests[ i ].call( {
-						allComponents: allComponents,
-						allEffects: allEffects,
-						allWidgets: allWidgets,
-						files: files
-					}, test );
-				};
-			}
-		} );
-	}
-	module.exports[ jqueryUi.pkg.version ] = {};
-	deepTestBuild( module.exports[ jqueryUi.pkg.version ], tests );
+	const allEffects = jqueryUi.components()
+			.filter( component => component.category === "Effects" )
+			.map( component => component.name );
+
+	const allWidgets = jqueryUi.components()
+		.filter( component => component.category === "Widgets" )
+		.map( component => component.name )
+		.sort()
+
+		// unique
+		.filter( ( element, i, arr ) => i === arr.indexOf( element ) );
+
+	const files = jqueryUi.files().cache;
+
+	runTests( {
+		allComponents: allComponents,
+		allEffects: allEffects,
+		allWidgets: allWidgets,
+		files: files
+	}, jqueryUi.pkg.version );
 } );

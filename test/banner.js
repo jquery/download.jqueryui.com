@@ -1,5 +1,7 @@
 "use strict";
 
+QUnit.module( "banner" );
+
 var banner = require( "../lib/banner" );
 
 function todayDate() {
@@ -21,9 +23,7 @@ var pkg = {
 		"* Includes: widgets/accordion.js, widgets/autocomplete.js\n" +
 		"* Copyright OpenJS Foundation and other contributors; Licensed MIT */\n\n";
 
-module.exports = {
-	"test: case 1": function( test ) {
-		test.ok( output === banner( pkg, fileNames ), "Not expected output" );
-		test.done();
-	}
-};
+QUnit.test( "banner", function( assert ) {
+	assert.expect( 1 );
+	assert.strictEqual( banner( pkg, fileNames ), output, "Banner generated properly" );
+} );

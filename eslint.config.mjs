@@ -56,7 +56,7 @@ export default [
 			globals: {
 				...globals.es2021,
 				...globals.node,
-				...globals.mocha
+				...globals.qunit
 			}
 		}
 	},

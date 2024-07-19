@@ -1,89 +1,90 @@
 "use strict";
 
-var fs = require( "node:fs/promises" ),
-	ThemeRoller = require( "../lib/themeroller" );
+const fs = require( "node:fs/promises" );
+const ThemeRoller = require( "../lib/themeroller" );
 
-module.exports = {
-	"test: folder name": {
-		"default \"custom-theme\"": function( test ) {
-			var customTheme = new ThemeRoller( {
-				vars: { ffDefault: "MyCustomFont" }
-			} );
-			test.ok( customTheme.folderName() === "custom-theme", "Default folder name \"" + customTheme.folderName() + "\" is different from \"custom-theme\"" );
-			test.done();
-		},
+QUnit.module( "themeroller", function() {
 
-		"default when theme is null \"no-theme\"": function( test ) {
-			var theme = new ThemeRoller( {
-				vars: null
-			} );
-			test.ok( theme.folderName() === "no-theme", "Default folder name \"" + theme.folderName() + "\" is different from \"no-theme\"" );
-			test.done();
-		},
-
-		"custom folder name based on theme's name": function( test ) {
-			var theme = new ThemeRoller( {
-				vars: { name: "My Name" }
-			} );
-			test.ok( theme.folderName() === "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
-			test.done();
-		},
-
-		"custom folder name": function( test ) {
-			var theme = new ThemeRoller( {
-				vars: { folderName: "my-name" }
-			} );
-			test.ok( theme.folderName() === "my-name", "Folder name \"my-name\" expected, but got \"" + theme.folderName() + "\"" );
-			test.done();
-		}
-	}
-};
-
-const themeRollerTests = module.exports[ "test: ThemeRoller" ] = {};
-
-( function() {
-	function dropThemeUrl( cssSource ) {
-		return cssSource.replace( /\n\s*\* To view and modify this theme, visit https?:\/\/jqueryui\.com\/themeroller\/[^\n]+\n/, "\n" );
-	}
-
-	[ "1.12.1", "1.13.3" ].forEach( ( jQueryUiVersion ) => {
-		let theme;
-
-		themeRollerTests[ `with jQuery UI ${ jQueryUiVersion }` ] = {
-			async setUp( callback ) {
-				const varsString = await fs.readFile( `${ __dirname }/fixtures/vars/smoothness.json`, "utf-8" );
-				const vars = JSON.parse( varsString );
-
-				theme = new ThemeRoller( { vars, version: jQueryUiVersion } );
-				callback();
-			},
-
-			async [ "should instantiate" ]( test ) {
-				test.ok( theme instanceof ThemeRoller );
-				test.done();
-			},
-
-			async [ "should generate the theme CSS" ]( test ) {
-				const smoothnessCssFixture = await fs.readFile( `${ __dirname }/fixtures/jquery-ui-${ jQueryUiVersion }/themes/smoothness.css`, "utf-8" );
-
-				test.equal(
-					dropThemeUrl( theme.css() ),
-					dropThemeUrl( smoothnessCssFixture )
-				);
-				test.done();
-			},
-
-			async [ "should generate images" ]( test ) {
-				theme.generateImages( function( error, images ) {
-					try {
-						test.strictEqual( error, null );
-						test.ok( images && typeof images === "object" );
-					} finally {
-						test.done();
-					}
-				} );
-			}
-		};
+	QUnit.test( "folder name: default \"custom-theme\"", function( assert ) {
+		assert.expect( 1 );
+		const customTheme = new ThemeRoller( {
+			vars: { ffDefault: "MyCustomFont" }
+		} );
+		assert.strictEqual( customTheme.folderName(), "custom-theme", "Default folder name" );
 	} );
 
-} )();
+	QUnit.test( "folder name: default when theme is null \"no-theme\"", function( assert ) {
+		assert.expect( 1 );
+		const theme = new ThemeRoller( {
+			vars: null
+		} );
+		assert.strictEqual( theme.folderName(), "no-theme", "Default folder name" );
+	} );
+
+	QUnit.test( "folder name: custom folder name based on theme's name", function( assert ) {
+		assert.expect( 1 );
+		const theme = new ThemeRoller( {
+			vars: { name: "My Name" }
+		} );
+		assert.strictEqual( theme.folderName(), "my-name", "Default folder name" );
+	} );
+
+	QUnit.test( "folder name: custom folder name", function( assert ) {
+		assert.expect( 1 );
+		const theme = new ThemeRoller( {
+			vars: { folderName: "my-name" }
+		} );
+		assert.strictEqual( theme.folderName(), "my-name", "Default folder name" );
+	} );
+
+	( function() {
+		function dropThemeUrl( cssSource ) {
+			return cssSource.replace( /\n\s*\* To view and modify this theme, visit https?:\/\/jqueryui\.com\/themeroller\/[^\n]+\n/, "\n" );
+		}
+
+		[ "1.12.1", "1.13.3", "1.14.0-beta.2" ].forEach( ( jQueryUiVersion ) => {
+			let theme;
+
+			QUnit.module( `with jQuery UI ${ jQueryUiVersion }`, function( hooks ) {
+				hooks.beforeEach( async function setUp() {
+					const varsString = await fs.readFile( `${ __dirname }/fixtures/vars/smoothness.json`, "utf-8" );
+					const vars = JSON.parse( varsString );
+
+					theme = new ThemeRoller( { vars, version: jQueryUiVersion } );
+				} );
+
+				QUnit.test( "should instantiate", function( assert ) {
+					assert.expect( 1 );
+					assert.ok( theme instanceof ThemeRoller, "Instance of ThemeRoller" );
+				} );
+
+				QUnit.test( "should generate the theme CSS", async function( assert ) {
+					assert.expect( 1 );
+
+					const smoothnessCssFixture = await fs.readFile( `${ __dirname }/fixtures/jquery-ui-${ jQueryUiVersion }/themes/smoothness.css`, "utf-8" );
+
+					assert.strictEqual(
+						dropThemeUrl( theme.css() ),
+						dropThemeUrl( smoothnessCssFixture ),
+						"Theme CSS generated properly"
+					);
+				} );
+
+				QUnit.test( "should generate images", function( assert ) {
+					assert.expect( 2 );
+					const done = assert.async();
+
+					theme.generateImages( function( error, images ) {
+						try {
+							assert.strictEqual( error, null, "No errors" );
+							assert.strictEqual( images && typeof images, "object", "An object generated" );
+						} finally {
+							done();
+						}
+					} );
+				} );
+			} );
+		} );
+
+	} )();
+} );
