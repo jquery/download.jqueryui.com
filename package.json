@@ -30,7 +30,6 @@
 		"qunit": "2.21.0",
 		"semver": "7.6.3",
 		"sqwish": "0.2.2",
-		"tap-diff": "0.1.1",
 		"uglify-js": "3.19.0",
 		"winston": "3.13.1",
 		"wolfy87-eventemitter": "5.2.9"
