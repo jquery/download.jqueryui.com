@@ -5,6 +5,12 @@
 	},
 	"jqueryUi": [
 		{
+			"version": "1.14.0",
+			"dependsOn": "jQuery 1.12+ / 2.2+ / 3.6+ / 4.0+",
+			"label": "Stable",
+			"stable": true
+		},
+		{
 			"version": "1.14.0-beta.2",
 			"dependsOn": "jQuery 1.12+ / 2.2+ / 3.6+ / 4.0+",
 			"label": "Beta"
@@ -12,8 +18,7 @@
 		{
 			"version": "1.13.3",
 			"dependsOn": "jQuery 1.8+",
-			"label": "Stable",
-			"stable": true
+			"label": "Legacy"
 		},
 		{
 			"version": "1.12.1",
