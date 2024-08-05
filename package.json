@@ -1,7 +1,7 @@
 {
 	"name": "download.jqueryui.com",
 	"type": "commonjs",
-	"version": "2.3.9",
+	"version": "2.3.10",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/jquery/download.jqueryui.com.git"
