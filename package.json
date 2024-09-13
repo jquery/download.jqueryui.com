@@ -12,7 +12,7 @@
 		"builder-amd": "0.0.3",
 		"builder-jquery-css": "0.0.4",
 		"eslint-config-jquery": "3.0.2",
-		"express": "4.20.0",
+		"express": "4.21.0",
 		"fast-glob": "3.3.2",
 		"formidable": "3.5.1",
 		"globals": "15.8.0",
