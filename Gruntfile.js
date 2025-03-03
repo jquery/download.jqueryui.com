@@ -11,7 +11,6 @@ grunt.loadNpmTasks( "grunt-check-modules" );
 grunt.loadNpmTasks( "grunt-contrib-clean" );
 grunt.loadNpmTasks( "grunt-contrib-copy" );
 grunt.loadNpmTasks( "grunt-contrib-handlebars" );
-grunt.loadNpmTasks( "grunt-contrib-uglify" );
 grunt.loadNpmTasks( "grunt-eslint" );
 
 grunt.initConfig( {
@@ -61,10 +60,7 @@ grunt.initConfig( {
 			dest: "app/dist"
 		}
 	},
-	uglify: {
-		options: {
-			preserveComments: "some"
-		},
+	minify: {
 
 		// DownloadBuilder minified frontend bundle
 		download: {
@@ -86,6 +82,9 @@ grunt.initConfig( {
 		appDist: [ "app/dist" ]
 	}
 } );
+
+// local tasks
+grunt.loadTasks( "grunt-tasks" );
 
 function log( callback, successMsg, errorMsg ) {
 	return function( error, result, code ) {
@@ -279,7 +278,7 @@ function buildPackages( folder, callback ) {
 
 grunt.registerTask( "default", [ "check-modules", "eslint", "test" ] );
 
-grunt.registerTask( "build-app", [ "clean", "handlebars", "copy", "uglify" ] );
+grunt.registerTask( "build-app", [ "clean", "handlebars", "copy", "minify" ] );
 
 grunt.registerTask( "build-packages", "Builds zip package of each jQuery UI release specified in config file with all components and lightness theme, inside the given folder", function( folder ) {
 	var done = this.async();
