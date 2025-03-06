@@ -8,9 +8,11 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"@swc/core": "1.11.5",
 		"async": "3.2.6",
 		"builder-amd": "0.0.3",
 		"builder-jquery-css": "0.0.4",
+		"eslint": "9.21.0",
 		"eslint-config-jquery": "3.0.2",
 		"express": "^4.21.2",
 		"fast-glob": "^3.3.3",
@@ -22,7 +24,6 @@
 		"grunt-contrib-clean": "2.0.1",
 		"grunt-contrib-copy": "1.0.0",
 		"grunt-contrib-handlebars": "3.0.0",
-		"grunt-contrib-uglify": "5.2.2",
 		"grunt-eslint": "25.0.0",
 		"handlebars": "4.7.8",
 		"lzma": "2.3.2",
@@ -30,7 +31,6 @@
 		"qunit": "^2.24.1",
 		"semver": "^7.7.1",
 		"sqwish": "0.2.2",
-		"uglify-js": "3.19.3",
 		"winston": "^3.17.0",
 		"wolfy87-eventemitter": "5.2.9"
 	},
