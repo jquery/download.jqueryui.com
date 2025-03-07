@@ -95,9 +95,11 @@ $ grunt deploy
 
 ## Appendix
 
-### Compile and install ImageMagick from source
+### Install ImageMagick
 
-Follow instructions from https://legacy.imagemagick.org/script/install-source.php to install ImageMagic `6.6.9-10`. Then, in the ImageMagick directory, invoke:
+You will need ImageMagic `7.x` with PNG support. If your distribution doesn't provide such a version (on macOS it is included in the `imagemagick` Homebrew package), you will need to compile ImageMagick from source.
+
+Follow instructions from https://imagemagick.org/script/install-source.php to install ImageMagic `7.x`. Then, in the ImageMagick directory, invoke:
 ```
 $ ./configure CFLAGS=-O5 CXXFLAGS=-O5 --prefix=/opt --enable-static --with-png --disable-shared
 ```
@@ -107,7 +109,7 @@ Make sure you have the below in the output.
 PNG               --with-png=yes		yes
 ```
 
-If "png=yes no", libpng is missing and needs to be installed, `apt-get install libpng-dev` on linux or `brew install libpng` on OS X.
+If "png=yes no", `libpng` is missing and needs to be installed, `apt-get install libpng-dev` on linux or `brew install libpng` on macOS.
 
 Continuing...
 ```
@@ -120,8 +122,8 @@ export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 
 Make sure you get the right bin when running it.
 ```
-$ which convert
-/opt/bin/convert
+$ which magick
+/opt/bin/magick
 ```
 
-Hint: add those export statements into your .bash_profile.
+Hint: add those export statements into your `.bash_profile`.
