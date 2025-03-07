@@ -55,7 +55,6 @@ One version with the `stable` property set to `true` is required. Each release h
 ### node server.js
 
 Use `node server.js` to run the server. Arguments:
-- `--console` output to console instead of syslog (via simple-log module);
 - `--host=<name>` specify custom host. Default localhost;
 - `--nocache` skip caching release files and theme images;
 - `--port=<number>` specify custom port. Default 8088;

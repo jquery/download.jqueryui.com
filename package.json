@@ -34,9 +34,6 @@
 		"winston": "^3.17.0",
 		"wolfy87-eventemitter": "5.2.9"
 	},
-	"optionalDependencies": {
-		"modern-syslog": "1.2.0"
-	},
 	"main": "main.js",
 	"scripts": {
 		"test": "qunit --require ./test/setup.js test"

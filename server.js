@@ -2,10 +2,8 @@
 
 "use strict";
 
-var logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" );
-
 process.on( "uncaughtException", function( err ) {
-	logger.error( "Caught exception: " + ( err.stack || err ) );
+	console.error( "Caught exception: " + ( err.stack || err ) );
 	process.exit( 1 );
 } );
 
@@ -69,7 +67,7 @@ if ( !argv.nocache ) {
 // OBS: We were using an older version of connect, which lacked a descent way to centralize
 // requests error handling. We use express now but we haven't updated that code.
 function error( err, response ) {
-	logger.error( "User request exception: " + ( err.stack || err ) );
+	console.error( "User request exception: " + ( err.stack || err ) );
 	frontend.error( response );
 }
 
