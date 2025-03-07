@@ -17,9 +17,28 @@ jobs:
     - name: Checkout
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-    - name: Install xsltproc & ImageMagick
+    - name: Install xsltproc
       run: |
-        sudo apt-get install xsltproc imagemagick
+        sudo apt-get install xsltproc
+
+    # When Ubuntu Plucky is available in GitHub Actions, switch to it, remove
+    # the following section and just install the `imagemagick` package normally
+    # via apt-get.
+    - name: Download and build ImageMagick 7
+      run: |
+        sudo apt-get install -y build-essential pkg-config \
+            libjpeg-dev libpng-dev libtiff-dev libwebp-dev
+
+        # Replace the version below with the desired release
+        IM_VERSION="7.1.1-44"
+        wget https://download.imagemagick.org/ImageMagick/download/releases/ImageMagick-${IM_VERSION}.tar.xz
+        tar -xf ImageMagick-${IM_VERSION}.tar.xz
+        cd ImageMagick-${IM_VERSION}
+
+        ./configure
+        make -j$(nproc)
+        sudo make install
+        sudo ldconfig
 
     - name: Use Node.js ${{ matrix.NODE_VERSION }}
       uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
