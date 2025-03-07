@@ -64,11 +64,6 @@ export default [
 	{
 		files: [ "app/src/**/*.js" ],
 		languageOptions: {
-
-			// No need to keep IE support, so we could bump it to ES2022 as well,
-			// but we need to switch the minifier to something other than UglifJS
-			// which is ES5-only.
-			ecmaVersion: 5,
 			sourceType: "script",
 			parserOptions: {
 				globalReturn: false
