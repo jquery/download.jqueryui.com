@@ -39,6 +39,6 @@
 		"test": "qunit --require ./test/setup.js test"
 	},
 	"engines": {
-		"node": "18 || 20 || 22"
+		"node": ">=20"
 	}
 }
