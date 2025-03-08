@@ -5,7 +5,6 @@ var cache, downloadLogger, jqueryUis,
 	fs = require( "node:fs" ),
 	Handlebars = require( "handlebars" ),
 	JqueryUi = require( "./lib/jquery-ui" ),
-	logger = require( "./lib/simple-log" ).init( "download.jqueryui.com" ),
 	Packager = require( "node-packager" ),
 	querystring = require( "querystring" ),
 	themeGallery = require( "./lib/themeroller-themegallery" )(),
@@ -76,7 +75,7 @@ Frontend.prototype = {
 			jqueryUi = JqueryUi.find( params.version );
 		}
 		if ( jqueryUi == null ) {
-			logger.error( "Invalid input \"version\" = \"" + params.version + "\"" );
+			console.error( "Invalid input \"version\" = \"" + params.version + "\"" );
 			data = { error: "invalid version" };
 		} else {
 			data = { categories: jqueryUi.categories };
