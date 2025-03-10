@@ -12,13 +12,13 @@
 		"async": "3.2.6",
 		"builder-amd": "0.0.3",
 		"builder-jquery-css": "0.0.4",
+		"cross-spawn": "7.0.6",
 		"eslint": "9.21.0",
 		"eslint-config-jquery": "3.0.2",
 		"express": "^4.21.2",
 		"fast-glob": "^3.3.3",
 		"formidable": "3.5.2",
 		"globals": "^16.0.0",
-		"gm": "^1.25.1",
 		"grunt": "1.6.1",
 		"grunt-check-modules": "1.1.0",
 		"grunt-contrib-clean": "2.0.1",
@@ -39,6 +39,6 @@
 		"test": "qunit --require ./test/setup.js test"
 	},
 	"engines": {
-		"node": "18 || 20 || 22"
+		"node": ">=20"
 	}
 }
