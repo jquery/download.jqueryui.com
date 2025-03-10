@@ -1,7 +1,7 @@
 jQuery UI DownloadBuilder & ThemeRoller backend and frontend application.
 
 ## Requirements
-- [node >= 20 and npm](https://nodejs.org/en/download/)
+- [node >=18 and npm](https://nodejs.org/en/download/)
 - ImageMagick 7.x. ([See below for instructions how to install it](#install-imagemagick))
 - grunt-cli: `npm install -g grunt-cli`
 
