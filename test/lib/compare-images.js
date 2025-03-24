@@ -7,8 +7,10 @@ function compareParsedImages( imgA, imgE, delta = 0 ) {
 
 	// Ensure both images have the same dimensions
 	if ( imgA.width !== imgE.width || imgA.height !== imgE.height ) {
-		console.error( "Error: Images have different dimensions!" );
-		return;
+		return {
+			passed: false,
+			message: "Images have different dimensions"
+		};
 	}
 
 	// Loop over every pixel (each pixel occupies 4 positions in the data array)
@@ -35,15 +37,20 @@ function compareParsedImages( imgA, imgE, delta = 0 ) {
 			const alphaDiff = Math.abs( rgbaA.alpha - rgbaE.alpha );
 
 			if ( rDiff > delta || gDiff > delta || bDiff > delta || alphaDiff > delta ) {
-				console.error( `Error at pixel (x: ${ x }, y: ${ y }): ` +
-					`Image actual: rgba(${ rgbaA.r }, ${ rgbaA.g }, ${ rgbaA.b }, ${ rgbaA.alpha }) vs. ` +
-					`Image expected: rgba(${ rgbaE.r }, ${ rgbaE.g }, ${ rgbaE.b }, ${ rgbaE.alpha })` );
-				return false;
+				return {
+					passed: false,
+					message: `Error at pixel (x: ${ x }, y: ${ y }): ` +
+						`Image actual: rgba(${ rgbaA.r }, ${ rgbaA.g }, ${ rgbaA.b }, ${ rgbaA.alpha }) vs. ` +
+						`Image expected: rgba(${ rgbaE.r }, ${ rgbaE.g }, ${ rgbaE.b }, ${ rgbaE.alpha })`
+				};
 			}
 		}
 	}
 
-	return true;
+	return {
+		passed: true,
+		message: "Images sufficiently similar"
+	};
 }
 
 async function compareImages( pathActual, pathExpected, delta = 0 ) {

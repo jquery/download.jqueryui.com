@@ -46,8 +46,8 @@ QUnit.test( "generates correct icons", async function( assert ) {
 		const iconsPath = path.join( tmpFolderPath, filename );
 		await fs.writeFile( iconsPath, data );
 
-		assert.ok( await compareImages( iconsPath, fixturePath, 2 ),
-			"Images sufficiently similar" );
+		const { passed, message } = await compareImages( iconsPath, fixturePath, 2 );
+		assert.ok( passed, message );
 
 		done();
 	} );
