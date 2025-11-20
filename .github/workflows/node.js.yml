@@ -13,7 +13,7 @@ jobs:
       matrix:
         # Node.js 18 is required by jqueryui.com
         # Remember to include the version used in Dockerfile!
-        NODE_VERSION: [18.x, 20.x, 22.x]
+        NODE_VERSION: [18.x, 20.x, 22.x, 24.x]
     steps:
     - name: Checkout
       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
