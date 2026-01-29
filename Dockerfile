@@ -3,7 +3,7 @@ FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 
-RUN apk add libxml2 libxslt git imagemagick6 python3 make g++
+RUN apk add libxml2 libxslt git imagemagick python3 make g++
 RUN npm install
 
 COPY . .
