@@ -8,10 +8,9 @@ on:
 jobs:
   build:
     # Update it to `ubuntu-latest` only when:
-    # - our infra is on Debian >= 13 which has ImageMagick 7
+    # - our infra is on Debian >=13 which has ImageMagick 7
     # - `ubuntu-latest` resolves to v26.x which has ImageMagick 7
-    # When doing that, also update `imagemagick6` to `imagemagick
-    # in Dockerfile and the `convert` command to `magick`.
+    # When doing that, also update the `convert` command to `magick`.
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
