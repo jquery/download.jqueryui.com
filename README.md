@@ -2,7 +2,7 @@ jQuery UI DownloadBuilder & ThemeRoller backend and frontend application.
 
 ## Requirements
 - [node >=18 and npm](https://nodejs.org/en/download/)
-- ImageMagick 7.x. ([See below for instructions how to install it](#install-imagemagick))
+- ImageMagick >=6.9.x <7. ([See below for instructions how to install it](#install-imagemagick))
 - grunt-cli: `npm install -g grunt-cli`
 
 ## Getting Started
@@ -97,9 +97,9 @@ $ grunt deploy
 
 ### Install ImageMagick
 
-You will need ImageMagic `7.x` with PNG support. If your distribution doesn't provide such a version (on macOS it is included in the `imagemagick` Homebrew package), you will need to compile ImageMagick from source.
+You will need ImageMagic `6.9.x` with PNG support. If your distribution doesn't provide such a version (on macOS it is included in the `imagemagick@6` Homebrew package), you will need to compile ImageMagick from source.
 
-Follow instructions from https://imagemagick.org/script/install-source.php to install ImageMagic `7.x`. Then, in the ImageMagick directory, invoke:
+Follow instructions from https://imagemagick.org/script/install-source.php to install ImageMagic `6.9.x`. The instructions are for version `7.x`, so some adjustments may be needed. Then, in the ImageMagick directory, invoke:
 ```
 $ ./configure CFLAGS=-O5 CXXFLAGS=-O5 --prefix=/opt --enable-static --with-png --disable-shared
 ```
@@ -122,8 +122,8 @@ export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 
 Make sure you get the right bin when running it.
 ```
-$ which magick
-/opt/bin/magick
+$ which convert
+/opt/bin/convert
 ```
 
 Hint: add those export statements into your `.bash_profile`.
