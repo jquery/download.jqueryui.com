@@ -7,7 +7,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Update it to `ubuntu-latest` only when:
+    # - our infra is on Debian >= 13 which has ImageMagick 7
+    # - `ubuntu-latest` resolves to v26.x which has ImageMagick 7
+    # When doing that, also update `imagemagick6` to `imagemagick
+    # in Dockerfile and the `convert` command to `magick`.
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -21,27 +26,8 @@ jobs:
     - name: Update apt-get cache
       run: sudo apt-get update
 
-    - name: Install xsltproc
-      run: sudo apt-get install -y xsltproc
-
-    # When Ubuntu Plucky is available in GitHub Actions, switch to it, remove
-    # the following section and just install the `imagemagick` package normally
-    # via apt-get.
-    - name: Download and build ImageMagick 7
-      run: |
-        sudo apt-get install -y build-essential pkg-config \
-            libjpeg-dev libpng-dev libtiff-dev libwebp-dev
-
-        # Replace the version below with the desired release
-        IM_VERSION="7.1.1-44"
-        wget https://download.imagemagick.org/ImageMagick/download/releases/ImageMagick-${IM_VERSION}.tar.xz
-        tar -xf ImageMagick-${IM_VERSION}.tar.xz
-        cd ImageMagick-${IM_VERSION}
-
-        ./configure
-        make -j$(nproc)
-        sudo make install
-        sudo ldconfig
+    - name: Install xsltproc & ImageMagick 6
+      run: sudo apt-get install -y xsltproc imagemagick
 
     - name: Use Node.js ${{ matrix.NODE_VERSION }}
       uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
