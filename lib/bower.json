@@ -1,0 +1,7 @@
+{
+  "name": "jquery-css-builder",
+  "version": "0.0.1-pre",
+  "dependencies": {
+    "require-css": "0.1.8"
+  }
+}
