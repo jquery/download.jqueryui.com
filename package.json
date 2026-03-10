@@ -10,7 +10,7 @@
 	"dependencies": {
 		"@swc/core": "1.11.5",
 		"async": "3.2.6",
-		"builder-jquery-css": "0.0.4",
+		"builder-amd-css": "0.0.x",
 		"cross-spawn": "7.0.6",
 		"express": "^4.21.2",
 		"fast-glob": "^3.3.3",
