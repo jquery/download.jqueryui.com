@@ -34,7 +34,13 @@ grunt.initConfig( {
 		}
 	},
 	eslint: {
-		all: [ "*.js", "test/*js", "lib/**/*.js", "app/src/*.js" ]
+		all: [
+			"*.js",
+			"test/*js",
+			"lib/**/*.js",
+			"!lib/external/**/*.js",
+			"app/src/*.js"
+		]
 	},
 	copy: {
 		appExternalFarbtastic: {

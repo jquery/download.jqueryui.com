@@ -13,7 +13,7 @@ export default [
 			"app/dist/**",
 			"external/**",
 			"jquery-ui/**",
-			"lib/bower_components/**",
+			"lib/external/**",
 			"template/**",
 			"test/fixtures/**",
 			"tmp/**",
