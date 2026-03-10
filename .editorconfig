@@ -13,3 +13,9 @@ insert_final_newline = true
 [*.yml]
 indent_style = space
 indent_size = 2
+
+# Vendored files - preserve upstream formatting
+[lib/external/**]
+indent_style = unset
+trim_trailing_whitespace = unset
+insert_final_newline = unset

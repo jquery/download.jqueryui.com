@@ -38,7 +38,10 @@
 	},
 	"main": "main.js",
 	"scripts": {
-		"test": "qunit --require ./test/setup.js test/*.js"
+		"build": "grunt prepare",
+		"eslint": "eslint --cache .",
+		"qunit": "qunit --require ./test/setup.js test/*.js",
+		"test": "npm run eslint && npm run build && npm run qunit"
 	},
 	"engines": {
 		"node": ">=18"
