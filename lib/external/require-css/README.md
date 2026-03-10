@@ -1,6 +1,16 @@
 require-css
 ===========
 
+**jQuery UI note:** This is version 0.1.8. `css-builder.js` has been locally
+patched to support in-memory file operations via `config.asReference`
+(used by `builder-amd-css`). See:
+- https://github.com/jquery/builder-amd-css/commit/a7f685c
+- https://github.com/jquery/builder-amd-css/commit/07d8c23
+
+The unmodified original is preserved as `css-builder.js.orig` for reference.
+
+---
+
 RequireJS CSS requiring and optimization, with almond support.
 
 Useful for writing modular CSS dependencies alongside scripts. For an example of widget rendering see [ZestJS](http://zestjs.org).
