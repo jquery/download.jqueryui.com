@@ -10,7 +10,6 @@
 	"dependencies": {
 		"@swc/core": "1.11.5",
 		"async": "3.2.6",
-		"builder-amd": "0.0.3",
 		"builder-jquery-css": "0.0.4",
 		"cross-spawn": "7.0.6",
 		"express": "^4.21.2",
@@ -19,6 +18,7 @@
 		"handlebars": "4.7.8",
 		"lzma": "2.3.2",
 		"node-packager": "0.0.7",
+		"requirejs-memfiles": ">=2.1.15-3 <=2.1.15",
 		"semver": "^7.7.1",
 		"sqwish": "0.2.2",
 		"winston": "^3.17.0",
@@ -39,7 +39,7 @@
 	},
 	"main": "main.js",
 	"scripts": {
-		"test": "qunit --require ./test/setup.js test"
+		"test": "qunit --require ./test/setup.js test/*.js"
 	},
 	"engines": {
 		"node": ">=18"
