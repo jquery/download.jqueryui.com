@@ -1,4 +1,3 @@
-/* eslint-env jquery, browser */
 /*global Hash: false, JST: false, Model: false, QueryString: false */
 /*!
  * jQuery UI ThemeRoller client-side JavaScript file

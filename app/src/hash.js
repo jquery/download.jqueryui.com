@@ -1,4 +1,3 @@
-/* eslint-env jquery, browser */
 /*global EventEmitter: false */
 /*!
  * jQuery UI helper JavaScript file for History and hash support
