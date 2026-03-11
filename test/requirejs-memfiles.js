@@ -31,7 +31,7 @@ QUnit.test( "requirejs.optimize", function( assert ) {
 			assert.strictEqual(
 				files[ "dist/output.js" ],
 				"define(\"b\",[],function(){return\"B\"}),define(\"a\",[\"./b\"]," +
-					"function(e){return e}),define(\"output\",function(){});",
+					"function(n){return n}),define(\"output\",function(){});",
 				"dist/output.js has expected content"
 			);
 
@@ -120,7 +120,7 @@ QUnit.test( "concurrent requirejs.optimize calls", function( assert ) {
 		assert.strictEqual(
 			filesA[ "dist/outputA.js" ],
 			"define(\"b\",[],function(){return\"B\"}),define(\"a\",[\"./b\"]," +
-				"function(e){return e}),define(\"outputA\",function(){});",
+				"function(n){return n}),define(\"outputA\",function(){});",
 			"dist/outputA.js has expected content"
 		);
 
@@ -131,7 +131,7 @@ QUnit.test( "concurrent requirejs.optimize calls", function( assert ) {
 		assert.strictEqual(
 			filesB[ "dist/outputB.js" ],
 			"define(\"b\",[],function(){return\"B\"}),define(\"a\",[\"./b\"]," +
-				"function(e){return e}),define(\"outputB\",function(){});",
+				"function(n){return n}),define(\"outputB\",function(){});",
 			"dist/outputB.js has expected content"
 		);
 

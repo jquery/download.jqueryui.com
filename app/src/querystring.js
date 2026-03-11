@@ -1,4 +1,3 @@
-/* eslint-env jquery, browser */
 /*!
  * jQuery UI helper JavaScript file for QueryString support
  *

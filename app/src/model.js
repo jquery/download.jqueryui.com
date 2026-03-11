@@ -1,4 +1,3 @@
-/* eslint-env jquery, browser */
 /*global EventEmitter: false, LZMA: false, QueryString: false */
 /*!
  * jQuery UI helper JavaScript file for DownloadBuilder and ThemeRoller models

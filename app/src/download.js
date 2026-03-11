@@ -1,4 +1,3 @@
-/* eslint-env jquery, browser */
 /*global Hash: false, JST: false, Model: false */
 /*!
  * jQuery UI DownloadBuilder client-side JavaScript file
