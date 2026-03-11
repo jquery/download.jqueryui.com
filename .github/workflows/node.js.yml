@@ -6,27 +6,37 @@ on:
     branches-ignore: "dependabot/**"
 
 jobs:
-  build:
+  build-and-test:
     # Update it to `ubuntu-latest` only when:
     # - our infra is on Debian >=13 which has ImageMagick 7
     # - `ubuntu-latest` resolves to v26.x which has ImageMagick 7
     # When doing that, also update the `convert` command to `magick`.
     runs-on: ubuntu-24.04
+    name: ${{ matrix.NAME }} (${{ matrix.NODE_VERSION }})
     strategy:
       fail-fast: false
       matrix:
+        NAME: [ "test" ]
+        NPM_SCRIPT: [ "qunit" ]
+
         # Node.js 18 is required by jqueryui.com
         # Remember to include the version used in Dockerfile!
         NODE_VERSION: [18.x, 20.x, 22.x, 24.x]
+        include:
+          - NAME: "lint"
+            NODE_VERSION: "24.x"
+            NPM_SCRIPT: "lint"
     steps:
     - name: Checkout
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
     - name: Update apt-get cache
       run: sudo apt-get update
+      if: "!contains(matrix.NPM_SCRIPT, 'lint')"
 
     - name: Install xsltproc & ImageMagick 6
       run: sudo apt-get install -y xsltproc imagemagick
+      if: "!contains(matrix.NPM_SCRIPT, 'lint')"
 
     - name: Use Node.js ${{ matrix.NODE_VERSION }}
       uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
@@ -38,8 +48,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Prepare for tests
-      run: ./node_modules/.bin/grunt prepare
+    - name: Build
+      run: npm run build
+      if: "!contains(matrix.NPM_SCRIPT, 'lint')"
 
     - name: Run tests
-      run: npm test
+      run: npm run ${{ matrix.NPM_SCRIPT }}
