@@ -27,7 +27,7 @@
 		"eslint": "10.0.3",
 		"eslint-config-jquery": "3.0.2",
 		"globals": "17.4.0",
-		"grunt": "1.6.1",
+		"grunt": "1.6.2",
 		"grunt-check-modules": "1.1.0",
 		"grunt-contrib-clean": "2.0.1",
 		"grunt-contrib-copy": "1.0.0",
